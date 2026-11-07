@@ -458,10 +458,11 @@
   };
 
   // ---------- Кейсы ----------
-  function it(name,row,col,qual,val){
+  function it(name,row,col,qual,val,img){
     var ln=name.toLowerCase();
     var svg;
-    if(ln.indexOf("karambit")>-1||ln.indexOf("knife")>-1||ln.indexOf("bayonet")>-1||row.indexOf("нож")>-1) svg=knifeSVG(col);
+    if(img){ svg='<img src="'+img+'" style="width:100%;height:100%;object-fit:contain" alt="'+name+'">'; }
+    else if(ln.indexOf("karambit")>-1||ln.indexOf("knife")>-1||ln.indexOf("bayonet")>-1||ln.indexOf("tanto")>-1||ln.indexOf("daggers")>-1||row.indexOf("нож")>-1) svg=knifeSVG(col);
     else if(row.indexOf("контейнер")>-1) svg=crateSVG(col);
     else if(ln.indexOf("ump")>-1||ln.indexOf("p90")>-1||ln.indexOf("uzi")>-1) svg=smgSVG(col);
     else if(ln.indexOf("ak")>-1||ln.indexOf("m4")>-1||ln.indexOf("m16")>-1||ln.indexOf("fammas")>-1||ln.indexOf("akr")>-1) svg=akSVG(col);
@@ -474,31 +475,16 @@
     {
       id:"origin", name:"Absolute Case", price:599, old:699, hot:true, stock:{left:137,total:200}, rar:false, art:artSVG("rif","#3dd7ff","#5b3dff"),
       items:[
-        it("G22 «Pixel Camouflage»","Пушка","#c9d1d9","common",15),
-        it("P350 «Savannah»","Пушка","#c9d1d9","common",18),
-        it("UMP45 «Pixel»","Пушка","#8b98a5","common",22),
-        it("M4 «Tiger»","Пушка","#3de08a","rare",40),
-        it("Desert Eagle «Blood»","Пушка","#ff3f3f","rare",55),
-        it("P90 «Radiation»","Пушка","#3de08a","rare",48),
-        it("M16 «Camouflage»","Пушка","#ffc93c","epic",210),
-        it("SM1014 «Facet»","Пушка","#3de08a","epic",200),
-        it("AKR12 «Pixel Camouflage» StatTrack","Пушка","#3dd7ff","legendary",1200),
-        it("SM1014 «Pathfinder» StatTrack","Пушка","#3dd7ff","legendary",1400),
-        it("AWM «Phoenix» StatTrack","Пушка","#ff9f43","legendary",1700),
-        it("P350 «Neon» StatTrack","Пушка","#ff9f43","legendary",1600),
-        it("UMP45 «Cyberpunk» StatTrack","Пушка","#7b3dff","legendary",1900),
-        it("P90 «Ghoul» StatTrack","Пушка","#7b3dff","legendary",2000),
-        it("M4 «Necromancer» StatTrack","Пушка","#ff3f6e","gold",2600),
-        it("AKR12 «Railgun» StatTrack","Пушка","#7b3dff","gold",2800),
-        it("M16 «Winged» StatTrack","Пушка","#5b3dff","gold",3000),
-        it("G22 «Nest» StatTrack","Пушка","#3dd7ff","gold",2400),
-        it("M9 Bayonet «Ancient»","Нож","#5b8bff","epic",820),
-        it("M9 Bayonet «Dragon Glass»","Нож","#7b8bff","legendary",2100),
-        it("M9 Bayonet «Scratch»","Нож","#c9d1d9","rare",95),
-        it("M9 Bayonet «Universe»","Нож","#ff5470","gold",3800),
-        it("AKR «Treasure Hunter»","Нож","#ffd700","gold",4500),
-        it("Контейнер «Origin»","Контейнер","#3dd7ff","epic",150),
-        it("Контейнер «Rare»","Контейнер","#ffc93c","legendary",900)
+        it("Tanto «Retro Arcade»","Нож","#ffc93c","rare",95,"tanto-retro.webp"),
+        it("Dual Daggers «Retro Arcade»","Нож","#ff9f43","rare",110,"dual-daggers-retro.webp"),
+        it("AWM «Festal Wrap»","Снайперская","#ff5470","epic",420,"awm-festal-wrap.webp"),
+        it("Tanto «Frost Nova»","Нож","#3dd7ff","epic",480,"tanto-frost-nova.webp"),
+        it("AWM «Hohei Taisho»","Снайперская","#ff9f43","legendary",1800,"awm-hohei-taisho.webp"),
+        it("Gloves «Artificer»","Перчатки","#ff8f3c","legendary",2200,"gloves-artificer.webp"),
+        it("AKR12 «Mimicry»","Автомат","#7b3dff","legendary",2000,"akr12-mimicry.webp"),
+        it("AKR12 «Mimicry»","Автомат","#7b3dff","legendary",2000,"akr12-mimicry.webp"),
+        it("AKR12 «Mimicry»","Автомат","#7b3dff","legendary",2000,"akr12-mimicry.webp"),
+        it("AKR12 «Mimicry»","Автомат","#ff3f6e","gold",2600,"akr12-mimicry.webp")
       ]}
   ];
 
