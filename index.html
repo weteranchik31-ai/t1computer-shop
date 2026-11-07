@@ -211,8 +211,8 @@
   <section id="cases">
     <div class="sec-head">
       <div>
-        <h1>🌴 Летний вайб</h1>
-        <div class="sub">Жара, как в лобби на закладке — залетай, крути и лови топовые скины под летний вайб!</div>
+        <h1>🎁 Кейсы Collection</h1>
+        <div class="sub">Залетай, крути и лови топовые скины из легендарных коллекций — Dynasty, Chameleon и Origin!</div>
       </div>
       <div class="sec-tabs">
         <button class="active">Live</button>
@@ -328,38 +328,39 @@
   function it(name,row,col,qual,val){return {name:name,type:row,col:col,q:qual,val:val,svg:name.toLowerCase().indexOf("ak")>-1?akSVG(col):name.toLowerCase().indexOf("ump")>-1?smgSVG(col):name.toLowerCase().indexOf("p90")>-1?smgSVG(col):name.toLowerCase().indexOf("awm")>-1?rifleSVG(col):name.toLowerCase().indexOf("val")>-1?rifleSVG(col):name.toLowerCase().indexOf("uzi")>-1?smgSVG(col):name.toLowerCase().indexOf("m4")>-1?rifleSVG(col):name.toLowerCase().indexOf("fammas")>-1?rifleSVG(col):pisSVG(col)}}
 
   var CASES = [
-    {id:"summer", name:"Летний Фестиваль", price:59, old:299, hot:false, stock:null, art:akSVG("#ffc93c"), rar:false,
-     items:[
-       it("UMP45 Beast","ПП","#ff8f3c","rare",45),
-       it("Akimbo Uzi Overdrive Red","Пистолеты","#ff3f6e","rare",52),
-       it("P90 Clash","ПП","#3de08a","epic",140),
-       it("FabM BOOM","Автомат","#3dd7ff","epic",210),
-       it("VAL Gilded Gale","Штурмовая","#ffc93c","legendary",900),
-       it("M4 Samurai","Автомат","#ff9f43","legendary",1200),
-       it("AWM BOOM","Снайперская","#ff3f6e","gold",2600)
-     ]},
-    {id:"sun", name:"Солнечный Удар", price:39, old:129, hot:true, stock:null, rar:false, art:smgSVG("#ff9f43"),
-     items:[
-       it("P90 Clash","ПП","#3de08a","rare",40),
-       it("UMP45 Beast","ПП","#ff8f3c","rare",48),
-       it("AKR Tiger","Автомат","#ff9f43","epic",200),
-       it("AWM Forest","Снайперская","#3dd7ff","epic",320),
-       it("M4 Dragon","Автомат","#ff3f6e","legendary",1500)
-     ]},
-    {id:"gold", name:"Голда", price:49, old:149, hot:false, stock:null, rar:true, art:pisSVG("#ffc93c"),
-     items:[
-       it("Gold AK47","Автомат","#ffc93c","rare",60),
-       it("Gold M4","Автомат","#ffd23c","epic",260),
-       it("Gold AWM","Снайперская","#ffe35c","legendary",1800),
-       it("Gold Karambit","Нож","#ff5470","gold",3200)
-     ]},
-    {id:"gift", name:"Подарок", price:99, old:999, hot:true, stock:{left:197,total:200}, rar:false, art:rifleSVG("#ff3f6e"),
-     items:[
-       it("FabM BOOM","Автомат","#3dd7ff","epic",210),
-       it("M4 Samurai","Автомат","#ff9f43","legendary",1200),
-       it("AWM BOOM","Снайперская","#ff3f6e","gold",2600),
-       it("Golden Karambit","Нож","#ffc93c","gold",4200)
-     ]}
+    {
+      id:"dynasty", name:"Dynasty Case", price:59, old:199, hot:true, stock:null, rar:true, art:artSVG("ak","#c0392b","#ffd700"),
+      items:[
+        it("AKR Imperial Gold","Автомат","#ffd700","rare",60),
+        it("M4 Red Dragon","Автомат","#ff3f3f","rare",55),
+        it("AKR Emperor","Автомат","#c0392b","epic",240),
+        it("AWM Golden Dynasty","Снайперская","#ffd700","epic",380),
+        it("VAL Jade Serpent","Штурмовая","#2dd0a8","legendary",1400),
+        it("M4 Crimson Pact","Автомат","#e04a4a","legendary",1800),
+        it("AKR Phoenix","Автомат","#ff8f3c","gold",3200)
+      ]},
+    {
+      id:"chameleon", name:"Chameleon Case", price:39, old:129, hot:false, stock:null, rar:false, art:artSVG("smg","#9b6bff","#3de08a"),
+      items:[
+        it("UMP45 Venom","ПП","#6bd84a","rare",45),
+        it("P90 Camo Shift","ПП","#4ad16b","rare",42),
+        it("Akimbo Uzi Toxic","Пистолеты","#8de04a","rare",48),
+        it("FAMAS Prism","Автомат","#9b6bff","epic",220),
+        it("UMP45 Chameleon Skin","ПП","#c06bff","epic",300),
+        it("VAL Ghost","Штурмовая","#4ae0b0","legendary",1500),
+        it("AWM Mirage","Снайперская","#8a6bff","gold",2900)
+      ]},
+    {
+      id:"origin", name:"Origin Case", price:99, old:299, hot:true, stock:{left:137,total:200}, rar:false, art:artSVG("rif","#3dd7ff","#5b3dff"),
+      items:[
+        it("AKR First Blood","Автомат","#ff5470","rare",50),
+        it("FAMAS Core","Автомат","#3d7bff","rare",58),
+        it("AWM Zero","Снайперская","#3d8bff","epic",340),
+        it("M4 Ancient","Автомат","#5b8bff","epic",320),
+        it("AKR Origin","Автомат","#3dd7ff","legendary",1900),
+        it("AWM Genesis","Снайперская","#5b3dff","legendary",2200),
+        it("Karambit Cosmic","Нож","#7b3dff","gold",4500)
+      ]}
   ];
 
   // ---------- Оружие в ролле со случайным (клиент) ----------
