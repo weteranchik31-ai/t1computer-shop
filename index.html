@@ -593,7 +593,7 @@
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noGloves:0,noFestal:0};
+    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noGloves:0,noFestal:0,noFrost:0,noRetro:0,noHohei:0};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -698,19 +698,24 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     st.noKnife=(st.noKnife||0)+1;
     st.noGloves=(st.noGloves||0)+1;
     st.noFestal=(st.noFestal||0)+1;
+    st.noFrost=(st.noFrost||0)+1;
+    st.noRetro=(st.noRetro||0)+1;
+    st.noHohei=(st.noHohei||0)+1;
+    function byName(s){return selected.items.filter(function(x){return x.name.indexOf(s)>-1;});}
     var knives=selected.items.filter(function(x){return x.type==="Нож"||x.type.indexOf("нож")>-1;});
-    var gloves=selected.items.filter(function(x){return x.type.indexOf("Перчатки")>-1||x.type.indexOf("перчат")>-1;});
-    var festal=selected.items.filter(function(x){return x.name.indexOf("Festal Wrap")>-1;});
+    var gloves=byName("Artificer");
+    var frost=byName("Frost Nova");
+    var retro=byName("Retro Arcade");
+    var festal=byName("Festal Wrap");
+    var hohei=byName("Hohei Taisho");
     var win;
-    if(festal.length>0 && st.noFestal>=2){
-      win=festal[Math.floor(Math.random()*festal.length)];
-    } else if(knives.length>0 && st.noKnife>=3){
-      win=knives[Math.floor(Math.random()*knives.length)];
-    } else if(gloves.length>0 && st.noGloves>=12){
-      win=gloves[Math.floor(Math.random()*gloves.length)];
-    } else {
-      win=rollItem(selected);
-    }
+    if(festal.length>0 && st.noFestal>=2){ win=festal[Math.floor(Math.random()*festal.length)]; }
+    else if(hohei.length>0 && st.noHohei>=4){ win=hohei[Math.floor(Math.random()*hohei.length)]; }
+    else if(frost.length>0 && st.noFrost>=6){ win=frost[Math.floor(Math.random()*frost.length)]; }
+    else if(retro.length>0 && st.noRetro>=8){ win=retro[Math.floor(Math.random()*retro.length)]; }
+    else if(gloves.length>0 && st.noGloves>=12){ win=gloves[Math.floor(Math.random()*gloves.length)]; }
+    else if(knives.length>0 && st.noKnife>=3){ win=knives[Math.floor(Math.random()*knives.length)]; }
+    else { win=rollItem(selected); }
     buildStrip(selected,win);
     var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
     var spinW=$("spinner").offsetWidth;
@@ -725,9 +730,12 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     try{
       var q=Q[win.q]||Q.rare;
       addXp(30);
-      if(win.type.indexOf("Нож")>-1||win.type.indexOf("нож")>-1){ st.noKnife=0; }
-      if(win.type.indexOf("Перчат")>-1||win.type.indexOf("перчат")>-1){ st.noGloves=0; }
-      if(win.name.indexOf("Festal Wrap")>-1){ st.noFestal=0; }
+if(win.type.indexOf("Нож")>-1||win.type.indexOf("нож")>-1){ st.noKnife=0; }
+    if(win.name.indexOf("Artificer")>-1){ st.noGloves=0; }
+    if(win.name.indexOf("Festal Wrap")>-1){ st.noFestal=0; }
+    if(win.name.indexOf("Frost Nova")>-1){ st.noFrost=0; }
+    if(win.name.indexOf("Retro Arcade")>-1){ st.noRetro=0; }
+    if(win.name.indexOf("Hohei Taisho")>-1){ st.noHohei=0; }
       if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
       $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
         '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
