@@ -714,7 +714,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     else if(frost.length>0 && st.noFrost>=6){ win=frost[Math.floor(Math.random()*frost.length)]; }
     else if(retro.length>0 && st.noRetro>=8){ win=retro[Math.floor(Math.random()*retro.length)]; }
     else if(gloves.length>0 && st.noGloves>=12){ win=gloves[Math.floor(Math.random()*gloves.length)]; }
-    else if(knives.length>0 && st.noKnife>=3){ win=knives[Math.floor(Math.random()*knives.length)]; }
+    else if(knives.length>0 && st.noKnife>=5){ win=knives[Math.floor(Math.random()*knives.length)]; }
     else { win=rollItem(selected); }
     buildStrip(selected,win);
     var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
