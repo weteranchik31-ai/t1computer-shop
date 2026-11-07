@@ -132,7 +132,7 @@
   .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
   .card h3{font-size:18px;font-weight:800;margin-bottom:4px}
   .card .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
-  .wheel{margin:8px auto 16px;width:200px;height:200px;border-radius:50%;background:conic-gradient(#ff3f6e 0 25%,#ffc93c 0 50%,#3dd7ff 0 75%,#3de08a 0 100%);box-shadow:0 0 24px rgba(255,63,110,.25);position:relative}
+  .wheel{margin:8px auto 16px;width:200px;height:200px;border-radius:50%;background:conic-gradient(#000000 0 60deg,#9aa0a6 60deg 120deg,#ffffff 120deg 180deg,#ff3f3f 180deg 240deg,#ffc93c 240deg 300deg,#3de08a 300deg 360deg);box-shadow:0 0 24px rgba(255,63,110,.25);position:relative;border:2px solid #0b0e13}
   .wheel .pin{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:22px;z-index:3}
   .wheel .hub{position:absolute;inset:38%;background:#0b0e13;border-radius:50%;display:grid;place-items:center;z-index:2}
   .wheel .hub b{color:var(--yellow);font-weight:800}
@@ -270,7 +270,7 @@
         <div class="pin">🔽</div>
         <div class="hub"><b id="wheelLabel">крути</b></div>
       </div>
-      <div class="wheel-labels"><span>50💎</span><span>Кейс</span><span>100💎</span><span>🎁</span></div>
+      <div class="wheel-labels"><span>Чёрный</span><span>Серый</span><span>Белый</span><span>Красный</span><span>Жёлтый</span><span>Зелёный</span></div>
       <div class="wheel-info">
         <button class="btn-spin" id="btnSpin">Крутить бесплатно</button>
         <button class="btn-spin btn-spin-paid" id="btnSpinPaid">Крутить за 50 💎</button>
@@ -606,17 +606,31 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
   var DAY=24*60*60*1000;
   function doSpin(paid){
     if(wheelSpinning)return;
-    var prize=["50 💎","100 💎","150 💎","🎁 Кейс"][Math.floor(Math.random()*4)];
+    var COLORS=[
+      {n:"Чёрный",c:"#000000",val:0},
+      {n:"Серый",c:"#9aa0a6",val:0},
+      {n:"Белый",c:"#ffffff",val:0},
+      {n:"Красный",c:"#ff3f3f",val:30},
+      {n:"Жёлтый",c:"#ffc93c",val:50},
+      {n:"Зелёный",c:"#3de08a",val:100}
+    ];
+    var r=Math.floor(Math.random()*COLORS.length);
+    var color=COLORS[r];
     wheelSpinning=true;
     $("btnSpin").disabled=true;$("btnSpinPaid").disabled=true;
     $("wheelLabel").textContent="...";
+    // лёгкое вращение колеса
+    var wheel=$("wheel");
+    wheel.style.transition="transform 0.9s cubic-bezier(.22,1,.22,1)";
+    wheel.style.transform="rotate("+(360*3 + (60*r + 30))+"deg)";
     setTimeout(function(){
-      $("wheelLabel").textContent=prize;
-      if(prize.indexOf("💎")>-1){st.bal+=parseInt(prize);renderBal();}
-      toast("🎉 "+prize+"!");
+      $("wheelLabel").textContent=color.n;
+      $("wheelLabel").style.color=color.n==="Белый"||color.n==="Жёлтый"?"#000":"#fff";
+      if(color.val>0){st.bal+=color.val;renderBal();}
+      toast("🎡 Выпал сектор: "+color.n+(color.val>0?" (+"+color.val+" 💎)":""));
       wheelSpinning=false;save();
       updateWheel();
-    },900);
+    },950);
   }
   function updateWheel(){
     var now=Date.now();
