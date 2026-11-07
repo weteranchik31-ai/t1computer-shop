@@ -719,9 +719,11 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     var fills=[["#2a2f38","#000000"],["#9aa0a6"],["#ffffff"],["#ff3f3f"],["#ffc93c"],["#3de08a"]];
     var svg='<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">';
     for(var i=0;i<6;i++){ svg+=seg(i*60,(i+1)*60, fills[i][0]||fills[i][1]); }
-    // Чёрный сектор (0-60°) — вставить картинку Desert Eagle Violet Flame
-    svg+='<g transform="translate('+CX+' '+CX+') rotate(30) translate(-45 -13)">'+
-      '<image href="violet-flame.webp" x="0" y="-32" width="84" height="46" preserveAspectRatio="none" opacity="0.95"/>'+
+    // Чёрный сектор (0-60°) — картинка Desert Eagle, повёрнутая вдоль биссектрисы сектора
+    var ang=30*Math.PI/180, rad=52;
+    var cx2=CX+rad*Math.cos(ang), cy2=CX+rad*Math.sin(ang);
+    svg+='<g transform="translate('+cx2.toFixed(1)+' '+cy2.toFixed(1)+') rotate(30) translate(-40 -20)">'+
+      '<image href="violet-flame.webp" x="0" y="0" width="80" height="40" preserveAspectRatio="xMidYMid meet" opacity="0.95"/>'+
       '</g>';
     svg+='</svg>';
     skin.innerHTML=svg;
