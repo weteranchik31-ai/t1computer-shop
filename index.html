@@ -722,18 +722,21 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     setTimeout(function(){finish(win);},1180);
   }
   function finish(win){
-    var q=Q[win.q]||Q.rare;
-    addXp(30);
-    if(win.type.indexOf("Нож")>-1||win.type.indexOf("нож")>-1){ st.noKnife=0; }
-    if(win.type.indexOf("Перчат")>-1||win.type.indexOf("перчат")>-1){ st.noGloves=0; }
-    if(win.name.indexOf("Festal Wrap")>-1){ st.noFestal=0; }
-    if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
-    $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
-      '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
-      '<div class="qcode" style="color:'+q.color+'">'+q.code+'</div>';
-    addToInv(win.name, win.svg, win.type);
-    spinning=false;$("btnOpen").disabled=false;
-    save();
+    try{
+      var q=Q[win.q]||Q.rare;
+      addXp(30);
+      if(win.type.indexOf("Нож")>-1||win.type.indexOf("нож")>-1){ st.noKnife=0; }
+      if(win.type.indexOf("Перчат")>-1||win.type.indexOf("перчат")>-1){ st.noGloves=0; }
+      if(win.name.indexOf("Festal Wrap")>-1){ st.noFestal=0; }
+      if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
+      $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
+        '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
+        '<div class="qcode" style="color:'+q.color+'">'+q.code+'</div>';
+      addToInv(win.name, win.svg, win.type);
+      save();
+    } finally {
+      spinning=false;$("btnOpen").disabled=false;
+    }
   }
   function addXp(n){
     st.xp+=n;var need=st.level*100;
