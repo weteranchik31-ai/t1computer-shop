@@ -78,8 +78,8 @@
   .case{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .15s,border-color .15s;position:relative}
   .case:hover{transform:translateY(-4px);border-color:var(--yellow)}
   .case .th{height:150px;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#232c3f 0%,#12161f 70%);border-bottom:1px solid var(--line);position:relative}
-  .case .th .art{width:150px;height:150px;display:grid;place-items:center}
-  .case .th .art svg{width:100%;height:100%}
+  .case .th .art{width:190px;height:112px;display:grid;place-items:center}
+  .case .th .art svg{width:100%;height:100%;display:block}
   .case.rar .th .art svg{filter:drop-shadow(0 0 14px rgba(255,63,110,.55))}
   .case .hot{position:absolute;top:10px;left:10px;background:var(--pink);color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:7px}
   .case .stock{position:absolute;top:10px;right:10px;background:#0009;color:var(--text);font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px}
@@ -105,11 +105,12 @@
   .spinner{height:230px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--line);background:#0d1017}
   .spinner::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--yellow);box-shadow:0 0 14px var(--yellow);transform:translateX(-50%);z-index:5}
   .strip{display:flex;height:100%;will-change:transform;transition:none}
-  .tile{flex:0 0 150px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-right:1px solid var(--line);background:#0f131b;padding:6px}
-  .tile .img{width:92px;height:92px}
-  .tile .img svg{width:100%;height:100%}
+  .tile{flex:0 0 150px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;border-right:1px solid var(--line);background:#0f131b;padding:6px 8px}
+  .tile .img{width:130px;height:77px;display:grid;place-items:center}
+  .tile .img svg{width:100%;height:100%;display:block}
   .tile .name{font-size:12px;font-weight:600;text-align:center;line-height:1.1}
   .tile .qty{font-size:10px;color:var(--muted)}
+  .tile .qbg{font-size:9px;font-weight:800;letter-spacing:.6px;text-shadow:0 0 8px currentColor;opacity:.9}
   .controls{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;align-items:center;justify-content:center}
   .btn{font-family:inherit;cursor:pointer;border:none;border-radius:11px;font-weight:800;transition:transform .12s,filter .12s}
   .btn:active{transform:scale(.97)}
@@ -120,9 +121,10 @@
   .btn:disabled{opacity:.45;cursor:not-allowed}
   .result{margin-top:18px;text-align:center;border:1px solid var(--line);border-radius:14px;padding:20px;background:#0d1017;min-height:120px}
   .result .empty{color:var(--muted);padding:12px}
-  .result .big{width:120px;height:120px;margin:0 auto}
-  .result .big svg{width:100%;height:100%}
-  .result h4{font-size:20px;margin:4px 0}
+  .result .big{width:180px;height:180px;margin:0 auto}
+  .result .big svg{width:100%;height:100%;display:block}
+  .result .qcode{font-size:13px;font-weight:800;letter-spacing:1.5px;margin:2px 0 8px;text-shadow:0 0 12px currentColor}
+  .result h4{font-size:20px;margin:4px 0 0}
 
   /* ---------- Низ: барабан бонусов / ранг ---------- */
   .bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
@@ -272,19 +274,54 @@
 (function(){
   "use strict";
 
-  // ---------- SVG предметов ----------
-  function akSVG(col){return '<svg viewBox="0 0 140 40"><defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M0 22 l30 6 8 8 22 2 62 0 10 -4 8 -6 -6 -8 -14 -2 C104 16 52 16 26 16 Z" fill="url(#a)" stroke="#0c0e14" stroke-width="1.4"/><rect x="86" y="34" width="16" height="10" rx="2" fill="#2a2f38" stroke="#0c0e14"/><path d="M38 23 l66 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
-  function smgSVG(col){return '<svg viewBox="0 0 140 40"><defs><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M2 21 l20 6 6 7 26 2 58 0 10 -4 8 -4 -4 -8 -16 -2 C92 16 36 15 26 15 Z" fill="url(#s)" stroke="#0c0e14" stroke-width="1.4"/><rect x="56" y="34" width="14" height="10" rx="2" fill="#2a2f38" stroke="#0c0e14"/><rect x="44" y="18" width="16" height="7" fill="#14181f"/><path d="M30 23 l58 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
-  function rifleSVG(col){return '<svg viewBox="0 0 150 42"><defs><linearGradient id="r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M2 22 l26 4 8 8 24 3 60 0 14 -4 8 -2 -2 -8 -16 -2 C100 20 46 16 30 16 Z" fill="url(#r)" stroke="#0c0e14" stroke-width="1.4"/><rect x="92" y="32" width="18" height="10" rx="2" fill="#242a33" stroke="#0c0e14"/><rect x="52" y="20" width="18" height="7" fill="#14181f"/><path d="M36 24 l60 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
-  function pisSVG(col){return '<svg viewBox="0 0 120 42"><defs><linearGradient id="p" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M4 20 l22 0 8 -8 30 0 8 8 26 2 8 6 -10 6 -38 -2 -8 6 C40 34 14 30 4 22 Z" fill="url(#p)" stroke="#0c0e14" stroke-width="1.4"/><rect x="24" y="28" width="13" height="12" rx="2" fill="#2a2f38" stroke="#0c0e14"/><path d="M34 22 l44 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
+  // ---------- Аватарки оружия (профиль на тёмном градиенте) ----------
+  // Каждый скин: контур оружия + яркий узор (скин) + фон со свечением в цвет качества.
+  // Параметры uid — уникальный префикс для id градиентов внутри одного svg.
+  function gunPath(type){
+    // Возвращает (d ствола/корпуса, d рукояти, поворот для вертикального вида)
+    if(type==="ak")  return ["M0 30 L34 40 46 62 76 72 156 72 178 60 194 46 178 32 142 26 C110 26 60 26 40 40 Z","M128 72 L150 108 L178 120 L186 104 L166 78 Z"];
+    if(type==="smg") return ["M0 28 L26 40 34 60 70 66 170 66 196 56 210 44 202 30 156 24 C110 24 56 22 40 32 Z","M120 66 L140 100 L160 112 L170 96 L152 72 Z"];
+    if(type==="rif") return ["M0 36 L44 48 66 64 92 72 176 72 202 60 216 46 206 30 170 24 C120 22 66 22 46 38 Z","M140 72 L164 104 L190 116 L200 100 L180 76 Z"];
+    return ["M10 46 L40 46 58 32 96 32 112 46 150 42 156 66 148 74 40 74 20 62 Z","M68 74 L88 104 L110 114 L118 100 L98 78 Z"];
+  }
+  function artSVG(type, glow, accent){
+    var g=gunPath(type), body=g[0], grip=g[1];
+    var base="#1a1f2b", grad="g"+Math.floor(Math.random()*1e6);
+    // рисунок скина: неоновая полоса по корпусу + акцентные пятна
+    var pattern='<path d="'+body+'" fill="url(#'+grad+')" stroke="#0a0c12" stroke-width="2"/>';
+    var deco='<path d="'+body+'" fill="none" stroke="'+accent+'" stroke-width="3" opacity=".9"/>';
+    var glitch='<path d="M30 20 C70 14 120 14 190 16" stroke="'+glow+'" stroke-width="2" fill="none" opacity=".5" filter="url(#bl)"/>';
+    return '<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg">'+
+      '<defs>'+
+        '<linearGradient id="'+grad+'" x1="0" y1="0" x2="1" y2="1">'+
+          '<stop offset="0" stop-color="'+glow+'"/><stop offset=".35" stop-color="'+accent+'"/><stop offset="1" stop-color="#14181f"/>'+
+        '</linearGradient>'+
+        '<filter id="bl" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="4"/></filter>'+
+        '<radialGradient id="bg'+grad+'" cx="50%" cy="40%" r="70%">'+
+          '<stop offset="0" stop-color="'+glow+'" stop-opacity=".35"/>'+
+          '<stop offset="1" stop-color="#0b0e14" stop-opacity="0"/>'+
+        '</radialGradient>'+
+      '</defs>'+
+      '<rect width="220" height="130" fill="url(#bg'+grad+')"/>'+
+      // размытый фон-логотип
+      '<text x="110" y="112" font-family="Arial, sans-serif" font-size="90" font-weight="900" fill="'+glow+'" opacity=".14" text-anchor="middle">Z9</text>'+
+      // рукоять позади
+      '<path d="'+grip+'" fill="#20242e" stroke="#0a0c12" stroke-width="2"/>'+
+      // корпус с узором
+      pattern + deco + glitch +'</svg>';
+  }
+  function akSVG(col){return artSVG("ak",col,"#ff8f3c");}
+  function smgSVG(col){return artSVG("smg",col,"#3de08a");}
+  function rifleSVG(col){return artSVG("rif",col,"#3dd7ff");}
+  function pisSVG(col){return artSVG("pist",col,"#ffc93c");}
 
   // ---------- Качество ----------
   var Q = {
-    common:{name:"Промышленное",color:"#8a93a6"},
-    rare:{name:"Армейское",color:"#3de08a"},
-    epic:{name:"Запрещённое",color:"#3dd7ff"},
-    legendary:{name:"Тайное",color:"#ff9f43"},
-    gold:{name:"Призрачное",color:"#ff3f6e"}
+    common:{name:"Промышленное",color:"#8a93a6",code:"INDUSTRY"},
+    rare:{name:"Армейское",color:"#3de08a",code:"MILITARY"},
+    epic:{name:"Запрещённое",color:"#3dd7ff",code:"RESTRICTED"},
+    legendary:{name:"Тайное",color:"#ff9f43",code:"LEGENDARY"},
+    gold:{name:"Призрачное",color:"#ff3f6e",code:"MYTHICAL"}
   };
 
   // ---------- Кейсы ----------
@@ -404,7 +441,7 @@
   function tileOf(it){
     var q=Q[it.q]||Q.rare;
     return '<div class="tile"><div class="img">'+it.svg+'</div><div class="name">'+it.name+'</div>'+
-      '<span style="font-size:10px;padding:1px 7px;border-radius:20px;color:#0b0e13;font-weight:800;background:'+q.color+'">'+q.name+'</span></div>';
+      '<span class="qbg" style="color:'+q.color+'">'+q.code+'</span></div>';
   }
   function buildStrip(c,win){
     var strip=$("strip");strip.innerHTML="";
@@ -451,6 +488,7 @@
     if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
     $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
       '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
+      '<div class="qcode" style="color:'+q.color+'">'+q.code+'</div>'+
       '<div>'+q.name+' · '+win.val+' ₽</div>';
     spinning=false;$("btnOpen").disabled=false;
     save();
