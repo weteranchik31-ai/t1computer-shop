@@ -665,8 +665,11 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
   }
   function buildStrip(c,win){
     var strip=$("strip");strip.innerHTML="";
+    var WIN_INDEX=14;
     for(var i=0;i<28;i++){
-      var it=c.items[Math.floor(Math.random()*c.items.length)];
+      var it;
+      if(win && i===WIN_INDEX){ it=win; }
+      else { it=c.items[Math.floor(Math.random()*c.items.length)]; }
       var d=document.createElement("div");d.innerHTML=tileOf(it);d=d.firstElementChild;
       if(win&&it===win)d.style.boxShadow="inset 0 0 0 2px #ffc93c";
       strip.appendChild(d);
@@ -710,8 +713,9 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     }
     buildStrip(selected,win);
     var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
-    var shift=Math.floor(Math.random()*7)-3;
-    var target=-((28/2-3)*tw+tw*3+shift*tw);
+    var spinW=$("spinner").offsetWidth;
+    var WIN_INDEX=14;
+    var target=-((WIN_INDEX*tw + tw/2 - spinW/2));
     if(reduced){$("strip").style.transform="translateX("+target+"px)";finish(win);return;}
     $("strip").style.transition="transform 1.1s cubic-bezier(.22,1,.22,1)";
     $("strip").style.transform="translateX("+target+"px)";
