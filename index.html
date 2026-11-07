@@ -132,7 +132,9 @@
   .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
   .card h3{font-size:18px;font-weight:800;margin-bottom:4px}
   .card .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
-  .wheel{margin:8px auto 16px;width:200px;height:200px;border-radius:50%;background:conic-gradient(#000000 0 60deg,#9aa0a6 60deg 120deg,#ffffff 120deg 180deg,#ff3f3f 180deg 240deg,#ffc93c 240deg 300deg,#3de08a 300deg 360deg);box-shadow:0 0 24px rgba(255,63,110,.25);position:relative;border:2px solid #0b0e13}
+  .wheel{margin:8px auto 16px;width:200px;height:200px;border-radius:50%;box-shadow:0 0 24px rgba(255,63,110,.25);position:relative;border:2px solid #0b0e13;overflow:hidden}
+  .wheel-skin{position:absolute;inset:0;width:100%;height:100%}
+  .wheel-skin svg{width:100%;height:100%;display:block}
   .wheel .pin{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:22px;z-index:3}
   .wheel .hub{position:absolute;inset:38%;background:#0b0e13;border-radius:50%;display:grid;place-items:center;z-index:2}
   .wheel .hub b{color:var(--yellow);font-weight:800}
@@ -280,6 +282,7 @@
       <h3>🎡 Барабан бонусов</h3>
       <div class="sub">Бесплатное вращение раз в 24 часа или крути за 50 💎.</div>
       <div class="wheel" id="wheel">
+        <div class="wheel-skin" id="wheelSkin"></div>
         <div class="pin">🔽</div>
         <div class="hub"><b id="wheelLabel">крути</b></div>
       </div>
@@ -702,6 +705,31 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
   $("winClose").addEventListener("click",function(){$("winModal").classList.remove("open");});
   $("winTake").addEventListener("click",function(){$("winModal").classList.remove("open");});
   $("winModal").addEventListener("click",function(e){ if(e.target===$("winModal")) $("winModal").classList.remove("open"); });
+  function renderWheel(){
+    var skin=$("wheelSkin");
+    // 6 секторов по 60° вокруг центра
+    var R=98, CX=100;
+    function seg(a0,a1,fill,stroke){
+      var x0=CX+R*Math.cos(a0*Math.PI/180), y0=CX+R*Math.sin(a0*Math.PI/180);
+      var x1=CX+R*Math.cos(a1*Math.PI/180), y1=CX+R*Math.sin(a1*Math.PI/180);
+      var large=(a1-a0)>180?1:0;
+      return '<path d="M'+CX+' '+CX+' L'+x0.toFixed(1)+' '+y0.toFixed(1)+' A'+R+' '+R+' 0 '+large+' 1 '+x1.toFixed(1)+' '+y1.toFixed(1)+' Z" fill="'+fill+'" stroke="#0b0e13" stroke-width="2"/>';
+    }
+    // SG: цвета (0-60 чёрный)
+    var fills=[["#2a2f38","#000000"],["#9aa0a6"],["#ffffff"],["#ff3f3f"],["#ffc93c"],["#3de08a"]];
+    var svg='<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">';
+    for(var i=0;i<6;i++){ svg+=seg(i*60,(i+1)*60, fills[i][0]||fills[i][1]); }
+    // Чёрный сектор (0-60°) — вставить мини-пистолет Violet Flame, повёрнутый вдоль 30°
+    // Контур пистолета, нарисованный в центре клина (радиус ~55)
+    svg+='<g transform="translate('+CX+' '+CX+') rotate(30) translate(-18 -55)">'+
+      '<rect x="0" y="-10" width="34" height="12" rx="2" fill="#7a3dff" stroke="#0a0c12" stroke-width="1.5"/>'+
+      '<rect x="34" y="-6" width="14" height="6" rx="1" fill="#b07dff" stroke="#0a0c12" stroke-width="1"/>'+
+      '<rect x="-2" y="2" width="14" height="10" rx="2" fill="#2a1040" stroke="#0a0c12" stroke-width="1.5"/>'+
+      '<path d="M6 -2 L30 -2" stroke="#e8aaff" stroke-width="1.5" opacity=".9"/>'+
+      '</g>';
+    svg+='</svg>';
+    skin.innerHTML=svg;
+  }
   function updateWheel(){
     var now=Date.now();
     var next=(st.lastSpin||0)+DAY;
@@ -816,7 +844,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
 
   function g(x){return x;}
 
-  drawCases();renderBal();renderLive();renderRank();tickTimer();
+  drawCases();renderBal();renderLive();renderRank();tickTimer();renderWheel();
 })();
 </script>
 </body>
