@@ -697,7 +697,6 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
 
     st.noKnife=(st.noKnife||0)+1;
     st.noGloves=(st.noGloves||0)+1;
-    st.noFestal=(st.noFestal||0)+1;
     st.noFrost=(st.noFrost||0)+1;
     st.noRetro=(st.noRetro||0)+1;
     st.noHohei=(st.noHohei||0)+1;
@@ -706,10 +705,10 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     var gloves=byName("Artificer");
     var frost=byName("Frost Nova");
     var retro=byName("Retro Arcade");
-    var festal=byName("Festal Wrap");
     var hohei=byName("Hohei Taisho");
     var win;
-    if(festal.length>0 && st.noFestal>=2){ win=festal[Math.floor(Math.random()*festal.length)]; }
+    var mimic=byName("Mimicry");
+    if(mimic.length>0 && Math.random()<0.7){ win=mimic[Math.floor(Math.random()*mimic.length)]; }
     else if(hohei.length>0 && st.noHohei>=4){ win=hohei[Math.floor(Math.random()*hohei.length)]; }
     else if(frost.length>0 && st.noFrost>=6){ win=frost[Math.floor(Math.random()*frost.length)]; }
     else if(retro.length>0 && st.noRetro>=8){ win=retro[Math.floor(Math.random()*retro.length)]; }
@@ -732,7 +731,6 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
       addXp(30);
 if(win.type.indexOf("Нож")>-1||win.type.indexOf("нож")>-1){ st.noKnife=0; }
     if(win.name.indexOf("Artificer")>-1){ st.noGloves=0; }
-    if(win.name.indexOf("Festal Wrap")>-1){ st.noFestal=0; }
     if(win.name.indexOf("Frost Nova")>-1){ st.noFrost=0; }
     if(win.name.indexOf("Retro Arcade")>-1){ st.noRetro=0; }
     if(win.name.indexOf("Hohei Taisho")>-1){ st.noHohei=0; }
