@@ -339,6 +339,38 @@
   function rifleSVG(col){return artSVG("rif",col,"#3dd7ff");}
   function pisSVG(col){return artSVG("pist",col,"#ffc93c");}
 
+  // Нож (карамбит) профилем на тёмном фоне
+  function knifeSVG(col){
+    var grad="kn"+Math.floor(Math.random()*1e6);
+    return '<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg"><defs>'+
+      '<linearGradient id="'+grad+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#14181f"/></linearGradient>'+
+      '<radialGradient id="b'+grad+'" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="'+col+'" stop-opacity=".35"/><stop offset="1" stop-color="#0b0e14" stop-opacity="0"/></radialGradient>'+
+      '</defs>'+
+      '<rect width="220" height="130" fill="url(#b'+grad+')"/>'+
+      '<text x="110" y="112" font-family="Arial" font-size="90" font-weight="900" fill="'+col+'" opacity=".14" text-anchor="middle">Z9</text>'+
+      '<g transform="translate(110 65)">'+
+        '<path d="M0 -52 C18 -40 20 -18 8 4 L-14 8 C-20 -20 -16 -44 0 -52 Z" fill="url(#'+grad+')" stroke="#0a0c12" stroke-width="2"/>'+
+        '<circle cx="-34" cy="26" r="18" fill="'+col+'" stroke="#0a0c12" stroke-width="2" opacity=".9"/>'+
+        '<path d="M-50 26 L-18 26 M-50 34 L-20 34" stroke="#0a0c12" stroke-width="3"/>'+
+      '</g></svg>';
+  }
+  // Контейнер (ящик с алмазом)
+  function crateSVG(col){
+    var grad="cr"+Math.floor(Math.random()*1e6);
+    return '<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg"><defs>'+
+      '<linearGradient id="'+grad+'" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#14181f"/></linearGradient>'+
+      '<radialGradient id="b'+grad+'" cx="50%" cy="40%" r="70%"><stop offset="0" stop-color="'+col+'" stop-opacity=".32"/><stop offset="1" stop-color="#0b0e14" stop-opacity="0"/></radialGradient>'+
+      '</defs>'+
+      '<rect width="220" height="130" fill="url(#b'+grad+')"/>'+
+      '<text x="110" y="112" font-family="Arial" font-size="90" font-weight="900" fill="'+col+'" opacity=".14" text-anchor="middle">Z9</text>'+
+      '<g transform="translate(110 70)">'+
+        '<path d="M-46 -30 L46 -30 L40 30 L-40 30 Z" fill="url(#'+grad+')" stroke="#0a0c12" stroke-width="2"/>'+
+        '<path d="M-46 -30 L0 -48 L46 -30 L0 -12 Z" fill="'+col+'" stroke="#0a0c12" stroke-width="2" opacity=".85"/>'+
+        '<path d="M0 -48 L0 -12" stroke="#0a0c12" stroke-width="2" opacity=".4"/>'+
+        '<rect x="-14" y="10" width="28" height="22" rx="3" fill="'+col+'" stroke="#0a0c12" stroke-width="1.5"/>'+
+      '</g></svg>';
+  }
+
   // ---------- Качество ----------
   var Q = {
     common:{name:"Промышленное",color:"#8a93a6",code:"INDUSTRY"},
@@ -349,7 +381,17 @@
   };
 
   // ---------- Кейсы ----------
-  function it(name,row,col,qual,val){return {name:name,type:row,col:col,q:qual,val:val,svg:name.toLowerCase().indexOf("ak")>-1?akSVG(col):name.toLowerCase().indexOf("ump")>-1?smgSVG(col):name.toLowerCase().indexOf("p90")>-1?smgSVG(col):name.toLowerCase().indexOf("awm")>-1?rifleSVG(col):name.toLowerCase().indexOf("val")>-1?rifleSVG(col):name.toLowerCase().indexOf("uzi")>-1?smgSVG(col):name.toLowerCase().indexOf("m4")>-1?rifleSVG(col):name.toLowerCase().indexOf("fammas")>-1?rifleSVG(col):pisSVG(col)}}
+  function it(name,row,col,qual,val){
+    var ln=name.toLowerCase();
+    var svg;
+    if(ln.indexOf("karambit")>-1||ln.indexOf("knife")>-1||row.indexOf("нож")>-1) svg=knifeSVG(col);
+    else if(row.indexOf("контейнер")>-1) svg=crateSVG(col);
+    else if(ln.indexOf("ump")>-1||ln.indexOf("p90")>-1||ln.indexOf("uzi")>-1) svg=smgSVG(col);
+    else if(ln.indexOf("ak")>-1||ln.indexOf("m4")>-1||ln.indexOf("m16")>-1||ln.indexOf("fammas")>-1||ln.indexOf("akr")>-1) svg=akSVG(col);
+    else if(ln.indexOf("awm")>-1||ln.indexOf("val")>-1||ln.indexOf("sm1014")>-1) svg=rifleSVG(col);
+    else svg=pisSVG(col);
+    return {name:name,type:row,col:col,q:qual,val:val,svg:svg};
+  }
 
   var CASES = [
     {
@@ -377,13 +419,28 @@
     {
       id:"origin", name:"Origin Case", price:599, old:699, hot:true, stock:{left:137,total:200}, rar:false, art:artSVG("rif","#3dd7ff","#5b3dff"),
       items:[
-        it("AKR First Blood","Автомат","#ff5470","rare",50),
-        it("FAMAS Core","Автомат","#3d7bff","rare",58),
-        it("AWM Zero","Снайперская","#3d8bff","epic",340),
-        it("M4 Ancient","Автомат","#5b8bff","epic",320),
-        it("AKR Origin","Автомат","#3dd7ff","legendary",1900),
-        it("AWM Genesis","Снайперская","#5b3dff","legendary",2200),
-        it("Karambit Cosmic","Нож","#7b3dff","gold",4500)
+        it("G22 «Pixel Camouflage»","Пушка","#c9d1d9","common",15),
+        it("P350 «Savannah»","Пушка","#c9d1d9","common",18),
+        it("UMP45 «Pixel»","Пушка","#8b98a5","common",22),
+        it("M4 «Tiger»","Пушка","#3de08a","rare",40),
+        it("Desert Eagle «Blood»","Пушка","#ff3f3f","rare",55),
+        it("P90 «Radiation»","Пушка","#3de08a","rare",48),
+        it("M16 «Camouflage»","Пушка","#ffc93c","epic",210),
+        it("SM1014 «Facet»","Пушка","#3de08a","epic",200),
+        it("Desert Eagle «Predator» StatTrack","Пушка","#ff3f6e","epic",260),
+        it("AKR12 «Pixel Camouflage» StatTrack","Пушка","#3dd7ff","legendary",1200),
+        it("SM1014 «Pathfinder» StatTrack","Пушка","#3dd7ff","legendary",1400),
+        it("AWM «Phoenix» StatTrack","Пушка","#ff9f43","legendary",1700),
+        it("P350 «Neon» StatTrack","Пушка","#ff9f43","legendary",1600),
+        it("UMP45 «Cyberpunk» StatTrack","Пушка","#7b3dff","legendary",1900),
+        it("P90 «Ghoul» StatTrack","Пушка","#7b3dff","legendary",2000),
+        it("M4 «Necromancer» StatTrack","Пушка","#ff3f6e","gold",2600),
+        it("AKR12 «Railgun» StatTrack","Пушка","#7b3dff","gold",2800),
+        it("M16 «Winged» StatTrack","Пушка","#5b3dff","gold",3000),
+        it("G22 «Nest» StatTrack","Пушка","#3dd7ff","gold",2400),
+        it("AKR «Treasure Hunter»","Нож","#ffd700","gold",4500),
+        it("Контейнер «Origin»","Контейнер","#3dd7ff","epic",150),
+        it("Контейнер «Rare»","Контейнер","#ffc93c","legendary",900)
       ]}
   ];
 
