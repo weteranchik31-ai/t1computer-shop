@@ -717,9 +717,9 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     var WIN_INDEX=14;
     var target=-((WIN_INDEX*tw + tw/2 - spinW/2));
     if(reduced){$("strip").style.transform="translateX("+target+"px)";finish(win);return;}
-    $("strip").style.transition="transform 1.1s cubic-bezier(.22,1,.22,1)";
+    $("strip").style.transition="transform 5s cubic-bezier(.15,.8,.15,1)";
     $("strip").style.transform="translateX("+target+"px)";
-    setTimeout(function(){finish(win);},1180);
+    setTimeout(function(){finish(win);},5100);
   }
   function finish(win){
     var q=Q[win.q]||Q.rare;
