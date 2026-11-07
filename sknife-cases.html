@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Станд Кнайф — Кейсы</title>
+<meta name="description" content="Симулятор открытия кейсов из игры Станд Кнайф. Выпадай кнайфы и следи за своей коллекцией.">
+<style>
+  :root{
+    --bg:#0b0e14;
+    --panel:#141a26;
+    --panel2:#1b2333;
+    --line:#273349;
+    --text:#e8edf6;
+    --muted:#8b98ad;
+    --gold:#f5c542;
+    --gold-2:#d9a520;
+    --accent:#5b8cff;
+    --accent-d:#3f6fe0;
+    --green:#3ddc84;
+    --red:#ff5470;
+    --purple:#a96bff;
+    --orange:#ff9f43;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+    background:radial-gradient(1100px 480px at 50% -120px, #25334d 0%, transparent 60%), var(--bg);
+    color:var(--text);line-height:1.45;min-height:100vh;
+  }
+  .wrap{max-width:1120px;margin:0 auto;padding:0 18px}
+
+  header.top{padding:16px 0;border-bottom:1px solid var(--line);background:rgba(11,14,20,.7);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
+  .top-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
+  .brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:19px}
+  .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-2));display:grid;place-items:center;font-size:22px;color:#1a1404;box-shadow:0 4px 16px rgba(245,197,66,.35)}
+  .brand small{display:block;font-size:11px;color:var(--muted);font-weight:500}
+  .balance{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 16px;display:flex;align-items:center;gap:10px}
+  .balance .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
+  .balance .val{font-size:20px;font-weight:800;color:var(--gold)}
+
+  main{padding:34px 0 70px}
+  .intro{max-width:760px;margin-bottom:36px}
+  .intro h1{font-size:34px;line-height:1.15;font-weight:800;margin-bottom:12px}
+  .intro h1 span{color:var(--gold)}
+  .intro p{color:var(--muted);font-size:16px}
+  .kpis{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
+  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-width:130px}
+  .kpi .n{font-size:22px;font-weight:800}
+  .kpi .t{font-size:12px;color:var(--muted)}
+
+  .cases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+  .case{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;transition:transform .15s,border-color .15s;position:relative;overflow:hidden}
+  .case:hover{transform:translateY(-4px);border-color:var(--gold-2)}
+  .case:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .case .box{height:96px;display:grid;place-items:center;margin-bottom:12px;font-size:52px;border-radius:12px;background:rgba(0,0,0,.25);border:1px solid var(--line)}
+  .case h3{font-size:17px;margin-bottom:4px}
+  .case .price{color:var(--gold);font-weight:700;font-size:15px}
+  .case .chance{font-size:12px;color:var(--muted);margin-top:6px}
+  .case .drop{position:absolute;top:14px;right:14px;background:#0009;color:#fff;font-size:11px;padding:3px 8px;border-radius:20px}
+  .rarity-line{width:100%;height:4px;border-radius:3px;margin-top:14px}
+
+  section{margin-top:44px}
+  section h2{font-size:24px;font-weight:800;margin-bottom:6px}
+  section .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+
+  .open-panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
+  .open-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px}
+  .open-head .tbox{font-size:40px;width:66px;height:66px;display:grid;place-items:center;background:rgba(0,0,0,.3);border-radius:12px;border:1px solid var(--line)}
+  .open-head h3{font-size:20px}
+  .open-head .cost{color:var(--gold);font-weight:700;margin-top:2px}
+
+  .spinner{height:230px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--line);background:#0d121d}
+  .spinner::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--gold);box-shadow:0 0 12px var(--gold);transform:translateX(-50%);z-index:5}
+  .strip{display:flex;height:100%;will-change:transform;transition:none}
+  .tile{flex:0 0 140px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;border-right:1px solid var(--line);background:#0f1522}
+  .tile .emoji{font-size:40px}
+  .tile .name{font-size:12px;font-weight:600;text-align:center;padding:0 8px;color:var(--text)}
+  .tile .r{font-size:10px;text-transform:uppercase;letter-spacing:.4px;padding:2px 8px;border-radius:20px;color:#0b0e14;font-weight:700}
+
+  .controls{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;align-items:center;justify-content:center}
+  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;font-weight:700;transition:transform .12s,filter .12s;color:#fff}
+  button:active{transform:scale(.97)}
+  button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+  .btn-x{background:var(--gold);color:#1a1404;padding:15px 32px;font-size:16px}
+  .btn-x:hover{filter:brightness(1.07)}
+  .btn-outline{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:13px 22px;font-size:14px}
+  .btn-outline:hover{border-color:var(--muted)}
+  button:disabled{opacity:.4;cursor:not-allowed;filter:none}
+
+  .result{margin-top:20px;text-align:center;border:1px solid var(--line);border-radius:14px;padding:22px;background:#0d121d;min-height:120px}
+  .result .empty{color:var(--muted);padding:14px}
+  .get{font-size:48px}
+  .result h4{font-size:22px;margin:6px 0 4px}
+  .result .cnt{color:var(--muted);font-size:14px}
+
+  table{width:100%;border-collapse:collapse;font-size:14px}
+  thead th{color:var(--muted);text-align:left;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
+  tbody td{padding:11px 12px;border-bottom:1px solid var(--line)}
+  tbody tr:hover{background:var(--panel)}
+  .rar{font-weight:700}
+  .q{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:22px;padding:2px 10px;font-weight:700}
+  .summ{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
+  .summ .s{font-size:13px;color:var(--muted)}
+  .summ .s b{display:block;font-size:19px;color:var(--text);margin-top:2px}
+  .empty-inv{color:var(--muted);padding:30px;text-align:center;border:1px dashed var(--line);border-radius:14px;margin-top:16px}
+
+  .rar-legend{list-style:none;margin-top:18px}
+  .rar-legend li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);padding:4px 0}
+  .dot{width:12px;height:12px;border-radius:4px;flex:none}
+
+  footer{color:var(--muted);font-size:12px;padding:26px 0;border-top:1px solid var(--line);margin-top:40px}
+
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+  .msg{display:flex;align-items:center;gap:10px;font-weight:600}
+  .msg .ic{font-size:22px}
+
+  @media(max-width:640px){
+    .intro h1{font-size:26px}
+    .spinner{height:170px}
+    .tile{flex-basis:110px}
+    .tile .emoji{font-size:32px}
+    .tile .name{font-size:11px}
+    table{font-size:12px}
+  }
+  @media (prefers-reduced-motion: reduce){
+    .strip{transition:none !important}
+    html{scroll-behavior:auto}
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap top-inner">
+    <div class="brand">
+      <div class="logo">🔪</div>
+      <div>Станд Кнайф <small>открытие кейсов</small></div>
+    </div>
+    <div class="balance"><span class="lbl">Баланс</span><span class="val" id="balance">0</span><span style="color:var(--gold)">💵</span></div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="intro">
+    <h1>Открой кейс и <span>забери кнайф</span></h1>
+    <p>Демо‑симулятор кейсов по мотивам игры Станд Кнайф. Выбирай кейс, крути барабан и смотри, что выпало. Редкость шмоток прокачивается, коллекция сохраняется у тебя в браузере.</p>
+    <div class="kpis">
+      <div class="kpi"><div class="n" id="kpiOpen">0</div><div class="t">Открыто кейсов</div></div>
+      <div class="kpi"><div class="n" id="kpiKnives">0</div><div class="t">Кнайфов выпало</div></div>
+      <div class="kpi"><div class="n" id="kpiSpent">0</div><div class="t">Потрачено 💵</div></div>
+    </div>
+  </div>
+
+  <section>
+    <h2>Кейсы</h2>
+    <p class="sub">Кликни по кейсу, чтобы перейти к открытию.</p>
+    <div class="cases-grid" id="casesGrid"></div>
+  </section>
+
+  <section id="open">
+    <h2 id="openTitle">Открытие</h2>
+    <div class="open-panel">
+      <div class="open-head">
+        <div class="tbox" id="openIcon">🎁</div>
+        <div>
+          <h3 id="openName">Кейс не выбран</h3>
+          <div class="cost" id="openCost">—</div>
+        </div>
+      </div>
+      <div class="spinner"><div class="strip" id="strip"></div></div>
+      <div class="controls">
+        <button class="btn-x" id="btnOpen" disabled>Открыть кейс</button>
+        <button class="btn-outline" id="btnQuit">Сменить кейс</button>
+      </div>
+      <div class="result" id="result"><div class="empty">Выбери кейс в магазине выше.</div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Твоя коллекция</h2>
+    <p class="sub">Выпавшие предметы. Цены демонстрационные.</p>
+    <div class="summ">
+      <div class="s">Всего предметов <b id="totalItems">0</b></div>
+      <div class="s">Стоимость коллекции <b id="invValue" style="color:var(--gold)">0 💵</b></div>
+    </div>
+    <table id="invTable">
+      <thead><tr><th>Предмет</th><th>Кейс</th><th>Редкость</th><th>Цена 💵</th><th>Кол‑во</th></tr></thead>
+      <tbody id="invBody"></tbody>
+    </table>
+    <div class="empty-inv" id="invEmpty">Пока пусто — открой первый кейс!</div>
+    <div style="margin-top:22px;text-align:right">
+      <button class="btn-outline" id="btnReset">Сбросить аккаунт</button>
+    </div>
+    <ul class="rar-legend">
+      <li><span class="dot" style="background:var(--muted)"></span> Обычный — до 5 💵</li>
+      <li><span class="dot" style="background:var(--green)"></span> Необычный — до 25 💵</li>
+      <li><span class="dot" style="background:var(--accent)"></span> Редкий — до 120 💵</li>
+      <li><span class="dot" style="background:var(--purple)"></span> Эпический — до 600 💵</li>
+      <li><span class="dot" style="background:var(--orange)"></span> Легендарный — до 2500 💵</li>
+      <li><span class="dot" style="background:var(--red)"></span> Кнайф 🔪 — топ‑дроп</li>
+    </ul>
+  </section>
+
+  <footer>Все предметы и цены — вымышленные, демонстрационные. Это симулятор, деньги никуда не списываются.</footer>
+</main>
+
+<div class="toast" id="toast"><div class="msg"><span class="ic"></span><span class="txt"></span></div></div>
+
+<script>
+(function(){
+  "use strict";
+
+  var R = {
+    common:   {name:"Обычный",    color:"#8b98ad"},
+    uncommon: {name:"Необычный",  color:"#3ddc84"},
+    rare:     {name:"Редкий",     color:"#5b8cff"},
+    epic:     {name:"Эпический",  color:"#a96bff"},
+    legendary:{name:"Легендарный",color:"#ff9f43"},
+    knife:    {name:"Кнайф",      color:"#ff5470"}
+  };
+
+  function item(icon,name,r,val){ return {icon:icon,name:name,r:r,val:val}; }
+
+  var CASES = [
+    {id:"autumn", icon:"🍂", name:"Кейс «Осень»", price:25, color:"#e0a54f",
+     items:[
+       item("🧣","Старая бандана","common",4),
+       item("🥊","Ржавый кастет","common",3),
+       item("👟","Кроссовки «дух»","common",4),
+       item("👕","Футболка осень","common",5),
+       item("🔪","Металлический мачете","uncommon",16),
+       item("🧥","Шарф выжившего","uncommon",18),
+       item("🕶️","Баллистические очки","rare",64),
+       item("🔫","Автомат АК‑74","rare",92),
+       item("🦺","Костюм разведчика","epic",310),
+       item("🎭","Охотничья маска","epic",245),
+       item("🔪","Кнайф «Золотая осень»","knife",1200)
+     ]},
+    {id:"urban", icon:"🏙️", name:"Кейс «Город»", price:40, color:"#7a8fd8",
+     items:[
+       item("🧢","Кепи района","common",4),
+       item("🧤","Перчатки грязные","common",3),
+       item("🧥","Плащ дождя","common",5),
+       item("⛓️","Цепочка","uncommon",20),
+       item("🧥","Тактическая куртка","uncommon",24),
+       item("🔫","Пистолет ПМ","rare",88),
+       item("🗡️","Нож‑бабочка","rare",110),
+       item("⛑️","Шлем полицейского","rare",95),
+       item("🕴️","Плащ сталкера","epic",560),
+       item("🦺","Бронежилет босса","epic",470),
+       item("🔪","Кнайф «Неон‑найт»","knife",2300)
+     ]},
+    {id:"forest", icon:"🌲", name:"Кейс «Лес»", price:60, color:"#5fbf77",
+     items:[
+       item("🍄","Грибы‑мухоморы","common",4),
+       item("🎩","Кожаная шапка","common",5),
+       item("🏹","Лук самодельный","common",4),
+       item("➹","Стрелы охотника","uncommon",21),
+       item("🫒","Камуфляж лес","uncommon",25),
+       item("🔫","Винтовка СКС","rare",120),
+       item("🐺","Маска волка","rare",98),
+       item("🪓","Топор дровосека","epic",520),
+       item("🧝","Плащ лешего","epic",590),
+       item("🔪","Кнайф «Волчий клык»","knife",2500)
+     ]},
+    {id:"night", icon:"🌙", name:"Кейс «Ночь»", price:100, color:"#a96bff",
+     items:[
+       item("🎭","Маска тёмная","common",5),
+       item("🩹","Повязка","common",4),
+       item("👟","Кроссовки «ночь»","uncommon",22),
+       item("🔦","Светящаяся палка","uncommon",19),
+       item("🔫","Пистолет‑пулемёт","rare",115),
+       item("😷","Газовая маска","rare",105),
+       item("👻","Костюм призрака","epic",540),
+       item("🌩️","Плащ дракон","epic",560),
+       item("🏹","Снайперская винтовка","legendary",2100),
+       item("🔪","Кнайф «Лунный призрак»","knife",3800)
+     ]}
+  ];
+
+  function tryLS(){ try{ return window.localStorage; }catch(e){ return null; } }
+  var LS = tryLS();
+
+  function loadState(){
+    var d = {balance:500, opened:0, knives:0, spent:0, inv:{}};
+    if(!LS) return d;
+    try{
+      var s = JSON.parse(LS.getItem("sknife_state_v1"));
+      if(s && typeof s.balance === "number") return Object.assign(d, s);
+    }catch(e){}
+    return d;
+  }
+  function saveState(){
+    if(!LS) return;
+    try{ LS.setItem("sknife_state_v1", JSON.stringify(state)); }catch(e){}
+  }
+
+  var state = loadState();
+  var selected = null;
+  var spinning = false;
+
+  var $ = function(id){ return document.getElementById(id); };
+  var balEl=$("balance"), casesGrid=$("casesGrid"), strip=$("strip"),
+      btnOpen=$("btnOpen"), btnQuit=$("btnQuit"), btnReset=$("btnReset"),
+      result=$("result"), toastEl=$("toast");
+
+  function fmt(n){ return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g," "); }
+  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  function showToast(ic, txt){
+    toastEl.querySelector(".ic").textContent=ic;
+    toastEl.querySelector(".txt").textContent=txt;
+    toastEl.classList.add("show");
+    clearTimeout(showToast._t);
+    showToast._t=setTimeout(function(){ toastEl.classList.remove("show"); }, 2200);
+  }
+
+  // ---------- Отрисовка ----------
+  function renderBalance(){ balEl.textContent=fmt(state.balance); }
+  function renderKpis(){
+    $("kpiOpen").textContent=fmt(state.opened);
+    $("kpiKnives").textContent=fmt(state.knives);
+    $("kpiSpent").textContent=fmt(state.spent);
+  }
+
+  function drawCases(){
+    casesGrid.innerHTML="";
+    CASES.forEach(function(c){
+      var card=document.createElement("div");
+      card.className="case";
+      card.setAttribute("role","button");
+      card.setAttribute("tabindex","0");
+      card.setAttribute("aria-label","Открыть кейс "+c.name+", цена "+c.price+" монет");
+      var hasKnife=c.items.some(function(i){return i.r==="knife";});
+      card.innerHTML=
+        '<div class="box">'+c.icon+'</div>'+
+        '<span class="drop">⭐ редкие ~'+(hasKnife?3:10)+'%</span>'+
+        '<h3>'+c.name+'</h3>'+
+        '<div class="price">'+c.price+' 💵</div>'+
+        '<div class="chance">'+c.items.length+' предметов</div>';
+      var line=document.createElement("div");
+      line.className="rarity-line";
+      line.style.background="linear-gradient(90deg,"+c.color+",#3a4a63)";
+      card.appendChild(line);
+
+      function pick(){ selectCase(c.id, true); }
+      card.addEventListener("click",pick);
+      card.addEventListener("keydown",function(e){
+        if(e.key==="Enter"||e.key===" "){ e.preventDefault(); pick(); }
+      });
+      casesGrid.appendChild(card);
+    });
+  }
+
+  function tileOf(it){
+    var col=R[it.r]||R.common;
+    var label = it.r==="knife" ? "🔪 "+col.name : col.name;
+    return '<div class="tile"><span class="emoji">'+it.icon+'</span>'+
+           '<span class="name">'+it.name+'</span>'+
+           '<span class="r" style="background:'+col.color+'">'+label+'</span></div>';
+  }
+
+  function buildStrip(c, winItem){
+    strip.innerHTML="";
+    for(var i=0;i<30;i++){
+      var it=c.items[Math.floor(Math.random()*c.items.length)];
+      var d=document.createElement("div");
+      d.innerHTML=tileOf(it);
+      d=d.firstElementChild;
+      if(winItem && it===winItem) d.style.boxShadow="inset 0 0 0 2px "+R[it.r].color;
+      strip.appendChild(d);
+    }
+  }
+
+  function selectCase(id, scroll){
+    var c=CASES.find(function(x){return x.id===id;});
+    if(!c || spinning) return;
+    selected=c;
+    $("openIcon").textContent=c.icon;
+    $("openName").textContent=c.name;
+    $("openCost").innerHTML=c.price+" 💵 за открытие";
+    btnOpen.disabled=false;
+    result.innerHTML='<div class="empty">Кейс выбран. Нажми «Открыть кейс».</div>';
+    buildStrip(c,null);
+    if(scroll) $("open").scrollIntoView({behavior:"smooth", block:"start"});
+  }
+
+  // ---------- Случайный предмет по весам ----------
+  function rollItem(c){
+    var weights={common:52, uncommon:28, rare:13, epic:5, legendary:1.6, knife:0.4};
+    var pool=[];
+    c.items.forEach(function(it){ pool.push(it); });
+    var total=0;
+    var weighted=pool.map(function(it){
+      total += weights[it.r]||1;
+      return {it:it, end:total};
+    });
+    var r=Math.random()*total;
+    for(var i=0;i<weighted.length;i++){
+      if(r<=weighted[i].end) return weighted[i].it;
+    }
+    return pool[pool.length-1];
+  }
+
+  // ---------- Открытие ----------
+  var t0=1200;
+  function openCase(){
+    if(spinning || !selected) return;
+    if(state.balance < selected.price){
+      showToast("😕","Не хватает монет. Сбрось аккаунт или выбери дешевле.");
+      return;
+    }
+    spinning=true;
+    btnOpen.disabled=true;
+    state.balance -= selected.price;
+    state.spent += selected.price;
+    state.opened += 1;
+    renderBalance(); renderKpis();
+
+    var win=rollItem(selected);
+    buildStrip(selected, win);
+
+    var tile=strip.querySelector(".tile");
+    var tw=tile ? tile.offsetWidth : 140;
+    var count=strip.children.length;
+    var mid=(count/2 - 3);
+    var delta=-(mid*tw + tw*3);
+    // random walk so winner isn't always centered identically
+    var shift=Math.floor(Math.random()*7)-3;
+    var target=delta + shift*tw;
+
+    if(reduced){
+      strip.style.transition="none";
+      strip.style.transform="translateX("+target+"px)";
+      finishOpen(win);
+      return;
+    }
+    strip.style.transition="transform "+t0/1000+"s cubic-bezier(.22,1,.22,1)";
+    strip.style.transform="translateX("+target+"px)";
+    setTimeout(function(){ finishOpen(win); }, t0+120);
+  }
+
+  function finishOpen(win){
+    var col=R[win.r]||R.common;
+    if(win.r==="knife"){
+      state.knives += 1;
+      addToInv(win);
+      result.innerHTML='<div class="get">'+win.icon+'</div><h4 style="color:'+col.color+'">'+win.name+'</h4><div class="cnt">Кнайф! Цена: '+win.val+' 💵</div>';
+      showToast("🔪","ГОРОСКОП: тебе выпал кнайф!");
+    } else {
+      addToInv(win);
+      result.innerHTML='<div class="get">'+win.icon+'</div><h4 style="color:'+col.color+'">'+win.name+'</h4><div class="cnt">'+col.name+', цена: '+win.val+' 💵</div>';
+    }
+    renderKpis();
+    renderInv();
+    saveState();
+    spinning=false;
+    btnOpen.disabled=false;
+  }
+
+  function addToInv(it){
+    var key=it.r+"|"+it.name;
+    if(!state.inv[key]){
+      state.inv[key]={name:it.name, r:it.r, val:it.val, count:0, icon:it.icon};
+    }
+    var row=state.inv[key];
+    row.count++;
+    row.val=it.val;
+  }
+
+  function renderInv(){
+    var keys=Object.keys(state.inv);
+    var body=$("invBody");
+    body.innerHTML="";
+    var total=0, value=0;
+    keys.sort(function(a,b){
+      return R[state.inv[b].r] && R[state.inv[a].r] && R[state.inv[b].r].color.localeCompare(R[state.inv[a].r].color) || 0;
+    }).reverse();
+    keys.forEach(function(k){
+      var it=state.inv[k];
+      var col=R[it.r]||R.common;
+      total+=it.count; value+=it.val*it.count;
+      var tr=document.createElement("tr");
+      tr.innerHTML=
+        '<td>'+it.icon+' '+it.name+'</td>'+
+        '<td>'+it.r+'</td>'+
+        '<td class="rar" style="color:'+col.color+'">'+col.name+'</td>'+
+        '<td>'+it.val+'</td>'+
+        '<td><span class="q">'+it.count+'</span></td>';
+      body.appendChild(tr);
+    });
+    $("totalItems").textContent=fmt(total);
+    $("invValue").textContent=fmt(value)+" 💵";
+    $("invEmpty").style.display= keys.length===0 ? "" : "none";
+    $("invTable").style.display= keys.length===0 ? "none" : "";
+  }
+
+  // ---------- События ----------
+  btnOpen.addEventListener("click", openCase);
+  btnQuit.addEventListener("click", function(){
+    selected=null;
+    btnOpen.disabled=true;
+    $("openIcon").textContent="🎁";
+    $("openName").textContent="Кейс не выбран";
+    $("openCost").textContent="—";
+    strip.innerHTML="";
+    result.innerHTML='<div class="empty">Выбери кейс в магазине выше.</div>';
+    $("open").scrollIntoView({behavior:"smooth", block:"start"});
+  });
+  btnReset.addEventListener("click", function(){
+    if(!confirm("Сбросить прогресс и вернуть стартовый баланс? Это удалит коллекцию.")) return;
+    state={balance:500, opened:0, knives:0, spent:0, inv:{}};
+    saveState();
+    renderBalance(); renderKpis(); renderInv();
+    showToast("🗑️","Аккаунт сброшен");
+  });
+
+  // ---------- Старт ----------
+  drawCases();
+  renderBalance();
+  renderKpis();
+  renderInv();
+})();
+</script>
+</body>
+</html>
