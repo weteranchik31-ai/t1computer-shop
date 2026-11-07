@@ -666,7 +666,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
       {n:"Чёрный",c:"#000000",val:0,item:{name:'Desert Eagle «Violet Flame»',svg:'<img src="violet-flame.webp" style="width:100%;height:100%;object-fit:contain" alt="Desert Eagle Violet Flame">'}},
       {n:"Серый",c:"#9aa0a6",val:0},
       {n:"Белый",c:"#ffffff",val:0},
-      {n:"Красный",c:"#ff3f3f",val:30},
+      {n:"Красный",c:"#ff3f3f",val:0,item:{name:'AKR «Sketch»',svg:'<img src="akr-sketch.webp" style="width:100%;height:100%;object-fit:contain" alt="AKR Sketch">'}},
       {n:"Жёлтый",c:"#ffc93c",val:0,item:{name:'AKR12 «Steam Beast»',svg:'<img src="steam-beast.webp" style="width:100%;height:100%;object-fit:contain" alt="AKR12 Steam Beast">'}},
       {n:"Зелёный",c:"#3de08a",val:100}
     ];
@@ -730,6 +730,12 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     var cx3=CX+rad2*Math.cos(ang2), cy3=CX+rad2*Math.sin(ang2);
     svg+='<g transform="translate('+cx3.toFixed(1)+' '+cy3.toFixed(1)+') rotate(270) translate(-42 -20)">'+
       '<image href="steam-beast.webp" x="0" y="0" width="84" height="40" preserveAspectRatio="xMidYMid meet" opacity="0.95"/>'+
+      '</g>';
+    // Красный сектор (180-240°) — картинка AKR Sketch (биссектриса 210°)
+    var ang3=210*Math.PI/180, rad3=52;
+    var cx4=CX+rad3*Math.cos(ang3), cy4=CX+rad3*Math.sin(ang3);
+    svg+='<g transform="translate('+cx4.toFixed(1)+' '+cy4.toFixed(1)+') rotate(210) translate(-42 -20)">'+
+      '<image href="akr-sketch.webp" x="0" y="0" width="84" height="40" preserveAspectRatio="xMidYMid meet" opacity="0.95"/>'+
       '</g>';
     svg+='</svg>';
     skin.innerHTML=svg;
