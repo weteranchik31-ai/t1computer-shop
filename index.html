@@ -461,7 +461,7 @@
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[]};
+    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -622,7 +622,11 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     var now=Date.now();
     var next=(st.lastSpin||0)+DAY;
     var left=next-now;
-    if(left>0){
+    if(st.freeSpins>0){
+      $("btnSpin").disabled=false;
+      $("btnSpinPaid").disabled=false;
+      $("wheelTimer").innerHTML='Бесплатных вращений: <b>'+st.freeSpins+'</b> (промокод)';
+    } else if(left>0){
       $("btnSpin").disabled=true;
       $("btnSpinPaid").disabled=false;
       var h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),s=Math.floor(left%60000/1000);
@@ -637,6 +641,12 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
   $("btnSpin").addEventListener("click",function(){
     if(wheelSpinning)return;
     var now=Date.now();
+    if(st.freeSpins>0){
+      st.freeSpins-=1;
+      save();
+      doSpin(false);
+      return;
+    }
     if((st.lastSpin||0)+DAY>now){ toast("⏳ Подожди — барабан ещё охлаждается."); return; }
     st.lastSpin=now;
     save();
@@ -649,16 +659,25 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     doSpin(true);
   });
   // ---------- Промокод ----------
-  var PROMOS={ "T1PCSHOP":50, "BONUS":30, "WELCOME":20, "GOLD":100, "DISCOVERY":75 };
+  var PROMOS={ "T1PCSHOP":50, "BONUS":30, "WELCOME":20, "GOLD":100, "DISCOVERY":0 };
   $("btnPromo").addEventListener("click",function(){
     var code=$("inPromo").value.trim().toUpperCase();
     var msg=$("promoMsg");
     if(!code){ msg.textContent="Введи промокод."; msg.style.color="var(--muted)"; return; }
     if(st.usedCodes&&st.usedCodes.indexOf(code)>-1){ msg.textContent="Этот промокод уже использован."; msg.style.color="var(--red)"; return; }
     if(PROMOS[code]===undefined){ msg.textContent="Промокод не найден."; msg.style.color="var(--red)"; return; }
-    st.bal+=PROMOS[code];
     st.usedCodes=st.usedCodes||[]; st.usedCodes.push(code);
-    renderBal();save();
+    if(code==="DISCOVERY"){
+      st.freeSpins=(st.freeSpins||0)+1;
+      save();
+      updateWheel();
+      msg.textContent="✅ Промокод активирован: +1 бесплатное вращение!";
+      msg.style.color="var(--green)";
+      return;
+    }
+    st.bal+=PROMOS[code];
+    save();
+    renderBal();
     msg.textContent="✅ Промокод активирован: +"+PROMOS[code]+" 💎";
     msg.style.color="var(--green)";
   });
