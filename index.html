@@ -664,11 +664,11 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     if(wheelSpinning)return;
     var COLORS=[
       {n:"Чёрный",c:"#000000",val:0,item:{name:'Desert Eagle «Violet Flame»',svg:'<img src="violet-flame.webp" style="width:100%;height:100%;object-fit:contain" alt="Desert Eagle Violet Flame">'}},
-      {n:"Серый",c:"#9aa0a6",val:0},
-      {n:"Белый",c:"#ffffff",val:0},
+      {n:"Серый",c:"#9aa0a6",val:50},
+      {n:"Белый",c:"#ffffff",val:69},
       {n:"Красный",c:"#ff3f3f",val:0,item:{name:'AKR «Sketch»',svg:'<img src="akr-sketch.webp" style="width:100%;height:100%;object-fit:contain" alt="AKR Sketch">'}},
       {n:"Жёлтый",c:"#ffc93c",val:0,item:{name:'AKR12 «Steam Beast»',svg:'<img src="steam-beast.webp" style="width:100%;height:100%;object-fit:contain" alt="AKR12 Steam Beast">'}},
-      {n:"Зелёный",c:"#3de08a",val:100}
+      {n:"Зелёный",c:"#3de08a",val:25}
     ];
     var r=Math.floor(Math.random()*COLORS.length);
     var color=COLORS[r];
