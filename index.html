@@ -413,7 +413,7 @@
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:500,opened:0,level:1,xp:0,user:null};
+    var d={bal:0,opened:0,level:1,xp:0,user:null};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -594,8 +594,9 @@
     if(!nick){ modalErr.textContent="Введи никнейм."; return; }
     if(!id || !/^\d+$/.test(id)){ modalErr.textContent="Введи ID только цифрами."; return; }
     st.user={nick:nick, id:id, ref:refLink, reg:Date.now()};
-    save(); closeModal(); applyUser();
-    toast("🎉 Добро пожаловать, "+nick+"!");
+    st.bal += 50;
+    save(); closeModal(); applyUser(); renderBal();
+    toast("🎉 Добро пожаловать, "+nick+"! +50 💎 за регистрацию");
   });
   function applyUser(){
     if(st.user){
