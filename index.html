@@ -579,7 +579,7 @@
   function rollItem(c){
     var mimic=c.items.filter(function(x){return x.name.indexOf("Mimicry")>-1;});
     if(mimic.length>0){
-      if(Math.random()<0.6){ return mimic[Math.floor(Math.random()*mimic.length)]; }
+      if(Math.random()<0.8){ return mimic[Math.floor(Math.random()*mimic.length)]; }
       c=c.items.filter(function(x){return x.name.indexOf("Mimicry")===-1;});
     }
     // выбор среди остальных по весам p (относительные шансы)
@@ -708,7 +708,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     var hohei=byName("Hohei Taisho");
     var win;
     var mimic=byName("Mimicry");
-    if(mimic.length>0 && Math.random()<0.6){ win=mimic[Math.floor(Math.random()*mimic.length)]; }
+    if(mimic.length>0 && Math.random()<0.8){ win=mimic[Math.floor(Math.random()*mimic.length)]; }
     else if(hohei.length>0 && st.noHohei>=7){ win=hohei[Math.floor(Math.random()*hohei.length)]; }
     else if(frost.length>0 && st.noFrost>=6){ win=frost[Math.floor(Math.random()*frost.length)]; }
     else if(retro.length>0 && st.noRetro>=4){ win=retro[Math.floor(Math.random()*retro.length)]; }
