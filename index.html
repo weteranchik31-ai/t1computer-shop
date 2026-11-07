@@ -384,7 +384,7 @@
   function it(name,row,col,qual,val){
     var ln=name.toLowerCase();
     var svg;
-    if(ln.indexOf("karambit")>-1||ln.indexOf("knife")>-1||row.indexOf("нож")>-1) svg=knifeSVG(col);
+    if(ln.indexOf("karambit")>-1||ln.indexOf("knife")>-1||ln.indexOf("bayonet")>-1||row.indexOf("нож")>-1) svg=knifeSVG(col);
     else if(row.indexOf("контейнер")>-1) svg=crateSVG(col);
     else if(ln.indexOf("ump")>-1||ln.indexOf("p90")>-1||ln.indexOf("uzi")>-1) svg=smgSVG(col);
     else if(ln.indexOf("ak")>-1||ln.indexOf("m4")>-1||ln.indexOf("m16")>-1||ln.indexOf("fammas")>-1||ln.indexOf("akr")>-1) svg=akSVG(col);
@@ -437,6 +437,10 @@
         it("AKR12 «Railgun» StatTrack","Пушка","#7b3dff","gold",2800),
         it("M16 «Winged» StatTrack","Пушка","#5b3dff","gold",3000),
         it("G22 «Nest» StatTrack","Пушка","#3dd7ff","gold",2400),
+        it("M9 Bayonet «Ancient»","Нож","#5b8bff","epic",820),
+        it("M9 Bayonet «Dragon Glass»","Нож","#7b8bff","legendary",2100),
+        it("M9 Bayonet «Scratch»","Нож","#c9d1d9","rare",95),
+        it("M9 Bayonet «Universe»","Нож","#ff5470","gold",3800),
         it("AKR «Treasure Hunter»","Нож","#ffd700","gold",4500),
         it("Контейнер «Origin»","Контейнер","#3dd7ff","epic",150),
         it("Контейнер «Rare»","Контейнер","#ffc93c","legendary",900)
