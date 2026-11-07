@@ -725,6 +725,12 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     svg+='<g transform="translate('+cx2.toFixed(1)+' '+cy2.toFixed(1)+') rotate(30) translate(-40 -20)">'+
       '<image href="violet-flame.webp" x="0" y="0" width="80" height="40" preserveAspectRatio="xMidYMid meet" opacity="0.95"/>'+
       '</g>';
+    // Жёлтый сектор (240-300°) — картинка AKR12 Steam Beast (биссектриса 270°)
+    var ang2=270*Math.PI/180, rad2=52;
+    var cx3=CX+rad2*Math.cos(ang2), cy3=CX+rad2*Math.sin(ang2);
+    svg+='<g transform="translate('+cx3.toFixed(1)+' '+cy3.toFixed(1)+') rotate(270) translate(-42 -20)">'+
+      '<image href="steam-beast.webp" x="0" y="0" width="84" height="40" preserveAspectRatio="xMidYMid meet" opacity="0.95"/>'+
+      '</g>';
     svg+='</svg>';
     skin.innerHTML=svg;
   }
