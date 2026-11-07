@@ -663,7 +663,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
   function doSpin(paid){
     if(wheelSpinning)return;
     var COLORS=[
-      {n:"Чёрный",c:"#000000",val:0,item:{name:'Desert Eagle «Violet Flame»',svg:deagleVioletSVG()}},
+      {n:"Чёрный",c:"#000000",val:0,item:{name:'Desert Eagle «Violet Flame»',svg:'<img src="violet-flame.webp" style="width:100%;height:100%;object-fit:contain" alt="Desert Eagle Violet Flame">'}},
       {n:"Серый",c:"#9aa0a6",val:0},
       {n:"Белый",c:"#ffffff",val:0},
       {n:"Красный",c:"#ff3f3f",val:30},
@@ -719,13 +719,9 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     var fills=[["#2a2f38","#000000"],["#9aa0a6"],["#ffffff"],["#ff3f3f"],["#ffc93c"],["#3de08a"]];
     var svg='<svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">';
     for(var i=0;i<6;i++){ svg+=seg(i*60,(i+1)*60, fills[i][0]||fills[i][1]); }
-    // Чёрный сектор (0-60°) — вставить мини-пистолет Violet Flame, повёрнутый вдоль 30°
-    // Контур пистолета, нарисованный в центре клина (радиус ~55)
-    svg+='<g transform="translate('+CX+' '+CX+') rotate(30) translate(-18 -55)">'+
-      '<rect x="0" y="-10" width="34" height="12" rx="2" fill="#7a3dff" stroke="#0a0c12" stroke-width="1.5"/>'+
-      '<rect x="34" y="-6" width="14" height="6" rx="1" fill="#b07dff" stroke="#0a0c12" stroke-width="1"/>'+
-      '<rect x="-2" y="2" width="14" height="10" rx="2" fill="#2a1040" stroke="#0a0c12" stroke-width="1.5"/>'+
-      '<path d="M6 -2 L30 -2" stroke="#e8aaff" stroke-width="1.5" opacity=".9"/>'+
+    // Чёрный сектор (0-60°) — вставить картинку Desert Eagle Violet Flame
+    svg+='<g transform="translate('+CX+' '+CX+') rotate(30) translate(-45 -13)">'+
+      '<image href="violet-flame.webp" x="0" y="-32" width="84" height="46" preserveAspectRatio="none" opacity="0.95"/>'+
       '</g>';
     svg+='</svg>';
     skin.innerHTML=svg;
