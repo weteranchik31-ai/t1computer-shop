@@ -737,6 +737,22 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     svg+='<g transform="translate('+cx4.toFixed(1)+' '+cy4.toFixed(1)+') rotate(210) translate(-42 -20)">'+
       '<image href="akr-sketch.webp" x="0" y="0" width="84" height="40" preserveAspectRatio="xMidYMid meet" opacity="0.95"/>'+
       '</g>';
+    // Иконка алмаза (рисуется голубым камнем)
+    function diamond(){
+      return '<g>'+
+        '<polygon points="0,-11 9,-4 0,11 -9,-4" fill="#7fd8ff" stroke="#0b0e13" stroke-width="1.5"/>'+
+        '<polygon points="0,-11 9,-4 4,-4" fill="#c9eefc"/>'+
+        '<polygon points="-9,-4 0,11 -4,-4" fill="#3db8e8"/>'+
+        '<polygon points="9,-4 0,11 0,-4" fill="#5cc8f5"/>'+
+        '<polygon points="-9,-4 0,-4 -4,-4" fill="#a6e3fb"/>'+
+      '</g>';
+    }
+    // Серый (60-120°, 90°), Белый (120-180°,150°), Зелёный (300-360°,330°)
+    [[90,"#3df0ff"],[150,"#7fd8ff"],[330,"#3df0ff"]].forEach(function(s){
+      var a=s[0]*Math.PI/180, rr=62;
+      var x=CX+rr*Math.cos(a), y=CX+rr*Math.sin(a);
+      svg+='<g transform="translate('+x.toFixed(1)+' '+y.toFixed(1)+')">'+diamond()+'</g>';
+    });
     svg+='</svg>';
     skin.innerHTML=svg;
   }
