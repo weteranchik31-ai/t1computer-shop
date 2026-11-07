@@ -40,6 +40,7 @@
   nav a.active{color:var(--text);background:var(--panel2);box-shadow:inset 0 -2px 0 var(--yellow)}
   .auth{margin-left:auto;display:flex;align-items:center;gap:10px}
   .auth .bal{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:13px;color:var(--yellow);font-weight:700}
+  .gold-ic{display:inline-block;width:1em;height:1em;vertical-align:-0.15em;background:no-repeat center/contain url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%23ffe066'/%3E%3Cstop offset='1' stop-color='%23f0a818'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect x='5' y='12' width='14' height='4' rx='1' fill='url(%23g)' stroke='%23b8860b'/%3E%3Crect x='6' y='8' width='12' height='4' rx='1' fill='url(%23g)' stroke='%23b8860b'/%3E%3Crect x='7' y='4' width='10' height='4' rx='1' fill='url(%23g)' stroke='%23b8860b'/%3E%3Ctext x='12' y='7.3' font-size='4' font-weight='800' fill='%23704a00' text-anchor='middle' font-family='Arial'%3EG%3C/text%3E%3C/svg%3E")}
   .btn-login{background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;border:none;padding:9px 16px;border-radius:9px;font-weight:800;font-size:14px;cursor:pointer}
   .btn-inv{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:9px 16px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer}
   .btn-inv:hover{border-color:var(--yellow);color:var(--yellow)}
@@ -237,7 +238,7 @@
   <div class="wrap tbar">
     <div class="logo"><span class="em">🎁</span><span>T1Computer <b>Shop</b></span></div>
     <div class="auth">
-      <span class="bal" id="balance">0 💎</span>
+      <span class="bal" id="balance">0 <i class="gold-ic"></i></span>
       <button class="btn-inv" id="btnInv">🎒 Инвентарь</button>
       <button class="btn-login" id="btnLogin">Войти на сайт</button>
     </div>
@@ -255,7 +256,7 @@
   <!-- Баннеры -->
   <div class="banners">
     <div class="bnr rose"><h4>🎁 Розыгрыш скинов</h4><p>Раздача подарков каждые 3 часа — не пропусти!</p><div class="timer" id="timerDraw">До розыгрыша: --:--</div><span class="ic">🎁</span></div>
-    <div class="bnr gold"><h4>💎 Голда без доната</h4><p>Заходи на T1Computer-shop и получай игровую валюту бесплатно.</p><span class="ic">💎</span></div>
+    <div class="bnr gold"><h4>Голда без доната</h4><p>Заходи на T1Computer-shop и получай игровую валюту бесплатно.</p></div>
     <div class="bnr cyan"><h4>🤝 Сотрудничество</h4><p>Приглашай людей на сайт и получай с них 20% прибыли.</p><span class="ic">🤝</span></div>
   </div>
 
@@ -298,7 +299,7 @@
   <div class="bottom">
     <div class="card" id="bonus">
       <h3>🎡 Барабан бонусов</h3>
-      <div class="sub">Бесплатное вращение раз в 24 часа или крути за 50 💎.</div>
+      <div class="sub">Бесплатное вращение раз в 24 часа или крути за 50 <i class="gold-ic"></i>.</div>
       <div class="wheel" id="wheel">
         <div class="wheel-skin" id="wheelSkin"></div>
         <div class="pin">🔽</div>
@@ -307,7 +308,7 @@
       <div class="wheel-labels"><span>Чёрный</span><span>Серый</span><span>Белый</span><span>Красный</span><span>Жёлтый</span><span>Зелёный</span></div>
       <div class="wheel-info">
         <button class="btn-spin" id="btnSpin">Крутить бесплатно</button>
-        <button class="btn-spin btn-spin-paid" id="btnSpinPaid">Крутить за 50 💎</button>
+        <button class="btn-spin btn-spin-paid" id="btnSpinPaid">Крутить за 50 <i class="gold-ic"></i></button>
         <div class="wheel-timer" id="wheelTimer"></div>
       </div>
       <div class="promo">
@@ -583,7 +584,9 @@
   function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g," ");}
   function toast(t){var e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){e.classList.remove("show");},2200);}
 
-function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
+  var G='<i class="gold-ic"></i>';
+
+function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
 
   var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast","VAL Gilded Gale","M4 Samurai","AWM BOOM","AKR Tiger","Gold AWM"];
   var livePlayers=["꧁༒☬ᤂℌ໔ℜ؏ৡ☬༒꧂","ᶜᴿᴬᶻᵞkíllєrツ","ᶜᴿᴬᶻᵞM̷O̷N̷S̷T̷E̷R̷ツ","彡ᴮᴬᴰʙᴏʏ彡ﺤ 乡","꧁☬ĶrÃçĄŷ4įĶ☬꧂","𝓑𝓻𝓸𝓴𝓮𝓷 𝓗𝓮𝓪𝓻𝓽♡","꧁༒☬₣ℜøźєη•₣ℓα₥єֆ☬༒꧂","💛M 1 c k y y💛","Ŧø₱4ĭĶ ₱ŗõ","꧁༒☬SaNtA☬༒꧂","ᬊᬁS͢ᴍᴀsʜ ツ","ᵒᶠᶠᶤᶜᶤᵃˡ","Stͥⱥnͣdͫoffﾂ ᵒᶠᶠᶤᶜᶤᵃˡ","M̷O̷N̷S̷T̷E̷R̷","ᶜᴿᴬᶻᵞBaNaNツ","山А山人ЫК","ЗŷБêĤкØ Ми✖ÃиЛ ПęŦрØßиЧ","₡҈Ⱥ҈М҈ П҈Ǿ ₡҈ɆБɆ","ŁĒgĘndÁ","ḴȐȺŠȂṼḈĤỈḰ","Сигма","денис T1PC","Нави"];
@@ -622,7 +625,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
         '<div class="th">'+hot+stockHtml+'<span class="art">'+c.art+'</span></div>'+
         '<div class="cname">'+c.name+'</div>'+
         '<div class="cmeta">'+c.items.length+' предметов</div>'+
-        '<div class="foot"><div class="price"><span class="now">'+c.price+' 💎</span><span class="old">'+c.old+' 💎</span></div>'+
+        '<div class="foot"><div class="price"><span class="now">'+c.price+' '+G+'</span><span class="old">'+c.old+' '+G+'</span></div>'+
         '<button class="btn-open" '+(sold?'disabled':'')+'>'+(sold?'Распродан':'Открыть')+'</button></div>';
       card.querySelector(".btn-open").addEventListener("click",function(){selectCase(c.id,true);});
       if(!sold){card.addEventListener("click",function(e){if(!e.target.classList.contains("btn-open"))selectCase(c.id,true);});}
@@ -648,7 +651,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     var c=CASES.find(function(x){return x.id===id;});if(!c||spinning)return;
     selected=c;
     $("openIcon").innerHTML=c.art;$("openName").textContent=c.name;
-    $("openCost").innerHTML=c.price+' 💎 за открытие';
+    $("openCost").innerHTML=c.price+' '+G+' за открытие';
     $("btnOpen").disabled=false;
     $("result").innerHTML='<div class="empty">Кейс выбран. Нажми «Открыть кейс».</div>';
     buildStrip(c,null);
@@ -696,7 +699,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     $("rankXp").textContent=st.xp+" / "+need+" XP";
     $("rankFill").style.width=Math.min(100,g(st.xp/need*100))+"%";
     var rw=$("rewards");rw.innerHTML="";
-    var rewards=[["20 💎",100],["Кейс",250],["50 💎",400],["Кейс",550],["100 💎",800]];
+    var rewards=[["20 "+G,100],["Кейс",250],["50 "+G,400],["Кейс",550],["100 "+G,800]];
     var totalNeed=100,unlocked=0;
     var thresh=[0];
     rewards.forEach(function(r){totalNeed+=r[1];thresh.push(totalNeed);});
@@ -742,7 +745,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
         $("wheelLabel").textContent=color.n;
         $("wheelLabel").style.color=color.n==="Белый"||color.n==="Жёлтый"?"#000":"#fff";
         if(color.val>0){st.bal+=color.val;renderBal();}
-        toast("🎡 Выпал сектор: "+color.n+(color.val>0?" (+"+color.val+" 💎)":""));
+        toast("🎡 Выпал сектор: "+color.n+(color.val>0?" (+"+color.val+" голды)":""));
       }
       wheelSpinning=false;save();
       updateWheel();
@@ -849,7 +852,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
       $("btnSpinPaid").disabled=false;
       var h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),s=Math.floor(left%60000/1000);
       function p(x){return x<10?"0"+x:x;}
-      $("wheelTimer").innerHTML='Бесплатно через: <b>'+p(h)+':'+p(m)+':'+p(s)+'</b> или крути за 50 💎';
+      $("wheelTimer").innerHTML='Бесплатно через: <b>'+p(h)+':'+p(m)+':'+p(s)+'</b> или крути за 50 '+G;
     } else {
       $("btnSpin").disabled=false;
       $("btnSpinPaid").disabled=false;
@@ -872,7 +875,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
   });
   $("btnSpinPaid").addEventListener("click",function(){
     if(wheelSpinning)return;
-    if(st.bal<50){ toast("😕 Нужно 50 💎."); return; }
+    if(st.bal<50){ toast("😕 Нужно 50 голды."); return; }
     st.bal-=50;renderBal();save();
     doSpin(true);
   });
@@ -896,7 +899,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     st.bal+=PROMOS[code];
     save();
     renderBal();
-    msg.textContent="✅ Промокод активирован: +"+PROMOS[code]+" 💎";
+    msg.textContent="✅ Промокод активирован: +"+PROMOS[code]+" голды";
     msg.style.color="var(--green)";
   });
   updateWheel();
@@ -928,7 +931,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     st.user={nick:nick, id:id, ref:refLink, reg:Date.now()};
     st.bal += 50;
     save(); closeModal(); applyUser(); renderBal();
-    toast("🎉 Добро пожаловать, "+nick+"! +50 💎 за регистрацию");
+    toast("🎉 Добро пожаловать, "+nick+"! +50 голды за регистрацию");
   });
   function applyUser(){
     if(st.user){
