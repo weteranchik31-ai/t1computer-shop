@@ -140,6 +140,18 @@
   .wheel-labels{display:flex;justify-content:space-around;font-size:11px;color:var(--muted);margin-bottom:12px}
   .btn-spin{width:100%;background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;padding:13px;border:none;border-radius:11px;font-weight:800;cursor:pointer;font-size:15px}
   .btn-spin:hover{filter:brightness(1.06)}
+  .wheel-info{display:flex;flex-direction:column;gap:8px}
+  .btn-spin.btn-spin-paid{background:linear-gradient(135deg,var(--pink),#ff7a3c);color:#fff;width:100%;padding:13px;border:none;border-radius:11px;font-weight:800;cursor:pointer;font-size:15px}
+  .btn-spin.btn-spin-paid:hover{filter:brightness(1.06)}
+  .btn-spin:disabled{opacity:.5;cursor:not-allowed}
+  .wheel-timer{font-size:12px;color:var(--muted);text-align:center;margin-top:6px}
+  .wheel-timer b{color:var(--yellow)}
+  .promo{margin-top:14px;border-top:1px solid var(--line);padding-top:12px;display:flex;gap:8px;flex-wrap:wrap}
+  .promo input{flex:1;min-width:140px;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--text);font-size:14px;font-family:inherit}
+  .promo input:focus{outline:none;border-color:var(--yellow)}
+  .btn-promo{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:11px 16px;border-radius:10px;font-weight:800;cursor:pointer;font-size:14px}
+  .btn-promo:hover{border-color:var(--yellow);color:var(--yellow)}
+  .promo-msg{width:100%;font-size:12px;min-height:16px;color:var(--muted)}
 
   .rank-line{background:var(--bg2);border:1px solid var(--line);border-radius:10px;height:14px;overflow:hidden;margin:14px 0 8px}
   .rank-line i{display:block;height:100%;background:linear-gradient(90deg,var(--yellow),var(--pink));width:0;transition:width .4s}
@@ -253,13 +265,22 @@
   <div class="bottom">
     <div class="card" id="bonus">
       <h3>🎡 Барабан бонусов</h3>
-      <div class="sub">Крути за задания и забирай бесплатные кейсы!</div>
+      <div class="sub">Бесплатное вращение раз в 24 часа или крути за 50 💎.</div>
       <div class="wheel" id="wheel">
         <div class="pin">🔽</div>
         <div class="hub"><b id="wheelLabel">крути</b></div>
       </div>
       <div class="wheel-labels"><span>50💎</span><span>Кейс</span><span>100💎</span><span>🎁</span></div>
-      <button class="btn-spin" id="btnSpin">Крутить барабан</button>
+      <div class="wheel-info">
+        <button class="btn-spin" id="btnSpin">Крутить бесплатно</button>
+        <button class="btn-spin btn-spin-paid" id="btnSpinPaid">Крутить за 50 💎</button>
+        <div class="wheel-timer" id="wheelTimer"></div>
+      </div>
+      <div class="promo">
+        <input id="inPromo" name="promo" aria-label="Промокод" type="text" placeholder="Промокод*" maxlength="20" autocomplete="off">
+        <button class="btn-promo" id="btnPromo">Активировать</button>
+        <div class="promo-msg" id="promoMsg"></div>
+      </div>
     </div>
     <div class="card">
       <h3>🏆 Пропуск &amp; ранг</h3>
@@ -440,7 +461,7 @@
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:0,opened:0,level:1,xp:0,user:null};
+    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[]};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -582,20 +603,67 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
   }
 
   // ---------- Барабан ----------
-  var wheelSlide=0;
-  $("btnSpin").addEventListener("click",function(){
+  var DAY=24*60*60*1000;
+  function doSpin(paid){
     if(wheelSpinning)return;
+    var prize=["50 💎","100 💎","150 💎","🎁 Кейс"][Math.floor(Math.random()*4)];
     wheelSpinning=true;
-    // лёгкая анимация: меняем подпись и добавляем XP
-    var prize=["50 💎","Кейс","100 💎","🎁"][Math.floor(Math.random()*4)];
+    $("btnSpin").disabled=true;$("btnSpinPaid").disabled=true;
     $("wheelLabel").textContent="...";
     setTimeout(function(){
       $("wheelLabel").textContent=prize;
       if(prize.indexOf("💎")>-1){st.bal+=parseInt(prize);renderBal();}
-      else toast("🎁 Бонус!");
+      toast("🎉 "+prize+"!");
       wheelSpinning=false;save();
+      updateWheel();
     },900);
+  }
+  function updateWheel(){
+    var now=Date.now();
+    var next=(st.lastSpin||0)+DAY;
+    var left=next-now;
+    if(left>0){
+      $("btnSpin").disabled=true;
+      $("btnSpinPaid").disabled=false;
+      var h=Math.floor(left/3600000),m=Math.floor(left%3600000/60000),s=Math.floor(left%60000/1000);
+      function p(x){return x<10?"0"+x:x;}
+      $("wheelTimer").innerHTML='Бесплатно через: <b>'+p(h)+':'+p(m)+':'+p(s)+'</b> или крути за 50 💎';
+    } else {
+      $("btnSpin").disabled=false;
+      $("btnSpinPaid").disabled=false;
+      $("wheelTimer").textContent="Бесплатное вращение доступно!";
+    }
+  }
+  $("btnSpin").addEventListener("click",function(){
+    if(wheelSpinning)return;
+    var now=Date.now();
+    if((st.lastSpin||0)+DAY>now){ toast("⏳ Подожди — барабан ещё охлаждается."); return; }
+    st.lastSpin=now;
+    save();
+    doSpin(false);
   });
+  $("btnSpinPaid").addEventListener("click",function(){
+    if(wheelSpinning)return;
+    if(st.bal<50){ toast("😕 Нужно 50 💎."); return; }
+    st.bal-=50;renderBal();save();
+    doSpin(true);
+  });
+  // ---------- Промокод ----------
+  var PROMOS={ "T1PCSHOP":50, "BONUS":30, "WELCOME":20, "GOLD":100 };
+  $("btnPromo").addEventListener("click",function(){
+    var code=$("inPromo").value.trim().toUpperCase();
+    var msg=$("promoMsg");
+    if(!code){ msg.textContent="Введи промокод."; msg.style.color="var(--muted)"; return; }
+    if(st.usedCodes&&st.usedCodes.indexOf(code)>-1){ msg.textContent="Этот промокод уже использован."; msg.style.color="var(--red)"; return; }
+    if(PROMOS[code]===undefined){ msg.textContent="Промокод не найден."; msg.style.color="var(--red)"; return; }
+    st.bal+=PROMOS[code];
+    st.usedCodes=st.usedCodes||[]; st.usedCodes.push(code);
+    renderBal();save();
+    msg.textContent="✅ Промокод активирован: +"+PROMOS[code]+" 💎";
+    msg.style.color="var(--green)";
+  });
+  updateWheel();
+  setInterval(updateWheel,1000);
 
   // ---------- Прочее ----------
   $("btnQuit").addEventListener("click",function(){
