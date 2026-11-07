@@ -703,12 +703,12 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     var otherItems=selected.items.filter(function(x){ return knives.indexOf(x)<0 && gloves.indexOf(x)<0; });
     var win;
     var r=Math.random()*100;
-    if(r<70 && otherItems.length>0){
+    if(r<85 && otherItems.length>0){
       win=otherItems[Math.floor(Math.random()*otherItems.length)];
-    } else if(r<80 && gloves.length>0){
-      win=gloves[Math.floor(Math.random()*gloves.length)];
-    } else if(r<100 && knives.length>0){
+    } else if(r<95 && knives.length>0){
       win=knives[Math.floor(Math.random()*knives.length)];
+    } else if(r<100 && gloves.length>0){
+      win=gloves[Math.floor(Math.random()*gloves.length)];
     } else {
       win=selected.items[Math.floor(Math.random()*selected.items.length)];
     }
