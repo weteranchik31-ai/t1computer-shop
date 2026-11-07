@@ -172,6 +172,19 @@
   .modal{position:fixed;inset:0;background:rgba(5,7,11,.72);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:80;padding:16px}
   .modal.open{display:flex}
   .modal-box{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:26px;width:100%;max-width:400px;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+
+  .win-modal{position:fixed;inset:0;background:rgba(5,7,11,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:85;padding:16px}
+  .win-modal.open{display:flex}
+  .win-box{background:linear-gradient(180deg,#1c1226,#14181f);border:1px solid #7a3dff;border-radius:18px;padding:26px 22px;width:100%;max-width:340px;text-align:center;position:relative;box-shadow:0 20px 70px rgba(122,61,255,.3)}
+  .win-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
+  .win-close:hover{color:var(--text)}
+  .win-art{width:200px;height:118px;margin:6px auto 10px}
+  .win-art svg{width:100%;height:100%;display:block}
+  .win-box h4{font-size:18px;font-weight:800;margin:4px 0 2px}
+  .win-q{font-size:12px;font-weight:800;letter-spacing:1.5px;color:#c86bff;margin-bottom:4px}
+  .win-coll{font-size:12px;color:var(--muted);margin-bottom:16px}
+  .win-take{width:100%;background:linear-gradient(135deg,#7a3dff,#c86bff);color:#fff;border:none;padding:13px;border-radius:11px;font-weight:800;cursor:pointer;font-size:15px}
+  .win-take:hover{filter:brightness(1.08)}
   .modal-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:6px}
   .modal-close:hover{color:var(--text)}
   .modal h2{font-size:22px;font-weight:800;margin-bottom:4px}
@@ -298,6 +311,18 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Оверлей выигрыша скина -->
+<div class="win-modal" id="winModal">
+  <div class="win-box">
+    <button class="win-close" id="winClose" aria-label="Закрыть">✕</button>
+    <div class="win-art" id="winArt"></div>
+    <h4 id="winTitle">Desert Eagle «Violet Flame»</h4>
+    <div class="win-q">RARE</div>
+    <div class="win-coll">Коллекция: Chameleon</div>
+    <button class="win-take" id="winTake">Забрать</button>
+  </div>
+</div>
+
 <!-- Модалка регистрации -->
 <div class="modal" id="modal">
   <div class="modal-box">
@@ -359,6 +384,34 @@
   function smgSVG(col){return artSVG("smg",col,"#3de08a");}
   function rifleSVG(col){return artSVG("rif",col,"#3dd7ff");}
   function pisSVG(col){return artSVG("pist",col,"#ffc93c");}
+
+  // Desert Eagle «Violet Flame» — фиолетовое пламя на тёмном фоне (стиль Chameleon)
+  function deagleVioletSVG(){
+    var grad="de"+Math.floor(Math.random()*1e6);
+    var fire="df"+Math.floor(Math.random()*1e6);
+    return '<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg"><defs>'+
+      '<linearGradient id="'+grad+'" x1="0" y1="0" x2="1" y2="1">'+
+        '<stop offset="0" stop-color="#7a3dff"/><stop offset=".5" stop-color="#b07dff"/><stop offset="1" stop-color="#2a1040"/></linearGradient>'+
+      '<linearGradient id="'+fire+'" x1="0" y1="1" x2="0" y2="0">'+
+        '<stop offset="0" stop-color="#7a3dff"/><stop offset=".6" stop-color="#c86bff"/><stop offset="1" stop-color="#ff9fdc"/></linearGradient>'+
+      '<radialGradient id="bg'+grad+'" cx="50%" cy="40%" r="70%">'+
+        '<stop offset="0" stop-color="#7a3dff" stop-opacity=".4"/><stop offset="1" stop-color="#12071f" stop-opacity="0"/></radialGradient>'+
+      '</defs>'+
+      '<rect width="220" height="130" fill="url(#bg'+grad+')"/>'+
+      '<text x="110" y="112" font-family="Arial" font-size="90" font-weight="900" fill="#c86bff" opacity=".18" text-anchor="middle">CH</text>'+
+      // пламя позади ствола
+      '<path d="M60 50 C50 40 52 26 66 22 C80 30 78 44 70 50 Z" fill="url(#'+fire+')" opacity=".9"/>'+
+      '<path d="M96 40 C88 28 92 16 104 12 C118 22 112 34 104 40 Z" fill="url(#'+fire+')" opacity=".8"/>'+
+      // корпус Desert Eagle
+      '<path d="M10 58 L46 58 66 42 118 42 136 58 176 54 184 78 172 84 40 84 22 72 Z" fill="url(#'+grad+')" stroke="#0a0c12" stroke-width="2"/>'+
+      // пламенный узор на корпусе
+      '<path d="M40 70 C60 62 80 72 100 64 C120 74 140 64 160 70" stroke="#e8aaff" stroke-width="3" fill="none" opacity=".85"/>'+
+      '<path d="M46 58 C66 66 88 58 108 66 C128 58 148 66 168 60" stroke="#ffc2ff" stroke-width="2" fill="none" opacity=".6"/>'+
+      // рукоять с пламенем
+      '<path d="M110 84 L128 116 L150 128 L158 112 L136 88 Z" fill="#2a1040" stroke="#0a0c12" stroke-width="2"/>'+
+      '<path d="M118 90 C126 104 138 112 148 118" stroke="#c86bff" stroke-width="2.5" fill="none" opacity=".8"/>'+
+      '</svg>';
+  }
 
   // Нож (карамбит) профилем на тёмном фоне
   function knifeSVG(col){
@@ -607,7 +660,7 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
   function doSpin(paid){
     if(wheelSpinning)return;
     var COLORS=[
-      {n:"Чёрный",c:"#000000",val:0},
+      {n:"Чёрный",c:"#000000",val:0,item:{name:'Desert Eagle «Violet Flame»',svg:deagleVioletSVG()}},
       {n:"Серый",c:"#9aa0a6",val:0},
       {n:"Белый",c:"#ffffff",val:0},
       {n:"Красный",c:"#ff3f3f",val:30},
@@ -624,14 +677,31 @@ function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
     wheel.style.transition="transform 0.9s cubic-bezier(.22,1,.22,1)";
     wheel.style.transform="rotate("+(360*3 + (60*r + 30))+"deg)";
     setTimeout(function(){
-      $("wheelLabel").textContent=color.n;
-      $("wheelLabel").style.color=color.n==="Белый"||color.n==="Жёлтый"?"#000":"#fff";
-      if(color.val>0){st.bal+=color.val;renderBal();}
-      toast("🎡 Выпал сектор: "+color.n+(color.val>0?" (+"+color.val+" 💎)":""));
+      if(color.item){
+        $("wheelLabel").textContent="🎁";
+        $("wheelLabel").style.color="#fff";
+        $("wheelLabel").style.fontSize="26px";
+        st.items=st.items||[]; st.items.push(color.item.name);
+        showWinItem(color.item);
+        toast("🔫 Выпал скин: "+color.item.name+"!");
+      } else {
+        $("wheelLabel").textContent=color.n;
+        $("wheelLabel").style.color=color.n==="Белый"||color.n==="Жёлтый"?"#000":"#fff";
+        if(color.val>0){st.bal+=color.val;renderBal();}
+        toast("🎡 Выпал сектор: "+color.n+(color.val>0?" (+"+color.val+" 💎)":""));
+      }
       wheelSpinning=false;save();
       updateWheel();
     },950);
   }
+  function showWinItem(item){
+    $("winArt").innerHTML=item.svg;
+    $("winTitle").textContent=item.name;
+    $("winModal").classList.add("open");
+  }
+  $("winClose").addEventListener("click",function(){$("winModal").classList.remove("open");});
+  $("winTake").addEventListener("click",function(){$("winModal").classList.remove("open");});
+  $("winModal").addEventListener("click",function(e){ if(e.target===$("winModal")) $("winModal").classList.remove("open"); });
   function updateWheel(){
     var now=Date.now();
     var next=(st.lastSpin||0)+DAY;
