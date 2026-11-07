@@ -205,6 +205,20 @@
   .inv-card .art img,.inv-card .art svg{max-width:100%;max-height:74px}
   .inv-card .nm{font-size:12px;font-weight:700;color:var(--text);line-height:1.15}
   .inv-card .ty{font-size:11px;color:var(--muted);margin-top:3px}
+
+  /* ---------- Окно вывода скина ---------- */
+  .inv-card{cursor:pointer}
+  .inv-card:hover{border-color:var(--yellow)}
+  .withdraw-modal{position:fixed;inset:0;background:rgba(5,7,11,.78);backdrop-filter:blur(4px);display:none;align-items:center;justify-content:center;z-index:95;padding:16px}
+  .withdraw-modal.open{display:flex}
+  .wd-box{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px 22px;width:100%;max-width:360px;text-align:center;position:relative;box-shadow:0 20px 60px rgba(0,0,0,.6)}
+  .wd-close{position:absolute;top:10px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer}
+  .wd-close:hover{color:var(--text)}
+  .wd-art{width:150px;height:85px;margin:4px auto 10px;display:grid;place-items:center}
+  .wd-art img,.wd-art svg{max-width:100%;max-height:85px}
+  .wd-box h4{font-size:17px;font-weight:800;margin-bottom:10px}
+  .wd-text{font-size:13px;color:var(--muted);line-height:1.5;margin-bottom:18px}
+  .wd-btn{display:block;width:100%;background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;text-decoration:none;padding:13px;border-radius:11px;font-weight:800;font-size:15px}
   .modal-close{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:6px}
   .modal-close:hover{color:var(--text)}
   .modal h2{font-size:22px;font-weight:800;margin-bottom:4px}
@@ -355,6 +369,17 @@
     <p class="inv-sub" id="invSub">Здесь хранятся скины, выпавшие из кейсов и барабана.</p>
     <div class="inv-grid" id="invGrid"></div>
     <div class="empty-inv" id="invEmpty">Инвентарь пуст — открой кейс или покрути барабан!</div>
+  </div>
+</div>
+
+<!-- Окно вывода скина -->
+<div class="withdraw-modal" id="wdModal">
+  <div class="wd-box">
+    <button class="wd-close" id="wdClose" aria-label="Закрыть">✕</button>
+    <div class="wd-art" id="wdArt"></div>
+    <h4 id="wdName">Скин</h4>
+    <p class="wd-text">Если хотите вывести скин в Stand Knife — сделайте скрин инвентаря и напишите, что хотите вывести.</p>
+    <a class="wd-btn" id="wdBtn" href="#" target="_blank" rel="noopener">Вывести</a>
   </div>
 </div>
 
@@ -773,10 +798,20 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     arr.forEach(function(it){
       var card=document.createElement("div"); card.className="inv-card";
       card.innerHTML='<div class="art">'+it.img+'</div><div class="nm">'+it.name+'</div><div class="ty">'+it.type+'</div>';
+      card.addEventListener("click",function(){ openWithdraw(it); });
       grid.appendChild(card);
     });
     $("invEmpty").style.display = arr.length===0 ? "" : "none";
   }
+  var REF_URL="https://vk.ru/weyz1"; // ссылка на ЛС VK
+  function openWithdraw(it){
+    $("wdArt").innerHTML=it.img;
+    $("wdName").textContent=it.name;
+    $("wdBtn").href=REF_URL;
+    $("wdModal").classList.add("open");
+  }
+  $("wdClose").addEventListener("click",function(){$("wdModal").classList.remove("open");});
+  $("wdModal").addEventListener("click",function(e){ if(e.target===$("wdModal")) $("wdModal").classList.remove("open"); });
   $("btnInv").addEventListener("click",function(){
     renderInv();
     $("invPage").classList.add("open");
