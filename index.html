@@ -431,7 +431,7 @@
         '<div class="th">'+hot+stockHtml+'<span class="art">'+c.art+'</span></div>'+
         '<div class="cname">'+c.name+'</div>'+
         '<div class="cmeta">'+c.items.length+' предметов</div>'+
-        '<div class="foot"><div class="price"><span class="now">'+c.price+' ₽</span><span class="old">'+c.old+' ₽</span></div>'+
+        '<div class="foot"><div class="price"><span class="now">'+c.price+' 💎</span><span class="old">'+c.old+' 💎</span></div>'+
         '<button class="btn-open" '+(sold?'disabled':'')+'>'+(sold?'Распродан':'Открыть')+'</button></div>';
       card.querySelector(".btn-open").addEventListener("click",function(){selectCase(c.id,true);});
       if(!sold){card.addEventListener("click",function(e){if(!e.target.classList.contains("btn-open"))selectCase(c.id,true);});}
@@ -457,7 +457,7 @@
     var c=CASES.find(function(x){return x.id===id;});if(!c||spinning)return;
     selected=c;
     $("openIcon").innerHTML=c.art;$("openName").textContent=c.name;
-    $("openCost").innerHTML=c.price+' ₽ за открытие';
+    $("openCost").innerHTML=c.price+' 💎 за открытие';
     $("btnOpen").disabled=false;
     $("result").innerHTML='<div class="empty">Кейс выбран. Нажми «Открыть кейс».</div>';
     buildStrip(c,null);
@@ -490,7 +490,7 @@
     $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
       '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
       '<div class="qcode" style="color:'+q.color+'">'+q.code+'</div>'+
-      '<div>'+q.name+' · '+win.val+' ₽</div>';
+      '<div>'+q.name+' · '+win.val+' 💎</div>';
     spinning=false;$("btnOpen").disabled=false;
     save();
   }
