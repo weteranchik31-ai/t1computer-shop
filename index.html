@@ -548,12 +548,17 @@
 
   // ---------- Оружие в ролле со случайным (клиент) ----------
   function rollItem(c){
+    var mimic=c.items.filter(function(x){return x.name.indexOf("Mimicry")>-1;});
+    if(mimic.length>0){
+      if(Math.random()<0.7){ return mimic[Math.floor(Math.random()*mimic.length)]; }
+      c=c.items.filter(function(x){return x.name.indexOf("Mimicry")===-1;});
+    }
     var weights={rare:34,epic:22,legendary:8,gold:2};
-    var pool=c.items,total=0,w=pool.map(function(x){
+    var pool=c,total=0,w=pool.map(function(x){
       total+=(weights[x.q]||weights.rare);return {x:x,end:total};
     });
     var r=Math.random()*total;
-    for(var i=0;i<w.length;i++) if(r<=w[i].end) return w[i].x;
+    for(var j=0;j<w.length;j++) if(r<=w[j].end) return w[j].x;
     return pool[pool.length-1];
   }
 
