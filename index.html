@@ -3,119 +3,163 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Stand Knife — Кейсы</title>
-<meta name="description" content="Симулятор открытия кейсов Stand Knife. Выпадай ножи и оружие со скинами и собирай коллекцию.">
+<title>STANDOFF case.pro — Кейсы</title>
+<meta name="description" content="STANDOFF case.pro — открывай кейсы, выбивай скины Standoff 2, заключай контракты и апгрейды.">
 <style>
   :root{
-    --bg:#0d1117; --panel:#161b22; --panel2:#1f2630; --line:#2b3440;
-    --text:#e6edf3; --muted:#8b949e; --gold:#f0b429; --gold-2:#d29922;
+    --bg:#0b0e13;
+    --bg2:#11151d;
+    --panel:#161b26;
+    --panel2:#1c2230;
+    --line:#232b3b;
+    --text:#e8edf5;
+    --muted:#8a93a6;
+    --yellow:#ffc93c;
+    --pink:#ff3f6e;
+    --cyan:#3dd7ff;
+    --green:#3de08a;
+    --orange:#ff9f43;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   body{
     font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
-    background:radial-gradient(1100px 480px at 50% -120px, #1d3a2f 0%, transparent 60%), var(--bg);
+    background:radial-gradient(1000px 420px at 80% -80px, #272038 0%, transparent 60%), var(--bg);
     color:var(--text);line-height:1.45;min-height:100vh;
   }
-  .wrap{max-width:1100px;margin:0 auto;padding:0 18px}
+  .wrap{max-width:1200px;margin:0 auto;padding:0 16px}
 
-  header.top{padding:16px 0;border-bottom:1px solid var(--line);background:rgba(13,17,23,.8);backdrop-filter:blur(8px);position:sticky;top:0;z-index:20}
-  .top-inner{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap}
-  .brand{display:flex;align-items:center;gap:12px;font-weight:700;font-size:20px}
-  .logo{width:42px;height:42px;border-radius:10px;background:linear-gradient(135deg,var(--gold),var(--gold-2));display:grid;place-items:center;font-size:23px;color:#1a1404;box-shadow:0 4px 18px rgba(240,180,41,.4)}
-  .brand small{display:block;font-size:11px;color:var(--muted);font-weight:500}
-  .balance{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:8px 16px;display:flex;align-items:center;gap:10px}
-  .balance .lbl{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px}
-  .balance .val{font-size:20px;font-weight:800;color:var(--gold)}
+  /* ---------- Шапка ---------- */
+  header.top{background:rgba(11,14,19,.9);border-bottom:1px solid var(--line);backdrop-filter:blur(8px);position:sticky;top:0;z-index:30}
+  .tbar{display:flex;align-items:center;gap:22px;padding:12px 0;flex-wrap:wrap}
+  .logo{font-weight:800;font-size:22px;letter-spacing:.5px;display:flex;align-items:center;gap:8px}
+  .logo .em{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,var(--pink),var(--yellow));display:grid;place-items:center;font-size:18px}
+  .logo b{color:var(--yellow)}
+  nav{display:flex;gap:4px;flex-wrap:wrap}
+  nav a{color:var(--muted);text-decoration:none;font-size:14px;font-weight:600;padding:8px 12px;border-radius:9px}
+  nav a:hover{color:var(--text);background:var(--panel2)}
+  nav a.active{color:var(--text);background:var(--panel2);box-shadow:inset 0 -2px 0 var(--yellow)}
+  .auth{margin-left:auto;display:flex;align-items:center;gap:10px}
+  .auth .bal{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:6px 12px;font-size:13px;color:var(--yellow);font-weight:700}
+  .btn-login{background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;border:none;padding:9px 16px;border-radius:9px;font-weight:800;font-size:14px;cursor:pointer}
+  .btn-login:hover{filter:brightness(1.06)}
 
-  main{padding:34px 0 70px}
-  .intro{max-width:760px;margin-bottom:36px}
-  .intro h1{font-size:34px;line-height:1.15;font-weight:800;margin-bottom:12px}
-  .intro h1 span{color:var(--gold)}
-  .intro p{color:var(--muted);font-size:16px}
-  .kpis{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap}
-  .kpi{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 18px;min-width:130px}
-  .kpi .n{font-size:22px;font-weight:800}
-  .kpi .t{font-size:12px;color:var(--muted)}
+  main{padding:22px 0 70px}
 
-  .cases-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
-  .case{background:linear-gradient(180deg,var(--panel2),var(--panel));border:1px solid var(--line);border-radius:16px;padding:20px;cursor:pointer;transition:transform .15s,border-color .15s;position:relative;overflow:hidden}
-  .case:hover{transform:translateY(-4px);border-color:var(--gold-2)}
-  .case:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-  .case .box{height:96px;display:grid;place-items:center;margin-bottom:12px;border-radius:12px;background:rgba(0,0,0,.3);border:1px solid var(--line);font-size:46px}
-  .case h3{font-size:17px;margin-bottom:4px}
-  .case .price{color:var(--gold);font-weight:700;font-size:15px}
-  .case .chance{font-size:12px;color:var(--muted);margin-top:6px}
-  .rarity-line{width:100%;height:4px;border-radius:3px;margin-top:14px}
+  /* ---------- Live-лента ---------- */
+  .live{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:10px 12px;margin-bottom:18px;display:flex;align-items:center;gap:12px}
+  .live .tag{font-size:12px;font-weight:800;color:var(--text);background:var(--pink);padding:4px 10px;border-radius:7px;flex:none}
+  .live .tag b{color:#fff}
+  .lstrip{display:flex;gap:8px;overflow:hidden;flex:1}
+  .litem{font-size:12px;color:var(--muted);white-space:nowrap;background:var(--bg2);border:1px solid var(--line);padding:5px 10px;border-radius:8px}
+  .litem .n{color:var(--text);font-weight:700}
 
-  section{margin-top:44px}
-  section h2{font-size:24px;font-weight:800;margin-bottom:6px}
-  section .sub{color:var(--muted);font-size:14px;margin-bottom:20px}
+  /* ---------- Баннеры ---------- */
+  .banners{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px;margin-bottom:26px}
+  .bnr{border-radius:14px;padding:16px;border:1px solid var(--line);background:linear-gradient(135deg,var(--panel2),var(--panel));position:relative;overflow:hidden;min-height:96px;display:flex;flex-direction:column;justify-content:center}
+  .bnr .ic{position:absolute;right:14px;bottom:10px;font-size:40px;opacity:.85}
+  .bnr h4{font-size:16px;font-weight:800;margin-bottom:4px}
+  .bnr p{font-size:12px;color:var(--muted);max-width:78%}
+  .bnr.rose{background:linear-gradient(135deg,#2a1633,#161b26)}
+  .bnr.rose h4{color:var(--pink)}
+  .bnr.gold h4{color:var(--yellow)}
+  .bnr.cyan h4{color:var(--cyan)}
+  .bnr .timer{font-size:12px;color:var(--yellow);font-weight:700;margin-top:4px}
 
-  .open-panel{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:24px}
-  .open-head{display:flex;align-items:center;gap:18px;flex-wrap:wrap;margin-bottom:22px}
-  .open-head .tbox{width:66px;height:66px;display:grid;place-items:center;background:rgba(0,0,0,.3);border-radius:12px;border:1px solid var(--line);font-size:38px}
-  .open-head h3{font-size:20px}
-  .open-head .cost{color:var(--gold);font-weight:700;margin-top:2px}
+  /* ---------- Секция кейсов ---------- */
+  section{margin-top:34px}
+  .sec-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:16px;flex-wrap:wrap}
+  .sec-head h1,.sec-head h2{font-size:26px;font-weight:800}
+  .sec-head .sub{color:var(--muted);font-size:14px;margin-top:4px}
+  .sec-tabs{display:flex;gap:6px}
+  .sec-tabs button{background:var(--panel);border:1px solid var(--line);color:var(--muted);padding:7px 14px;border-radius:9px;font-weight:700;cursor:pointer;font-size:13px}
+  .sec-tabs button.active{color:var(--text);border-color:var(--yellow);background:var(--panel2)}
 
-  .spinner{height:240px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--line);background:#0d1117}
-  .spinner::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--gold);box-shadow:0 0 12px var(--gold);transform:translateX(-50%);z-index:5}
+  .cases{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px}
+  .case{background:var(--panel);border:1px solid var(--line);border-radius:16px;overflow:hidden;transition:transform .15s,border-color .15s;position:relative}
+  .case:hover{transform:translateY(-4px);border-color:var(--yellow)}
+  .case .th{height:150px;display:grid;place-items:center;background:radial-gradient(circle at 50% 30%,#232c3f 0%,#12161f 70%);border-bottom:1px solid var(--line);position:relative}
+  .case .th .art{width:150px;height:150px;display:grid;place-items:center}
+  .case .th .art svg{width:100%;height:100%}
+  .case.rar .th .art svg{filter:drop-shadow(0 0 14px rgba(255,63,110,.55))}
+  .case .hot{position:absolute;top:10px;left:10px;background:var(--pink);color:#fff;font-size:11px;font-weight:800;padding:3px 8px;border-radius:7px}
+  .case .stock{position:absolute;top:10px;right:10px;background:#0009;color:var(--text);font-size:11px;font-weight:700;padding:3px 8px;border-radius:7px}
+  .case .stock.low{color:var(--yellow)}
+  .case .cname{padding:12px 14px 4px;font-size:16px;font-weight:800}
+  .case .cmeta{padding:0 14px;font-size:12px;color:var(--muted);margin-top:2px}
+  .case .foot{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;gap:10px;flex-wrap:wrap}
+  .price{display:flex;align-items:center;gap:8px}
+  .price .now{font-size:19px;font-weight:800;color:var(--yellow)}
+  .price .old{font-size:13px;color:var(--muted);text-decoration:line-through}
+  .btn-open{background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;border:none;padding:9px 16px;border-radius:9px;font-weight:800;cursor:pointer;font-size:14px}
+  .btn-open:hover{filter:brightness(1.06)}
+  .btn-open.sold{background:var(--panel2);color:var(--muted);cursor:default}
+
+  /* ---------- Барабан / открытие ---------- */
+  .open-wrap{margin-top:34px}
+  .open-panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:22px}
+  .open-head{display:flex;align-items:center;gap:16px;margin-bottom:18px;flex-wrap:wrap}
+  .open-head .tbox{width:62px;height:62px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);display:grid;place-items:center;overflow:hidden}
+  .open-head .tbox svg{width:70%;height:70%}
+  .open-head h3{font-size:19px}
+  .open-head .cost{color:var(--yellow);font-weight:700}
+  .spinner{height:230px;border-radius:14px;overflow:hidden;position:relative;border:1px solid var(--line);background:#0d1017}
+  .spinner::after{content:"";position:absolute;left:50%;top:0;bottom:0;width:3px;background:var(--yellow);box-shadow:0 0 14px var(--yellow);transform:translateX(-50%);z-index:5}
   .strip{display:flex;height:100%;will-change:transform;transition:none}
-  .tile{flex:0 0 150px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-right:1px solid var(--line);background:#10151d;padding:6px}
-  .tile .img{width:86px;height:86px;display:grid;place-items:center}
+  .tile{flex:0 0 150px;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border-right:1px solid var(--line);background:#0f131b;padding:6px}
+  .tile .img{width:92px;height:92px}
   .tile .img svg{width:100%;height:100%}
-  .tile .name{font-size:12px;font-weight:600;text-align:center;color:#fff;line-height:1.1}
-  .tile .type{font-size:10px;color:var(--muted);text-align:center}
-  .tile .r{font-size:9px;text-transform:uppercase;letter-spacing:.4px;padding:2px 7px;border-radius:20px;color:#0b0e14;font-weight:800}
+  .tile .name{font-size:12px;font-weight:600;text-align:center;line-height:1.1}
+  .tile .qty{font-size:10px;color:var(--muted)}
+  .controls{display:flex;gap:12px;margin-top:20px;flex-wrap:wrap;align-items:center;justify-content:center}
+  .btn{font-family:inherit;cursor:pointer;border:none;border-radius:11px;font-weight:800;transition:transform .12s,filter .12s}
+  .btn:active{transform:scale(.97)}
+  .btn-pink{background:linear-gradient(135deg,var(--pink),#ff7a3c);color:#fff;padding:14px 30px;font-size:16px}
+  .btn-pink:hover{filter:brightness(1.07)}
+  .btn-ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:12px 20px;font-size:14px}
+  .btn-ghost:hover{border-color:var(--muted)}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .result{margin-top:18px;text-align:center;border:1px solid var(--line);border-radius:14px;padding:20px;background:#0d1017;min-height:120px}
+  .result .empty{color:var(--muted);padding:12px}
+  .result .big{width:120px;height:120px;margin:0 auto}
+  .result .big svg{width:100%;height:100%}
+  .result h4{font-size:20px;margin:4px 0}
 
-  .controls{display:flex;gap:12px;margin-top:22px;flex-wrap:wrap;align-items:center;justify-content:center}
-  button{font-family:inherit;cursor:pointer;border:none;border-radius:12px;font-weight:700;transition:transform .12s,filter .12s;color:#fff}
-  button:active{transform:scale(.97)}
-  button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
-  .btn-x{background:var(--gold);color:#1a1404;padding:15px 32px;font-size:16px}
-  .btn-x:hover{filter:brightness(1.07)}
-  .btn-outline{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:13px 22px;font-size:14px}
-  .btn-outline:hover{border-color:var(--muted)}
-  button:disabled{opacity:.4;cursor:not-allowed;filter:none}
+  /* ---------- Низ: барабан бонусов / ранг ---------- */
+  .bottom{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:34px}
+  @media(max-width:820px){.bottom{grid-template-columns:1fr}}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
+  .card h3{font-size:18px;font-weight:800;margin-bottom:4px}
+  .card .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .wheel{margin:8px auto 16px;width:200px;height:200px;border-radius:50%;background:conic-gradient(#ff3f6e 0 25%,#ffc93c 0 50%,#3dd7ff 0 75%,#3de08a 0 100%);box-shadow:0 0 24px rgba(255,63,110,.25);position:relative}
+  .wheel .pin{position:absolute;top:-6px;left:50%;transform:translateX(-50%);font-size:22px;z-index:3}
+  .wheel .hub{position:absolute;inset:38%;background:#0b0e13;border-radius:50%;display:grid;place-items:center;z-index:2}
+  .wheel .hub b{color:var(--yellow);font-weight:800}
+  .seg{position:absolute;width:100%;height:100%;border-radius:50%;overflow:hidden}
+  .wheel-labels{display:flex;justify-content:space-around;font-size:11px;color:var(--muted);margin-bottom:12px}
+  .btn-spin{width:100%;background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;padding:13px;border:none;border-radius:11px;font-weight:800;cursor:pointer;font-size:15px}
+  .btn-spin:hover{filter:brightness(1.06)}
 
-  .result{margin-top:20px;text-align:center;border:1px solid var(--line);border-radius:14px;padding:22px;background:#0d1117;min-height:130px}
-  .result .empty{color:var(--muted);padding:14px}
-  .get{width:130px;height:130px;margin:0 auto 8px}
-  .get svg{width:100%;height:100%}
-  .result h4{font-size:22px;margin:6px 0 4px}
-  .result .cnt{color:var(--muted);font-size:14px}
+  .rank-line{background:var(--bg2);border:1px solid var(--line);border-radius:10px;height:14px;overflow:hidden;margin:14px 0 8px}
+  .rank-line i{display:block;height:100%;background:linear-gradient(90deg,var(--yellow),var(--pink));width:0;transition:width .4s}
+  .ranktxt{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:16px}
+  .rewards{display:flex;gap:8px;flex-wrap:wrap}
+  .reward{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:8px 12px;font-size:12px}
+  .reward b{color:var(--yellow)}
+  .reward.done{opacity:.5}
+  .reward.done::after{content:" ✓";color:var(--green)}
 
-  table{width:100%;border-collapse:collapse;font-size:14px}
-  thead th{color:var(--muted);text-align:left;padding:10px 12px;background:var(--panel2);border-bottom:1px solid var(--line)}
-  tbody td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
-  tbody tr:hover{background:var(--panel)}
-  .icell{display:flex;align-items:center;gap:10px}
-  .icell .si{width:40px;height:40px;flex:none}
-  .icell .si svg{width:100%;height:100%}
-  .rar{font-weight:700}
-  .q{border:1px solid var(--line);background:var(--panel2);color:#fff;border-radius:22px;padding:2px 10px;font-weight:700}
-  .summ{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:18px;margin-bottom:16px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:14px}
-  .summ .s{font-size:13px;color:var(--muted)}
-  .summ .s b{display:block;font-size:19px;color:var(--text);margin-top:2px}
-  .empty-inv{color:var(--muted);padding:30px;text-align:center;border:1px dashed var(--line);border-radius:14px;margin-top:16px}
+  footer{color:var(--muted);font-size:12px;padding:26px 0;border-top:1px solid var(--line);margin-top:44px}
+  footer b{color:var(--text)}
 
-  .rar-legend{list-style:none;margin-top:18px}
-  .rar-legend li{display:flex;align-items:center;gap:10px;font-size:14px;color:var(--muted);padding:4px 0}
-  .dot{width:12px;height:12px;border-radius:4px;flex:none}
-
-  footer{color:var(--muted);font-size:12px;padding:26px 0;border-top:1px solid var(--line);margin-top:40px}
-
-  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%) translateY(20px);background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:14px 22px;box-shadow:0 10px 30px rgba(0,0,0,.5);opacity:0;pointer-events:none;transition:.25s;z-index:60;font-weight:600}
   .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-  .msg{display:flex;align-items:center;gap:10px;font-weight:600}
-  .msg .ic{font-size:22px}
 
   @media(max-width:640px){
-    .intro h1{font-size:26px}
+    nav{order:3;width:100%;overflow-x:auto}
+    .intro h1{font-size:24px}
     .spinner{height:180px}
     .tile{flex-basis:120px}
-    .tile .img{width:62px;height:62px}
-    .tile .name{font-size:11px}
-    table{font-size:12px}
+    .tile .img{width:64px;height:64px}
   }
   @media (prefers-reduced-motion: reduce){
     .strip{transition:none !important}
@@ -126,366 +170,350 @@
 <body>
 
 <header class="top">
-  <div class="wrap top-inner">
-    <div class="brand">
-      <div class="logo">🔪</div>
-      <div>Stand Knife <small>кейсы · скины</small></div>
+  <div class="wrap tbar">
+    <div class="logo"><span class="em">🎁</span><span>STANDOFF <b>case.pro</b></span></div>
+    <nav id="nav">
+      <a class="active" href="#cases">Кейсы</a>
+      <a href="#battle">Сражения</a>
+      <a href="#cases">Пропуск</a>
+      <a href="#cases">Контракты</a>
+      <a href="#cases">Апгрейды</a>
+      <a href="#bonus">Бонусы</a>
+      <a href="#cases">Рефералка</a>
+      <a href="#cases">Топ</a>
+      <a href="#cases">Поддержка</a>
+    </nav>
+    <div class="auth">
+      <span class="bal" id="balance">0 💎</span>
+      <button class="btn-login" id="btnLogin">Войти на сайт</button>
     </div>
-    <div class="balance"><span class="lbl">Баланс</span><span class="val" id="balance">0</span><span style="color:var(--gold)">💎</span></div>
   </div>
 </header>
 
 <main class="wrap">
-  <div class="intro">
-    <h1>Отправь дроп и <span>получи кнайф</span></h1>
-    <p>Симулятор кейсов в стиле Stand Knife. Крути барабан, выбивай ножи и оружие со скинами, собирай коллекцию. Качество и названия — как в шутере: обычное, редкое, эпичное и легендарное.</p>
-    <div class="kpis">
-      <div class="kpi"><div class="n" id="kpiOpen">0</div><div class="t">Открыто кейсов</div></div>
-      <div class="kpi"><div class="n" id="kpiKnives">0</div><div class="t">Кнайфов выпало</div></div>
-      <div class="kpi"><div class="n" id="kpiSpent">0</div><div class="t">Потрачено 💎</div></div>
-    </div>
+
+  <!-- Live -->
+  <div class="live">
+    <span class="tag">LIVE</span>
+    <div class="lstrip" id="liveStrip"></div>
   </div>
 
-  <section>
-    <h2>Кейсы</h2>
-    <p class="sub">Кликни по кейсу, чтобы перейти к открытию.</p>
-    <div class="cases-grid" id="casesGrid"></div>
+  <!-- Баннеры -->
+  <div class="banners">
+    <div class="bnr rose"><h4>🎁 Розыгрыш скинов</h4><p>Раздача подарков каждые 3 часа — не пропусти!</p><div class="timer" id="timerDraw">До розыгрыша: --:--</div><span class="ic">🎁</span></div>
+    <div class="bnr gold"><h4>💎 Голда без доната</h4><p>Качай BestSkins и получай игровую валюту бесплатно.</p><span class="ic">💎</span></div>
+    <div class="bnr cyan"><h4>🤝 Сотрудничество</h4><p>Приглашай друзей и получай до 50% прибыли. <a href="#" style="color:var(--cyan)">Telegram</a></p><span class="ic">🤝</span></div>
+  </div>
+
+  <!-- Кейсы -->
+  <section id="cases">
+    <div class="sec-head">
+      <div>
+        <h1>🌴 Летний вайб</h1>
+        <div class="sub">Жара, как в лобби на закладке — залетай, крути и лови топовые скины под летний вайб!</div>
+      </div>
+      <div class="sec-tabs">
+        <button class="active">Live</button>
+        <button>Топ</button>
+        <button>Все</button>
+      </div>
+    </div>
+    <div class="cases" id="casesGrid"></div>
   </section>
 
-  <section id="open">
-    <h2>Открытие</h2>
+  <!-- Барабан -->
+  <section id="open" class="open-wrap">
     <div class="open-panel">
       <div class="open-head">
         <div class="tbox" id="openIcon">🎁</div>
         <div>
-          <h3 id="openName">Кейс не выбран</h3>
+          <h3 id="openName">Выбери кейс</h3>
           <div class="cost" id="openCost">—</div>
         </div>
       </div>
       <div class="spinner"><div class="strip" id="strip"></div></div>
       <div class="controls">
-        <button class="btn-x" id="btnOpen" disabled>Открыть кейс</button>
-        <button class="btn-outline" id="btnQuit">Сменить кейс</button>
+        <button class="btn btn-pink" id="btnOpen" disabled>Открыть кейс</button>
+        <button class="btn btn-ghost" id="btnQuit">Сменить кейс</button>
       </div>
       <div class="result" id="result"><div class="empty">Выбери кейс в магазине выше.</div></div>
     </div>
   </section>
 
-  <section>
-    <h2>Твоя коллекция</h2>
-    <p class="sub">Выпавшие ножи и оружие в твоём скине.</p>
-    <div class="summ">
-      <div class="s">Всего предметов <b id="totalItems">0</b></div>
-      <div class="s">Стоимость коллекции <b id="invValue" style="color:var(--gold)">0 💎</b></div>
+  <!-- Низ -->
+  <div class="bottom">
+    <div class="card" id="bonus">
+      <h3>🎡 Барабан бонусов</h3>
+      <div class="sub">Крути за задания и забирай бесплатные кейсы!</div>
+      <div class="wheel" id="wheel">
+        <div class="pin">🔽</div>
+        <div class="hub"><b id="wheelLabel">крути</b></div>
+      </div>
+      <div class="wheel-labels"><span>50💎</span><span>Кейс</span><span>100💎</span><span>🎁</span></div>
+      <button class="btn-spin" id="btnSpin">Крутить барабан</button>
     </div>
-    <table id="invTable">
-      <thead><tr><th>Предмет</th><th>Тип</th><th>Качество</th><th>Цена 💎</th><th>Кол‑во</th></tr></thead>
-      <tbody id="invBody"></tbody>
-    </table>
-    <div class="empty-inv" id="invEmpty">Пока пусто — открой первый кейс!</div>
-    <div style="margin-top:22px;text-align:right">
-      <button class="btn-outline" id="btnReset">Сбросить аккаунт</button>
+    <div class="card">
+      <h3>🏆 Пропуск &amp; ранг</h3>
+      <div class="sub">Играй и зарабатывай награды.</div>
+      <div class="rank-line"><i id="rankFill"></i></div>
+      <div class="ranktxt"><span id="rankLvl">Уровень 1</span><span id="rankXp">0 / 100 XP</span></div>
+      <div class="rewards" id="rewards"></div>
     </div>
-    <ul class="rar-legend">
-      <li><span class="dot" style="background:#8b98ad"></span> Обычное — до 6 💎</li>
-      <li><span class="dot" style="background:#3ddc84"></span> Редкое — до 60 💎</li>
-      <li><span class="dot" style="background:#7d6bff"></span> Эпичное — до 600 💎</li>
-      <li><span class="dot" style="background:#ff9f43"></span> Легендарное — до 2400 💎</li>
-      <li><span class="dot" style="background:#ff5470"></span> Кнайф — топ‑дроп 🔪</li>
-    </ul>
-  </section>
+  </div>
 
-  <footer>Все скины и названия — вымышленные, демонстрационные. Это симулятор, деньги никуда не списываются.</footer>
+  <footer>
+    Демонстрационный симулятор в стиле Standoff. Все скины, кейсы и цены — вымышленные. <b>Не является лотереей</b>, деньги не списываются.
+  </footer>
 </main>
 
-<div class="toast" id="toast"><div class="msg"><span class="ic"></span><span class="txt"></span></div></div>
+<div class="toast" id="toast"></div>
 
 <script>
 (function(){
   "use strict";
 
-  var R = {
-    common:    {name:"Обычное",    color:"#8b98ad"},
-    rare:      {name:"Редкое",     color:"#3ddc84"},
-    epic:      {name:"Эпичное",    color:"#7d6bff"},
-    legendary: {name:"Легендарное",color:"#ff9f43"},
-    knife:     {name:"Кнайф",      color:"#ff5470"}
+  // ---------- SVG предметов ----------
+  function akSVG(col){return '<svg viewBox="0 0 140 40"><defs><linearGradient id="a" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M0 22 l30 6 8 8 22 2 62 0 10 -4 8 -6 -6 -8 -14 -2 C104 16 52 16 26 16 Z" fill="url(#a)" stroke="#0c0e14" stroke-width="1.4"/><rect x="86" y="34" width="16" height="10" rx="2" fill="#2a2f38" stroke="#0c0e14"/><path d="M38 23 l66 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
+  function smgSVG(col){return '<svg viewBox="0 0 140 40"><defs><linearGradient id="s" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M2 21 l20 6 6 7 26 2 58 0 10 -4 8 -4 -4 -8 -16 -2 C92 16 36 15 26 15 Z" fill="url(#s)" stroke="#0c0e14" stroke-width="1.4"/><rect x="56" y="34" width="14" height="10" rx="2" fill="#2a2f38" stroke="#0c0e14"/><rect x="44" y="18" width="16" height="7" fill="#14181f"/><path d="M30 23 l58 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
+  function rifleSVG(col){return '<svg viewBox="0 0 150 42"><defs><linearGradient id="r" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M2 22 l26 4 8 8 24 3 60 0 14 -4 8 -2 -2 -8 -16 -2 C100 20 46 16 30 16 Z" fill="url(#r)" stroke="#0c0e14" stroke-width="1.4"/><rect x="92" y="32" width="18" height="10" rx="2" fill="#242a33" stroke="#0c0e14"/><rect x="52" y="20" width="18" height="7" fill="#14181f"/><path d="M36 24 l60 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
+  function pisSVG(col){return '<svg viewBox="0 0 120 42"><defs><linearGradient id="p" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+col+'"/><stop offset="1" stop-color="#2a2f38"/></linearGradient></defs><path d="M4 20 l22 0 8 -8 30 0 8 8 26 2 8 6 -10 6 -38 -2 -8 6 C40 34 14 30 4 22 Z" fill="url(#p)" stroke="#0c0e14" stroke-width="1.4"/><rect x="24" y="28" width="13" height="12" rx="2" fill="#2a2f38" stroke="#0c0e14"/><path d="M34 22 l44 0" stroke="#ffffff" stroke-width="2.5" opacity=".4"/></svg>';}
+
+  // ---------- Качество ----------
+  var Q = {
+    common:{name:"Промышленное",color:"#8a93a6"},
+    rare:{name:"Армейское",color:"#3de08a"},
+    epic:{name:"Запрещённое",color:"#3dd7ff"},
+    legendary:{name:"Тайное",color:"#ff9f43"},
+    gold:{name:"Призрачное",color:"#ff3f6e"}
   };
 
-  // ---------- Уникальные SVG-рисунки оружия ----------
-  function knifeSVG(body, handle, accent){
-    return '<svg viewBox="0 0 120 40"><defs><linearGradient id="k1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eef2f7"/><stop offset="1" stop-color="#98a6b5"/></linearGradient><linearGradient id="kb" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+body+'"/><stop offset="1" stop-color="'+accent+'"/></linearGradient></defs><path d="M6 22 L6 18 C30 12 44 14 60 20 L112 20 C110 26 100 28 90 24 C66 28 40 28 20 24 Z" fill="url(#kb)" stroke="#10131a" stroke-width="1.4"/><rect x="70" y="15" width="48" height="10" rx="3" fill="'+handle+'" stroke="#10131a" stroke-width="1"/><path d="M14 21 l42 0" stroke="#ffffff" stroke-width="2" opacity=".45"/></svg>';
-  }
-  function karambitSVG(body, handle, accent){
-    return '<svg viewBox="0 0 120 40"><defs><linearGradient id="k2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+body+'"/><stop offset="1" stop-color="'+accent+'"/></linearGradient></defs><path d="M8 22 C14 8 34 6 46 12 C54 16 50 26 42 28 C64 30 78 24 92 18 L118 20 C112 26 100 28 88 26 C78 30 64 32 50 32 C30 34 14 32 8 22 Z" fill="url(#k2)" stroke="#10131a" stroke-width="1.3"/><path d="M46 12 C38 18 34 24 36 30" stroke="#ffffff" stroke-width="2" fill="none" opacity=".4"/><circle cx="35" cy="24" r="6.5" fill="'+handle+'" stroke="#10131a" stroke-width="1.5"/></svg>';
-  }
-  function butterflySVG(body, handle, accent){
-    return '<svg viewBox="0 0 120 40"><defs><linearGradient id="k3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+body+'"/><stop offset="1" stop-color="'+accent+'"/></linearGradient></defs><path d="M4 18 C20 6 44 8 60 16 L96 14 C92 22 82 26 72 22 L40 26 C24 28 10 26 4 18 Z" fill="url(#k3)" stroke="#10131a" stroke-width="1.4"/><rect x="52" y="12" width="42" height="6" rx="3" fill="'+handle+'" stroke="#10131a" stroke-width="1"/><rect x="52" y="20" width="42" height="6" rx="3" fill="'+handle+'" stroke="#10131a" stroke-width="1"/><circle cx="50" cy="18" r="4" fill="#10131a"/><path d="M18 21 l18 3" stroke="#ffffff" stroke-width="2" opacity=".4"/></svg>';
-  }
-  function rifleSVG(body, handle, accent){
-    return '<svg viewBox="0 0 160 44"><defs><linearGradient id="k4" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+body+'"/><stop offset="1" stop-color="'+accent+'"/></linearGradient></defs><path d="M4 20 l26 6 6 10 20 4 70 0 18 -2 6 -6 -6 -6 -12 -2 C110 20 60 16 40 16 Z" fill="url(#k4)" stroke="#10131a" stroke-width="1.4"/><rect x="96" y="34" width="18" height="10" rx="2" fill="'+handle+'" stroke="#10131a" stroke-width="1"/><rect x="52" y="21" width="16" height="6" fill="#14181f"/><path d="M38 24 l66 0" stroke="#ffffff" stroke-width="2.5" opacity=".45"/></svg>';
-  }
-  function pistolSVG(body, handle, accent){
-    return '<svg viewBox="0 0 120 44"><defs><linearGradient id="k5" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+body+'"/><stop offset="1" stop-color="'+accent+'"/></linearGradient></defs><path d="M8 20 l20 0 8 -8 30 0 8 8 30 2 L106 26 96 30 30 30 20 24 Z" fill="url(#k5)" stroke="#10131a" stroke-width="1.4"/><rect x="26" y="30" width="13" height="10" rx="2" fill="'+handle+'" stroke="#10131a" stroke-width="1"/><path d="M34 22 l44 0" stroke="#ffffff" stroke-width="2.5" opacity=".45"/></svg>';
-  }
-  function smgSVG(body, handle, accent){
-    return '<svg viewBox="0 0 150 44"><defs><linearGradient id="k6" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+body+'"/><stop offset="1" stop-color="'+accent+'"/></linearGradient></defs><path d="M6 20 l16 8 6 8 26 2 70 0 12 -4 6 -6 -6 -8 -14 -2 C92 16 40 16 24 16 Z" fill="url(#k6)" stroke="#10131a" stroke-width="1.4"/><rect x="56" y="34" width="15" height="10" rx="2" fill="'+handle+'" stroke="#10131a" stroke-width="1"/><rect x="44" y="20" width="17" height="6" fill="#14181f"/><path d="M32 23 l62 0" stroke="#ffffff" stroke-width="2.5" opacity=".45"/></svg>';
-  }
-  function shotSVG(body, handle, accent){
-    return '<svg viewBox="0 0 140 46"><defs><linearGradient id="k7" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="'+body+'"/><stop offset="1" stop-color="'+accent+'"/></linearGradient></defs><path d="M4 18 l14 0 8 10 96 0 8 -12 6 0 0 10 -8 8 -110 0 -8 -6 Z" fill="url(#k7)" stroke="#10131a" stroke-width="1.4"/><rect x="24" y="30" width="42" height="14" rx="3" fill="'+handle+'" stroke="#10131a" stroke-width="1"/><path d="M30 22 l62 0" stroke="#ffffff" stroke-width="2.5" opacity=".45"/></svg>';
-  }
+  // ---------- Кейсы ----------
+  function it(name,row,col,qual,val){return {name:name,type:row,col:col,q:qual,val:val,svg:name.toLowerCase().indexOf("ak")>-1?akSVG(col):name.toLowerCase().indexOf("ump")>-1?smgSVG(col):name.toLowerCase().indexOf("p90")>-1?smgSVG(col):name.toLowerCase().indexOf("awm")>-1?rifleSVG(col):name.toLowerCase().indexOf("val")>-1?rifleSVG(col):name.toLowerCase().indexOf("uzi")>-1?smgSVG(col):name.toLowerCase().indexOf("m4")>-1?rifleSVG(col):name.toLowerCase().indexOf("fammas")>-1?rifleSVG(col):pisSVG(col)}}
 
-  // Описание предмета: тип оружия + собственная картинка + скин.
-  function it(name,type,quality,val,body,handle,accent){
-    var svg;
-    if(type==="карамбит") svg=karambitSVG(body,handle,accent);
-    else if(type==="бабочка") svg=butterflySVG(body,handle,accent);
-    else if(type==="штык-нож") svg=knifeSVG(body,handle,accent);
-    else if(type==="винтовка") svg=rifleSVG(body,handle,accent);
-    else if(type==="пистолет") svg=pistolSVG(body,handle,accent);
-    else if(type==="пистолет-пулемёт") svg=smgSVG(body,handle,accent);
-    else svg=shotSVG(body,handle,accent);
-    return {name:name, type:type, r:quality, val:val, svg:svg};
-  }
-
-  // ---------- Кейсы с дропом ----------
   var CASES = [
-    {
-      id:"knifecase", name:"Кнайф‑кейс", price:90, color:"#ff5470", icon:"🔪",
-      items:[
-        it("Разбойник","бабочка","common",3,"#98a1ab","#3a3f45","#c9d1d9"),
-        it("Сталь","карамбит","common",4,"#c7cdd4","#5a5344","#9aa7b5"),
-        it("Обугленный","штык-нож","common",5,"#3a3f45","#23262a","#7a8084"),
-        it("Хищник","карамбит","rare",34,"#3ddc84","#0f4d2b","#b7ffd6"),
-        it("Неон","бабочка","rare",46,"#58a6ff","#122c49","#c8e1ff"),
-        it("Пламя","штык-нож","rare",52,"#ff9f43","#5c2d12","#ffdcc0"),
-        it("Сапфир","карамбит","epic",420,"#4d6bff","#181e4d","#c3ccff"),
-        it("Призрак","бабочка","epic",530,"#a5b1bd","#39404a","#e6ecf2"),
-        it("Титан","штык-нож","epic",590,"#7d7f85","#2c2e33","#d6d6d6"),
-        it("Золотой дракон","карамбит","legendary",2200,"#ffd700","#8a6d1c","#fff3b0"),
-        it("Кнайф «Король»","карамбит","knife",4500,"#ff5470","#5e0f1f","#ffb3c0")
-      ]
-    },
-    {
-      id:"military", name:"Военный кейс", price:40, color:"#3ddc84", icon:"🎖️",
-      items:[
-        it("Полевая сталь","штык-нож","common",3,"#aab2ba","#3f464d","#c9d1d9"),
-        it("Маскировка","пистолет","common",4,"#556b3f","#2c3520","#8ea879"),
-        it("Ржавчина","пистолет","common",5,"#8a6a46","#3d2f1f","#b98d5f"),
-        it("Пустыня","пистолет","rare",30,"#c2a15f","#6b5226","#e6d1a1"),
-        it("Победа","пистолет","rare",42,"#58a6ff","#1c3a5e","#c4d9f2"),
-        it("Камуфляж","пистолет-пулемёт","rare",50,"#7c8455","#41462c","#b7bd8f"),
-        it("Штурм","пистолет-пулемёт","epic",380,"#9b6bff","#3c1e66","#d9c2ff"),
-        it("Лесной","винтовка","epic",470,"#3f6e3a","#1f3a1b","#9ed193"),
-        it("Гром","винтовка","legendary",1900,"#ffd700","#7a6217","#fff0b3"),
-        it("Кнайф «Генерал»","штык-нож","knife",3800,"#ff5470","#5e0f1f","#ffc2cd")
-      ]
-    },
-    {
-      id:"ice", name:"Ледяной кейс", price:30, color:"#58b8ff", icon:"❄️",
-      items:[
-        it("Зимняя","бабочка","common",3,"#a6bdd0","#3a4d5e","#d7e4ee"),
-        it("Стужа","штык-нож","common",4,"#7fa6c4","#2c4458","#c3d8e8"),
-        it("Снежинка","бабочка","rare",38,"#dff3ff","#7fa4bd","#ffffff"),
-        it("Лёд","карамбит","rare",45,"#b8dcf2","#406580","#e8f5ff"),
-        it("Полярная","пистолет","rare",48,"#cfedff","#3a5b72","#ffffff"),
-        it("Северное сияние","штык-нож","epic",420,"#8ff0d0","#1f5c4a","#e4fff6"),
-        it("Глетчер","карамбит","epic",500,"#8fd3ff","#2a4a63","#e7f6ff"),
-        it("Арктика","винтовка","epic",560,"#aee2ff","#33607f","#ffffff"),
-        it("Кристалл","штык-нож","legendary",2100,"#bfe9ff","#3f6d8a","#ffffff"),
-        it("Кнайф «Вечная мерзлота»","бабочка","knife",4200,"#7fd8ff","#123c52","#e0f6ff")
-      ]
-    },
-    {
-      id:"golden", name:"Золотой кейс", price:70, color:"#ffd700", icon:"👑",
-      items:[
-        it("Латунь","пистолет","common",5,"#c9b458","#7a6a25","#eadc8f"),
-        it("Медный","пистолет","common",6,"#b87333","#6b3f17","#e0a76b"),
-        it("Янтарь","штык-нож","rare",44,"#e6a13d","#7a5217","#ffd9a0"),
-        it("Шампанское","карамбит","rare",58,"#d9c087","#8a7033","#f6ecc9"),
-        it("Золото","пистолет","epic",520,"#ffd700","#8a6d1c","#fff3b0"),
-        it("Королевский","винтовка","epic",580,"#e0b13c","#7e5f14","#ffe9a8"),
-        it("Чистое золото","штык-нож","legendary",2300,"#ffd700","#9a7a1c","#fffbe0"),
-        it("Кнайф «Император»","карамбит","knife",4900,"#ffe680","#7a6210","#fff8d6")
-      ]
-    }
+    {id:"summer", name:"Летний Фестиваль", price:59, old:299, hot:false, stock:null, art:akSVG("#ffc93c"), rar:false,
+     items:[
+       it("UMP45 Beast","ПП","#ff8f3c","rare",45),
+       it("Akimbo Uzi Overdrive Red","Пистолеты","#ff3f6e","rare",52),
+       it("P90 Clash","ПП","#3de08a","epic",140),
+       it("FabM BOOM","Автомат","#3dd7ff","epic",210),
+       it("VAL Gilded Gale","Штурмовая","#ffc93c","legendary",900),
+       it("M4 Samurai","Автомат","#ff9f43","legendary",1200),
+       it("AWM BOOM","Снайперская","#ff3f6e","gold",2600)
+     ]},
+    {id:"sun", name:"Солнечный Удар", price:39, old:129, hot:true, stock:null, rar:false, art:smgSVG("#ff9f43"),
+     items:[
+       it("P90 Clash","ПП","#3de08a","rare",40),
+       it("UMP45 Beast","ПП","#ff8f3c","rare",48),
+       it("AKR Tiger","Автомат","#ff9f43","epic",200),
+       it("AWM Forest","Снайперская","#3dd7ff","epic",320),
+       it("M4 Dragon","Автомат","#ff3f6e","legendary",1500)
+     ]},
+    {id:"gold", name:"Голда", price:49, old:149, hot:false, stock:null, rar:true, art:pisSVG("#ffc93c"),
+     items:[
+       it("Gold AK47","Автомат","#ffc93c","rare",60),
+       it("Gold M4","Автомат","#ffd23c","epic",260),
+       it("Gold AWM","Снайперская","#ffe35c","legendary",1800),
+       it("Gold Karambit","Нож","#ff5470","gold",3200)
+     ]},
+    {id:"gift", name:"Подарок", price:99, old:999, hot:true, stock:{left:197,total:200}, rar:false, art:rifleSVG("#ff3f6e"),
+     items:[
+       it("FabM BOOM","Автомат","#3dd7ff","epic",210),
+       it("M4 Samurai","Автомат","#ff9f43","legendary",1200),
+       it("AWM BOOM","Снайперская","#ff3f6e","gold",2600),
+       it("Golden Karambit","Нож","#ffc93c","gold",4200)
+     ]}
   ];
 
-  function tryLS(){ try{ return window.localStorage; }catch(e){ return null; } }
+  // ---------- Оружие в ролле со случайным (клиент) ----------
+  function rollItem(c){
+    var weights={rare:34,epic:22,legendary:8,gold:2};
+    var pool=c.items,total=0,w=pool.map(function(x){
+      total+=(weights[x.q]||weights.rare);return {x:x,end:total};
+    });
+    var r=Math.random()*total;
+    for(var i=0;i<w.length;i++) if(r<=w[i].end) return w[i].x;
+    return pool[pool.length-1];
+  }
+
+  // ---------- Состояние ----------
+  function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
-  function loadState(){
-    var d={balance:800,opened:0,knives:0,spent:0,inv:{}};
+  function load(){
+    var d={bal:500,opened:0,level:1,xp:0};
     if(!LS) return d;
-    try{ var s=JSON.parse(LS.getItem("standknife_v1")); if(s&&typeof s.balance==="number") return Object.assign(d,s); }catch(e){}
+    try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
   }
-  function saveState(){ if(!LS) return; try{ LS.setItem("standknife_v1",JSON.stringify(state)); }catch(e){} }
+  var st=load();
+  function save(){if(!LS)return;try{LS.setItem("scase_v1",JSON.stringify(st));}catch(e){}}
 
-  var state=loadState(), selected=null, spinning=false;
   var $=function(id){return document.getElementById(id);};
-  var balEl=$("balance"), casesGrid=$("casesGrid"), strip=$("strip"),
-      btnOpen=$("btnOpen"), btnQuit=$("btnQuit"), btnReset=$("btnReset"),
-      result=$("result"), toastEl=$("toast");
-  function fmt(n){ return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g," "); }
-  var reduced = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var selected=null, spinning=false, wheelSpinning=false, liveIdx=0;
+  var reduced=window.matchMedia&&window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-  function showToast(ic,txt){
-    toastEl.querySelector(".ic").textContent=ic;
-    toastEl.querySelector(".txt").textContent=txt;
-    toastEl.classList.add("show");
-    clearTimeout(showToast._t);
-    showToast._t=setTimeout(function(){toastEl.classList.remove("show");},2200);
-  }
-  function renderBalance(){ balEl.textContent=fmt(state.balance); }
-  function renderKpis(){
-    $("kpiOpen").textContent=fmt(state.opened);
-    $("kpiKnives").textContent=fmt(state.knives);
-    $("kpiSpent").textContent=fmt(state.spent);
-  }
+  function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g," ");}
+  function toast(t){var e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){e.classList.remove("show");},2200);}
 
+  function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
+
+  // ---------- Live ----------
+  var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast","VAL Gilded Gale","M4 Samurai","AWM BOOM","AKR Tiger","Gold AWM"];
+  function renderLive(){
+    var strip=$("liveStrip");strip.innerHTML="";
+    for(var i=liveIdx;i<liveIdx+7;i++){
+      var n=liveItems[i%liveItems.length];
+      var e=document.createElement("span");e.className="litem";
+      e.innerHTML='<span class="n">'+n+'</span> · игрок'+(Math.floor(Math.random()*90)+10);
+      strip.appendChild(e);
+    }
+  }
+  setInterval(function(){liveIdx++;renderLive();},4000);
+
+  // ---------- Таймер ----------
+  function tickTimer(){
+    var now=Date.now(), end=(Math.floor(now/10800000)+1)*10800000, rem=end-now;
+    var h=Math.floor(rem/3600000),m=Math.floor(rem%3600000/60000),s=Math.floor(rem%60000/1000);
+    function p(x){return x<10?"0"+x:x;}
+    $("timerDraw").textContent="До розыгрыша: "+p(h)+":"+p(m)+":"+p(s);
+  }
+  setInterval(tickTimer,1000);tickTimer();
+
+  // ---------- Кейсы ----------
   function drawCases(){
-    casesGrid.innerHTML="";
+    var g=$("casesGrid");g.innerHTML="";
     CASES.forEach(function(c){
-      var card=document.createElement("div");
-      card.className="case"; card.setAttribute("role","button"); card.setAttribute("tabindex","0");
-      card.setAttribute("aria-label","Открыть кейс "+c.name+", цена "+c.price+" алмазов");
-      var hasKnife=c.items.some(function(i){return i.r==="knife";});
+      var card=document.createElement("div");card.className="case"+(c.rar?" rar":"");
+      var stock=c.stock;
+      var sold=stock&&stock.left<=0;
+      var stockHtml="";
+      if(stock) stockHtml='<span class="stock'+(stock.left<20?" low":"")+'">⚡ '+stock.left+' из '+stock.total+'</span>';
+      var hot=c.hot?'<span class="hot">ХИТ</span>':"";
       card.innerHTML=
-        '<div class="box">'+c.icon+'</div>'+
-        '<h3>'+c.name+'</h3>'+
-        '<div class="price">'+c.price+' 💎</div>'+
-        '<div class="chance">'+c.items.length+' предметов · кнайф ~'+(hasKnife?2:4)+'%</div>';
-      var line=document.createElement("div"); line.className="rarity-line";
-      line.style.background="linear-gradient(90deg,"+c.color+",#2b3440)";
-      card.appendChild(line);
-      function pick(){ selectCase(c.id,true); }
-      card.addEventListener("click",pick);
-      card.addEventListener("keydown",function(e){ if(e.key==="Enter"||e.key===" "){e.preventDefault();pick();} });
-      casesGrid.appendChild(card);
+        '<div class="th">'+hot+stockHtml+'<span class="art">'+c.art+'</span></div>'+
+        '<div class="cname">'+c.name+'</div>'+
+        '<div class="cmeta">'+c.items.length+' предметов</div>'+
+        '<div class="foot"><div class="price"><span class="now">'+c.price+' ₽</span><span class="old">'+c.old+' ₽</span></div>'+
+        '<button class="btn-open" '+(sold?'disabled':'')+'>'+(sold?'Распродан':'Открыть')+'</button></div>';
+      card.querySelector(".btn-open").addEventListener("click",function(){selectCase(c.id,true);});
+      if(!sold){card.addEventListener("click",function(e){if(!e.target.classList.contains("btn-open"))selectCase(c.id,true);});}
+      g.appendChild(card);
     });
   }
 
   function tileOf(it){
-    var col=R[it.r]||R.common;
-    var label=it.r==="knife"?"🔪 "+col.name:col.name;
-    return '<div class="tile"><div class="img">'+it.svg+'</div>'+
-      '<span class="name">'+it.name+'</span>'+
-      '<span class="type">'+it.type+'</span>'+
-      '<span class="r" style="background:'+col.color+'">'+label+'</span></div>';
+    var q=Q[it.q]||Q.rare;
+    return '<div class="tile"><div class="img">'+it.svg+'</div><div class="name">'+it.name+'</div>'+
+      '<span style="font-size:10px;padding:1px 7px;border-radius:20px;color:#0b0e13;font-weight:800;background:'+q.color+'">'+q.name+'</span></div>';
   }
   function buildStrip(c,win){
-    strip.innerHTML="";
-    for(var i=0;i<30;i++){
+    var strip=$("strip");strip.innerHTML="";
+    for(var i=0;i<28;i++){
       var it=c.items[Math.floor(Math.random()*c.items.length)];
-      var d=document.createElement("div"); d.innerHTML=tileOf(it); d=d.firstElementChild;
-      if(win&&it===win) d.style.boxShadow="inset 0 0 0 2px "+R[it.r].color;
+      var d=document.createElement("div");d.innerHTML=tileOf(it);d=d.firstElementChild;
+      if(win&&it===win)d.style.boxShadow="inset 0 0 0 2px #ffc93c";
       strip.appendChild(d);
     }
   }
-
   function selectCase(id,scroll){
-    var c=CASES.find(function(x){return x.id===id;});
-    if(!c||spinning) return;
+    var c=CASES.find(function(x){return x.id===id;});if(!c||spinning)return;
     selected=c;
-    $("openIcon").textContent=c.icon;
-    $("openName").textContent=c.name;
-    $("openCost").innerHTML=c.price+" 💎 за открытие";
-    btnOpen.disabled=false;
-    result.innerHTML='<div class="empty">Кейс выбран. Нажми «Открыть кейс».</div>';
+    $("openIcon").innerHTML=c.art;$("openName").textContent=c.name;
+    $("openCost").innerHTML=c.price+' ₽ за открытие';
+    $("btnOpen").disabled=false;
+    $("result").innerHTML='<div class="empty">Кейс выбран. Нажми «Открыть кейс».</div>';
     buildStrip(c,null);
-    if(scroll) $("open").scrollIntoView({behavior:"smooth",block:"start"});
+    if(scroll)$("open").scrollIntoView({behavior:"smooth",block:"start"});
   }
 
-  function rollItem(c){
-    var weights={common:46,rare:30,epic:15,legendary:7,knife:2};
-    var pool=c.items, total=0, weighted=pool.map(function(it){
-      total+=(weights[it.r]||1); return {it:it,end:total};
-    });
-    var r=Math.random()*total;
-    for(var i=0;i<weighted.length;i++) if(r<=weighted[i].end) return weighted[i].it;
-    return pool[pool.length-1];
-  }
-
-  var t0=1100;
+  // ---------- Открытие ----------
   function openCase(){
-    if(spinning||!selected) return;
-    if(state.balance<selected.price){
-      showToast("😕","Не хватает алмазов. Сбрось аккаунт или выбери дешевле."); return;
-    }
-    spinning=true; btnOpen.disabled=true;
-    state.balance-=selected.price; state.spent+=selected.price; state.opened+=1;
-    renderBalance(); renderKpis();
+    if(spinning||!selected)return;
+    if(st.bal<selected.price){toast("😕 Не хватает монет — покрути барабан бонусов.");return;}
+    spinning=true;$("btnOpen").disabled=true;
+    st.bal-=selected.price;st.opened++;
+    if(selected.stock)selected.stock.left=Math.max(0,selected.stock.left-1);
+    renderBal();drawCases();
 
     var win=rollItem(selected);
     buildStrip(selected,win);
-    var tile=strip.firstElementChild;
-    var tw=tile?tile.offsetWidth:150;
-    var count=strip.children.length;
+    var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
     var shift=Math.floor(Math.random()*7)-3;
-    var target=-((count/2-3)*tw + tw*3 + shift*tw);
-
-    if(reduced){ strip.style.transform="translateX("+target+"px)"; finishOpen(win); return; }
-    strip.style.transition="transform "+t0/1000+"s cubic-bezier(.22,1,.22,1)";
-    strip.style.transform="translateX("+target+"px)";
-    setTimeout(function(){finishOpen(win);},t0+120);
+    var target=-((28/2-3)*tw+tw*3+shift*tw);
+    if(reduced){$("strip").style.transform="translateX("+target+"px)";finish(win);return;}
+    $("strip").style.transition="transform 1.1s cubic-bezier(.22,1,.22,1)";
+    $("strip").style.transform="translateX("+target+"px)";
+    setTimeout(function(){finish(win);},1180);
   }
-
-  function finishOpen(win){
-    var col=R[win.r]||R.common;
-    addToInv(win);
-    if(win.r==="knife") state.knives+=1;
-    result.innerHTML='<div class="get">'+win.svg+'</div>'+
-      '<h4 style="color:'+col.color+'">'+win.name+'</h4>'+
-      '<div class="cnt">'+win.type+' · '+col.name+' · '+win.val+' 💎</div>';
-    if(win.r==="knife") showToast("🔪","ГОРОСКОП: тебе выпал кнайф!");
-    renderKpis(); renderInv(); saveState();
-    spinning=false; btnOpen.disabled=false;
+  function finish(win){
+    var q=Q[win.q]||Q.rare;
+    addXp(30);
+    if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
+    $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
+      '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
+      '<div>'+q.name+' · '+win.val+' ₽</div>';
+    spinning=false;$("btnOpen").disabled=false;
+    save();
   }
-
-  function addToInv(it){
-    var key=it.r+"|"+it.name;
-    if(!state.inv[key]) state.inv[key]={name:it.name,type:it.type,r:it.r,val:it.val,count:0,svg:it.svg};
-    state.inv[key].count++; state.inv[key].val=it.val;
+  function addXp(n){
+    st.xp+=n;var need=st.level*100;
+    while(st.xp>=need){st.xp-=need;st.level++;need=st.level*100;toast("🎉 Новый уровень: "+st.level+"!");}
+    renderRank();save();
   }
-
-  var rOrder=["knife","legendary","epic","rare","common"];
-  function renderInv(){
-    var keys=Object.keys(state.inv);
-    var body=$("invBody"); body.innerHTML="";
-    var total=0,value=0;
-    keys.sort(function(a,b){ return rOrder.indexOf(state.inv[a].r)-rOrder.indexOf(state.inv[b].r); });
-    keys.forEach(function(k){
-      var it=state.inv[k], col=R[it.r]||R.common;
-      total+=it.count; value+=it.val*it.count;
-      var tr=document.createElement("tr");
-      tr.innerHTML='<td><div class="icell"><span class="si">'+it.svg+'</span><span>'+it.name+'</span></div></td>'+
-        '<td>'+it.type+'</td>'+
-        '<td class="rar" style="color:'+col.color+'">'+col.name+'</td>'+
-        '<td>'+it.val+'</td>'+
-        '<td><span class="q">'+it.count+'</span></td>';
-      body.appendChild(tr);
+  function renderRank(){
+    var need=st.level*100;
+    $("rankLvl").textContent="Уровень "+st.level;
+    $("rankXp").textContent=st.xp+" / "+need+" XP";
+    $("rankFill").style.width=Math.min(100,g(st.xp/need*100))+"%";
+    var rw=$("rewards");rw.innerHTML="";
+    var rewards=[["20 💎",100],["Кейс",250],["50 💎",400],["Кейс",550],["100 💎",800]];
+    var totalNeed=100,unlocked=0;
+    var thresh=[0];
+    rewards.forEach(function(r){totalNeed+=r[1];thresh.push(totalNeed);});
+    var i=st.level; // упрощение: уровень = число наград
+    rewards.forEach(function(r,idx){
+      var done=st.level> idx;
+      var e=document.createElement("span");e.className="reward"+(done?" done":"");
+      e.innerHTML="<b>"+r[0]+"</b> · ур."+(idx+1);if(done)e.setAttribute("done","");
+      rw.appendChild(e);
     });
-    $("totalItems").textContent=fmt(total);
-    $("invValue").textContent=fmt(value)+" 💎";
-    $("invEmpty").style.display=keys.length===0?"":"none";
-    $("invTable").style.display=keys.length===0?"none":"";
   }
 
-  btnOpen.addEventListener("click",openCase);
-  btnQuit.addEventListener("click",function(){
-    selected=null; btnOpen.disabled=true;
-    $("openIcon").textContent="🎁"; $("openName").textContent="Кейс не выбран"; $("openCost").textContent="—";
-    strip.innerHTML=""; result.innerHTML='<div class="empty">Выбери кейс в магазине выше.</div>';
+  // ---------- Барабан ----------
+  var wheelSlide=0;
+  $("btnSpin").addEventListener("click",function(){
+    if(wheelSpinning)return;
+    wheelSpinning=true;
+    // лёгкая анимация: меняем подпись и добавляем XP
+    var prize=["50 💎","Кейс","100 💎","🎁"][Math.floor(Math.random()*4)];
+    $("wheelLabel").textContent="...";
+    setTimeout(function(){
+      $("wheelLabel").textContent=prize;
+      if(prize.indexOf("💎")>-1){st.bal+=parseInt(prize);renderBal();}
+      else toast("🎁 Бонус!");
+      wheelSpinning=false;save();
+    },900);
+  });
+
+  // ---------- Прочее ----------
+  $("btnQuit").addEventListener("click",function(){
+    selected=null;$("btnOpen").disabled=true;
+    $("openIcon").innerHTML="🎁";$("openName").textContent="Выбери кейс";$("openCost").textContent="—";
+    $("strip").innerHTML="";$("result").innerHTML='<div class="empty">Выбери кейс в магазине выше.</div>';
     $("open").scrollIntoView({behavior:"smooth",block:"start"});
   });
-  btnReset.addEventListener("click",function(){
-    if(!confirm("Сбросить прогресс и вернуть стартовый баланс? Это удалит коллекцию.")) return;
-    state={balance:800,opened:0,knives:0,spent:0,inv:{}};
-    saveState(); renderBalance(); renderKpis(); renderInv();
-    showToast("🗑️","Аккаунт сброшен");
+  $("btnOpen").addEventListener("click",openCase);
+  $("btnLogin").addEventListener("click",function(){toast("🔐 Вход через Steam — скоро.");});
+  document.querySelectorAll(".sec-tabs button").forEach(function(b){
+    b.addEventListener("click",function(){
+      document.querySelectorAll(".sec-tabs button").forEach(function(x){x.classList.remove("active");});
+      b.classList.add("active");
+    });
   });
 
-  drawCases(); renderBalance(); renderKpis(); renderInv();
+  function g(x){return x;}
+
+  drawCases();renderBal();renderLive();renderRank();tickTimer();
 })();
 </script>
 </body>
