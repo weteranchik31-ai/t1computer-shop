@@ -192,15 +192,10 @@
 <header class="top">
   <div class="wrap tbar">
     <div class="logo"><span class="em">🎁</span><span>STANDOFF <b>case.pro</b></span></div>
-    <nav id="nav">
-      <a href="#battle">Сражения</a>
-      <a href="#cases">Пропуск</a>
-      <a href="#cases">Контракты</a>
-      <a href="#cases">Апгрейды</a>
-      <a href="#bonus">Бонусы</a>
-      <a href="#cases">Рефералка</a>
-      <a href="#cases">Топ</a>
-    </nav>
+    <div class="auth">
+      <span class="bal" id="balance">0 💎</span>
+      <button class="btn-login" id="btnLogin">Войти на сайт</button>
+    </div>
   </div>
 </header>
 
@@ -281,6 +276,23 @@
 </main>
 
 <div class="toast" id="toast"></div>
+
+<!-- Модалка регистрации -->
+<div class="modal" id="modal">
+  <div class="modal-box">
+    <button class="modal-close" id="modalClose" aria-label="Закрыть">✕</button>
+    <h2>Регистрация</h2>
+    <p class="modal-sub">Создай аккаунт, чтобы играть и пополнять баланс.</p>
+    <label for="inNick">Никнейм</label>
+    <input id="inNick" name="nick" type="text" placeholder="Введите никнейм" maxlength="20" autocomplete="nickname">
+    <label for="inId">ID</label>
+    <input id="inId" name="id" type="text" placeholder="Введите ID (числами)" inputmode="numeric" autocomplete="off">
+    <label for="inRef">Реферальная ссылка</label>
+    <input id="inRef" name="ref" type="text" value="https://weteranchik31-ai.github.io/stand-knife-cases/#cases" spellcheck="false">
+    <div class="modal-err" id="modalErr"></div>
+    <button class="btn-reg" id="btnReg">Зарегистрироваться</button>
+  </div>
+</div>
 
 <script>
 (function(){
@@ -406,7 +418,9 @@
   function fmt(n){return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g," ");}
   function toast(t){var e=$("toast");e.textContent=t;e.classList.add("show");clearTimeout(toast._t);toast._t=setTimeout(function(){e.classList.remove("show");},2200);}
 
-var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast","VAL Gilded Gale","M4 Samurai","AWM BOOM","AKR Tiger","Gold AWM"];
+function renderBal(){$("balance").textContent=fmt(st.bal)+" 💎";}
+
+  var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast","VAL Gilded Gale","M4 Samurai","AWM BOOM","AKR Tiger","Gold AWM"];
   var livePlayers=["꧁༒☬ᤂℌ໔ℜ؏ৡ☬༒꧂","ᶜᴿᴬᶻᵞkíllєrツ","ᶜᴿᴬᶻᵞM̷O̷N̷S̷T̷E̷R̷ツ","彡ᴮᴬᴰʙᴏʏ彡ﺤ 乡","꧁☬ĶrÃçĄŷ4įĶ☬꧂","𝓑𝓻𝓸𝓴𝓮𝓷 𝓗𝓮𝓪𝓻𝓽♡","꧁༒☬₣ℜøźєη•₣ℓα₥єֆ☬༒꧂","💛M 1 c k y y💛","Ŧø₱4ĭĶ ₱ŗõ","꧁༒☬SaNtA☬༒꧂","ᬊᬁS͢ᴍᴀsʜ ツ","ᵒᶠᶠᶤᶜᶤᵃˡ","Stͥⱥnͣdͫoffﾂ ᵒᶠᶠᶤᶜᶤᵃˡ","M̷O̷N̷S̷T̷E̷R̷","ᶜᴿᴬᶻᵞBaNaNツ","山А山人ЫК","ЗŷБêĤкØ Ми✖ÃиЛ ПęŦрØßиЧ","₡҈Ⱥ҈М҈ П҈Ǿ ₡҈ɆБɆ","ŁĒgĘndÁ","ḴȐȺŠȂṼḈĤỈḰ","Сигма","денис T1PC","Нави"];
   function renderLive(){
     var strip=$("liveStrip");strip.innerHTML="";
@@ -483,7 +497,7 @@ var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast",
     spinning=true;$("btnOpen").disabled=true;
     st.bal-=selected.price;st.opened++;
     if(selected.stock)selected.stock.left=Math.max(0,selected.stock.left-1);
-    drawCases();
+    drawCases();renderBal();
 
     var win=rollItem(selected);
     buildStrip(selected,win);
@@ -540,7 +554,7 @@ var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast",
     $("wheelLabel").textContent="...";
     setTimeout(function(){
       $("wheelLabel").textContent=prize;
-      if(prize.indexOf("💎")>-1){st.bal+=parseInt(prize);}
+      if(prize.indexOf("💎")>-1){st.bal+=parseInt(prize);renderBal();}
       else toast("🎁 Бонус!");
       wheelSpinning=false;save();
     },900);
@@ -555,6 +569,36 @@ var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast",
   });
   $("btnOpen").addEventListener("click",openCase);
 
+  // ---------- Регистрация / Вход ----------
+  var modal=$("modal"), modalErr=$("modalErr");
+  function openModal(){ modal.classList.add("open"); modalErr.textContent=""; $("inNick").focus(); }
+  function closeModal(){ modal.classList.remove("open"); }
+  $("btnLogin").addEventListener("click",openModal);
+  $("modalClose").addEventListener("click",closeModal);
+  modal.addEventListener("click",function(e){ if(e.target===modal) closeModal(); });
+  document.addEventListener("keydown",function(e){ if(e.key==="Escape") closeModal(); });
+
+  $("btnReg").addEventListener("click",function(){
+    var nick=$("inNick").value.trim();
+    var id=$("inId").value.trim();
+    if(!nick){ modalErr.textContent="Введи никнейм."; return; }
+    if(!id || !/^\d+$/.test(id)){ modalErr.textContent="Введи ID только цифрами."; return; }
+    st.user={nick:nick, id:id, ref:refLink, reg:Date.now()};
+    st.bal += 50;
+    save(); closeModal(); applyUser(); renderBal();
+    toast("🎉 Добро пожаловать, "+nick+"! +50 💎 за регистрацию");
+  });
+  function applyUser(){
+    if(st.user){
+      $("btnLogin").outerHTML='<button class="btn-user" id="btnUser">'+st.user.nick+' · ID '+st.user.id+'</button>';
+      var b=$("btnUser");
+      b.addEventListener("click",function(){ toast("👤 Никнейм: "+st.user.nick+" · Реферал: "+st.user.ref); });
+    } else {
+      $("btnLogin").outerHTML='<button class="btn-login" id="btnLogin">Войти на сайт</button>';
+      var bl=$("btnLogin"); bl.addEventListener("click",openModal);
+    }
+  }
+  applyUser();
   document.querySelectorAll(".sec-tabs button").forEach(function(b){
     b.addEventListener("click",function(){
       document.querySelectorAll(".sec-tabs button").forEach(function(x){x.classList.remove("active");});
@@ -564,7 +608,7 @@ var liveItems=["Akimbo Uzi Overdrive Red","P90 Clash","FabM BOOM","UMP45 Beast",
 
   function g(x){return x;}
 
-  drawCases();renderLive();renderRank();tickTimer();
+  drawCases();renderBal();renderLive();renderRank();tickTimer();
 })();
 </script>
 </body>
