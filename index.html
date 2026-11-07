@@ -462,6 +462,33 @@
         '<path d="M-50 26 L-18 26 M-50 34 L-20 34" stroke="#0a0c12" stroke-width="3"/>'+
       '</g></svg>';
   }
+
+  // Иконка кейса Absolute — тёмный glitch-фон, красная надпись, персонаж
+  function absoluteCaseSVG(){
+    var fid="ab"+Math.floor(Math.random()*1e6);
+    return '<svg viewBox="0 0 220 130" xmlns="http://www.w3.org/2000/svg"><defs>'+
+      '<radialGradient id="b'+fid+'" cx="50%" cy="42%" r="75%"><stop offset="0" stop-color="#2a0f1f" stop-opacity=".9"/><stop offset="1" stop-color="#07030a"/></radialGradient>'+
+      '<linearGradient id="g'+fid+'" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ff2d3a"/><stop offset="1" stop-color="#8a0f1c"/></linearGradient>'+
+      '</defs>'+
+      '<rect width="220" height="130" fill="url(#b'+fid+')"/>'+
+      // осколки/glitch-штрихи
+      '<path d="M0 20 L40 6 L80 18 L120 4 L170 16 L220 8" stroke="#ff3a4d" stroke-width="1.5" opacity=".35"/>'+
+      '<path d="M0 108 L50 98 L110 112 L170 96 L220 106" stroke="#ff3a4d" stroke-width="1.5" opacity=".3"/>'+
+      '<path d="M14 40 L30 34 M60 100 L82 94 M150 30 L172 22 M188 80 L210 72" stroke="#ff6b7a" stroke-width="3" opacity=".4"/>'+
+      // персонаж силуэт (аниме со спины, пурпурные волосы, цифра 4)
+      '<g transform="translate(150 46)">'+
+        '<ellipse cx="0" cy="16" rx="20" ry="26" fill="#141a26" stroke="#0a0c12" stroke-width="1.5"/>'+
+        '<path d="M-14 -2 L18 -6 C15 -20 5 -26 -6 -24 C-14 -22 -18 -14 -16 -6 Z" fill="#b3126e" stroke="#0a0c12" stroke-width="1.2"/>'+
+        '<rect x="-10" y="-28" width="4" height="10" rx="1" fill="#d81f9b" transform="rotate(-15 -8 -24)"/>'+
+        '<rect x="8" y="-30" width="4" height="10" rx="1" fill="#d81f9b" transform="rotate(10 10 -26)"/>'+
+        '<text x="0" y="26" font-family="Arial" font-size="26" font-weight="900" fill="#5a1c40" text-anchor="middle" opacity=".8">4</text>'+
+      '</g>'+
+      // надпись ABSOLUTE
+      '<text x="12" y="88" font-family="Arial, sans-serif" font-size="34" font-weight="900" fill="url(#g'+fid+')" letter-spacing="2" stroke="#000" stroke-width="1">ABSOLUTE</text>'+
+      '<text x="15" y="88" font-family="Arial" font-size="34" font-weight="900" fill="#ff2d3a" opacity=".5" letter-spacing="2">ABSOLUTE</text>'+
+      '<text x="8" y="114" font-family="Arial" font-size="20" font-weight="800" fill="#f5f5f5" letter-spacing="3" opacity=".9">C A S E</text>'+
+      '</svg>';
+  }
   // Контейнер (ящик с алмазом)
   function crateSVG(col){
     var grad="cr"+Math.floor(Math.random()*1e6);
@@ -504,7 +531,7 @@
 
   var CASES = [
     {
-      id:"origin", name:"Absolute Case", price:599, old:699, hot:true, stock:{left:137,total:200}, rar:false, art:artSVG("rif","#3dd7ff","#5b3dff"),
+      id:"origin", name:"Absolute Case", price:599, old:699, hot:true, stock:{left:137,total:200}, rar:false, art:absoluteCaseSVG(),
       items:[
         it("Tanto «Retro Arcade»","Нож","#ffc93c","rare",95,"tanto-retro.webp"),
         it("Dual Daggers «Retro Arcade»","Нож","#ff9f43","rare",110,"dual-daggers-retro.webp"),
