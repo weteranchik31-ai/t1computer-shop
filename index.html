@@ -593,7 +593,7 @@
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[]};
+    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noGloves:0};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -692,7 +692,18 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     if(selected.stock)selected.stock.left=Math.max(0,selected.stock.left-1);
     drawCases();renderBal();
 
-    var win=rollItem(selected);
+    st.noKnife=(st.noKnife||0)+1;
+    st.noGloves=(st.noGloves||0)+1;
+    var knives=selected.items.filter(function(x){return x.type==="Нож"||x.type.indexOf("нож")>-1;});
+    var gloves=selected.items.filter(function(x){return x.type.indexOf("Перчатки")>-1||x.type.indexOf("перчат")>-1;});
+    var win;
+    if(knives.length>0 && st.noKnife>=3){
+      win=knives[Math.floor(Math.random()*knives.length)];
+    } else if(gloves.length>0 && st.noGloves>=12){
+      win=gloves[Math.floor(Math.random()*gloves.length)];
+    } else {
+      win=rollItem(selected);
+    }
     buildStrip(selected,win);
     var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
     var shift=Math.floor(Math.random()*7)-3;
@@ -705,6 +716,8 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
   function finish(win){
     var q=Q[win.q]||Q.rare;
     addXp(30);
+    if(win.type.indexOf("Нож")>-1||win.type.indexOf("нож")>-1){ st.noKnife=0; }
+    if(win.type.indexOf("Перчат")>-1||win.type.indexOf("перчат")>-1){ st.noGloves=0; }
     if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
     $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
       '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
