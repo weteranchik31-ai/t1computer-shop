@@ -1211,6 +1211,9 @@ function renderBal(){
   var MEDIA_BADGE_IDS=["DEV","10745652"];
   var YT_BADGE_IDS=["DEV","10745652"];
   var TECH_BADGE_IDS=["02","01"];
+  var IDEA_BADGE_IDS=[];
+  var THANKS_BADGE_IDS=[];
+  var GOLDSP_BADGE_IDS=[];
   function chipSVG(col,innerCol){
     return '<svg viewBox="0 0 24 24" width="18" height="18">'+
       '<path d="M12 1 L21 8 L18 20 L6 20 L3 8 Z" fill="#1a2320" stroke="'+col+'" stroke-width="1.6" stroke-linejoin="round"/>'+
@@ -1226,6 +1229,32 @@ function renderBal(){
   function badgeMediaSVG(){ return chipSVG("#ff3fb0","#0b0e13"); }
   function badgeYtSVG(){ return chipSVG("#ff5252","#0b0e13"); }
   function badgeTechSVG(){ return chipSVG("#26c6da","#0b0e13"); }
+  function badgeIdeaSVG(){
+    // ромб фиолетовый с лампочкой-идеей
+    return '<svg viewBox="0 0 24 24" width="18" height="18">'+
+      '<path d="M12 1 L21 8 L18 20 L6 20 L3 8 Z" fill="#1a2320" stroke="#b388ff" stroke-width="1.6" stroke-linejoin="round"/>'+
+      '<path d="M12 6 L17 10.5 L15.4 17 L8.6 17 L7 10.5 Z" fill="#b388ff" opacity="0.9"/>'+
+      '<path d="M10.2 8.6 h3.6 v1.6 q0 1.2-0.9 1.9 a1.4 1.4 0 0 0-0.9 1.3 h-0.9 a1.4 1.4 0 0 0-0.9-1.3 q-0.9-0.7-0.9-1.9 Z" fill="#0b0e13"/>'+
+      '<rect x="11.2" y="14.4" width="1.6" height="1.4" fill="#0b0e13"/>'+
+      '</svg>';
+  }
+  function badgeThanksSVG(){
+    // ромб розовый с сердцем
+    return '<svg viewBox="0 0 24 24" width="18" height="18">'+
+      '<path d="M12 1 L21 8 L18 20 L6 20 L3 8 Z" fill="#1a2320" stroke="#ff7096" stroke-width="1.6" stroke-linejoin="round"/>'+
+      '<path d="M12 6 L17 10.5 L15.4 17 L8.6 17 L7 10.5 Z" fill="#ff7096" opacity="0.9"/>'+
+      '<path d="M12 16.2 c-2.3-1.4-3.4-2.6-3.4-4 a1.9 1.9 0 0 1 3.4-1.2 a1.9 1.9 0 0 1 3.4 1.2 c0 1.4-1.1 2.6-3.4 4 Z" fill="#0b0e13"/>'+
+      '</svg>';
+  }
+  function badgeGoldSpoSVG(){
+    // ромб золотой с короной
+    return '<svg viewBox="0 0 24 24" width="18" height="18">'+
+      '<path d="M12 1 L21 8 L18 20 L6 20 L3 8 Z" fill="#1a2320" stroke="#ffd700" stroke-width="1.6" stroke-linejoin="round"/>'+
+      '<path d="M12 6 L17 10.5 L15.4 17 L8.6 17 L7 10.5 Z" fill="#ffd700" opacity="0.9"/>'+
+      '<path d="M9 13.4 h6 l0.8-3.2 -1.8 1.2 -1-2.1 -1 2.1 -1.8-1.2 Z" fill="#0b0e13"/>'+
+      '<path d="M9 14.4 h6 v1.1 h-6 Z" fill="#0b0e13"/>'+
+      '</svg>';
+  }
   function userBadges(){
     if(!st.user) return [];
     var list=[];
@@ -1235,6 +1264,9 @@ function renderBal(){
     if(MEDIA_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"media", name:"Медиа-Партнер", svg:badgeMediaSVG()});
     if(YT_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"yt", name:"Ютубер", svg:badgeYtSVG()});
     if(TECH_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"tech", name:"Тех. Работник", svg:badgeTechSVG()});
+    if(IDEA_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"idea", name:"Автор идей", svg:badgeIdeaSVG()});
+    if(THANKS_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"thanks", name:"Спасибо", svg:badgeThanksSVG()});
+    if(GOLDSP_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"goldsp", name:"Золотой спонсор", svg:badgeGoldSpoSVG()});
     return list;
   }
   function applyUser(){
