@@ -1141,9 +1141,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     toast("🎉 Добро пожаловать, "+nick+"! +50 голды за регистрацию");
   });
   function isValidId(id){
-    var s=String(id).trim();
-    if(s==="TECH1") return true;
-    return /^\d+$/.test(s);
+    return /^\d+$/.test(String(id).trim());
   }
   function applyUser(){
     if(st.user){
