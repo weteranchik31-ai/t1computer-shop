@@ -720,12 +720,7 @@
 
   // ---------- Оружие в ролле со случайным (клиент) ----------
   function rollItem(c){
-    var mimic=c.items.filter(function(x){return x.name.indexOf("Mimicry")>-1;});
-    if(mimic.length>0){
-      if(Math.random()<0.8){ return mimic[Math.floor(Math.random()*mimic.length)]; }
-      c=c.items.filter(function(x){return x.name.indexOf("Mimicry")===-1;});
-    }
-    // выбор среди остальных по весам p (относительные шансы)
+    // чистый весовой выбор, как в Standoff 2
     var total=0,pool=c.map(function(x){ total+=(x.p||1); return {x:x,end:total}; });
     var r=Math.random()*total;
     for(var j=0;j<pool.length;j++) if(r<=pool[j].end) return pool[j].x;
@@ -873,26 +868,7 @@ function renderBal(){
     drawCases();renderBal();
 
     function byName(s){return selected.items.filter(function(x){return x.name.indexOf(s)>-1;});}
-    st.noHohei=(st.noHohei||0)+1;
-    st.noFrost=(st.noFrost||0)+1;
-    st.noRetro=(st.noRetro||0)+1;
-    st.noVenator=(st.noVenator||0)+1;
-    st.noScorpion=(st.noScorpion||0)+1;
-    st.noTanHide=(st.noTanHide||0)+1;
-    var hohei=byName("Hohei Taisho");
-    var frost=byName("Frost Nova");
-    var retro=byName("Retro Arcade");
-    var venom=byName("Venator");
-    var scorpion=byName("Scorpion");
-    var tanHide=byName("Tan Hide");
-    var win;
-    if(hohei.length>0 && st.noHohei>=4){ win=hohei[Math.floor(Math.random()*hohei.length)]; }
-    else if(frost.length>0 && st.noFrost>=5){ win=frost[Math.floor(Math.random()*frost.length)]; }
-    else if(retro.length>0 && st.noRetro>=11){ win=retro[Math.floor(Math.random()*retro.length)]; }
-    else if(scorpion.length>0 && st.noScorpion>=10){ win=scorpion[Math.floor(Math.random()*scorpion.length)]; }
-    else if(venom.length>0 && st.noVenator>=7){ win=venom[Math.floor(Math.random()*venom.length)]; }
-    else if(tanHide.length>0 && st.noTanHide>=13){ win=tanHide[Math.floor(Math.random()*tanHide.length)]; }
-    else { win=rollItem(selected); }
+    var win=rollItem(selected);
     buildStrip(selected,win);
     var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
     var spinW=$("spinner").offsetWidth;
@@ -907,12 +883,6 @@ function renderBal(){
     try{
       var q=Q[win.q]||Q.rare;
       addXp(30);
-      if(win.name.indexOf("Hohei Taisho")>-1){ st.noHohei=0; }
-      if(win.name.indexOf("Frost Nova")>-1){ st.noFrost=0; }
-      if(win.name.indexOf("Retro Arcade")>-1){ st.noRetro=0; }
-      if(win.name.indexOf("Venator")>-1){ st.noVenator=0; }
-      if(win.name.indexOf("Scorpion")>-1){ st.noScorpion=0; }
-      if(win.name.indexOf("Tan Hide")>-1){ st.noTanHide=0; }
       if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
       $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
         '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
