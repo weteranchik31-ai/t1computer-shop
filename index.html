@@ -234,6 +234,13 @@
   .btn-reg:hover{filter:brightness(1.06)}
   .btn-user{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:9px 16px;border-radius:9px;font-weight:700;font-size:14px;cursor:pointer}
   .btn-user:hover{border-color:var(--muted)}
+  .u-av{display:inline-flex;align-items:center;justify-content:center;font-size:16px}
+  .u-av img{width:24px;height:24px;border-radius:50%;object-fit:cover}
+  .p-avatar{width:84px;height:84px;border-radius:50%;margin:0 auto 14px;background:var(--bg2);border:2px solid var(--yellow);overflow:hidden;display:grid;place-items:center}
+  .p-avimg{width:100%;height:100%;display:grid;place-items:center;font-size:34px;color:var(--text)}
+  .p-avimg img{width:100%;height:100%;object-fit:cover}
+  .btn-support{display:block;width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:13px;border-radius:11px;font-weight:800;text-align:center;text-decoration:none;font-size:15px;margin-top:10px}
+  .btn-support:hover{border-color:var(--yellow)}
 
   @media(max-width:640px){
     nav{order:3;width:100%;overflow-x:auto}
@@ -410,6 +417,25 @@
     <input id="inRef" name="ref" type="text" value="https://weteranchik31-ai.github.io/t1computer-shop/#cases" spellcheck="false">
     <div class="modal-err" id="modalErr"></div>
     <button class="btn-reg" id="btnReg">Зарегистрироваться</button>
+  </div>
+</div>
+
+<!-- Модалка профиля -->
+<div class="modal" id="pModal">
+  <div class="modal-box">
+    <button class="modal-close" id="pClose" aria-label="Закрыть">✕</button>
+    <h2>Профиль</h2>
+    <p class="modal-sub">Измени никнейм, ID или аватарку.</p>
+    <div class="p-avatar" id="pAvBox"><div id="pAvImg" class="p-avimg">👤</div></div>
+    <label for="pAvatar">Ссылка на аватарку (URL картинки)</label>
+    <input id="pAvatar" name="avatar" type="text" placeholder="https://…картинка.jpg" spellcheck="false">
+    <label for="pNick">Никнейм</label>
+    <input id="pNick" name="pNick" type="text" placeholder="Введите никнейм" maxlength="20">
+    <label for="pId">ID</label>
+    <input id="pId" name="pId" type="text" placeholder="Введите ID (числами)" inputmode="numeric">
+    <div class="modal-err" id="pErr"></div>
+    <button class="btn-reg" id="btnSaveProfile">Сохранить</button>
+    <a class="btn-support" id="btnSupport" href="https://vk.ru/weyz1" target="_blank" rel="noopener">Поддержка</a>
   </div>
 </div>
 
@@ -1049,21 +1075,55 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     var id=$("inId").value.trim();
     if(!nick){ modalErr.textContent="Введи никнейм."; return; }
     if(!id || !/^\d+$/.test(id)){ modalErr.textContent="Введи ID только цифрами."; return; }
-    st.user={nick:nick, id:id, ref:refLink, reg:Date.now()};
+    st.user={nick:nick, id:id, ref:refLink, reg:Date.now(), avatar:""};
     st.bal += 50;
     save(); closeModal(); applyUser(); renderBal();
     toast("🎉 Добро пожаловать, "+nick+"! +50 голды за регистрацию");
   });
   function applyUser(){
     if(st.user){
-      $("btnLogin").outerHTML='<button class="btn-user" id="btnUser">'+st.user.nick+' · ID '+st.user.id+'</button>';
+      var av=st.user.avatar?'<img src="'+st.user.avatar+'" alt="ava">':"👤";
+      $("btnLogin").outerHTML='<button class="btn-user" id="btnUser"><span class="u-av">'+av+'</span><span>'+st.user.nick+' · ID '+st.user.id+'</span></button>';
       var b=$("btnUser");
-      b.addEventListener("click",function(){ toast("👤 Никнейм: "+st.user.nick+" · Реферал: "+st.user.ref); });
+      b.style.display="inline-flex";b.style.alignItems="center";b.style.gap="8px";
+      var ai=b.querySelector(".u-av img"); if(ai){ai.style.width="24px";ai.style.height="24px";ai.style.borderRadius="50%";}
+      b.addEventListener("click",openProfile);
     } else {
       $("btnLogin").outerHTML='<button class="btn-login" id="btnLogin">Войти на сайт</button>';
       var bl=$("btnLogin"); bl.addEventListener("click",openModal);
     }
   }
+  function openProfile(){
+    if(!st.user) return;
+    st.user.avatar=st.user.avatar||"";
+    $("pAvatar").value=st.user.avatar;
+    $("pNick").value=st.user.nick;
+    $("pId").value=st.user.id;
+    renderPv(st.user.avatar);
+    $("pErr").textContent="";
+    $("pModal").classList.add("open");
+  }
+  function renderPv(url){
+    var box=$("pAvImg");
+    if(url) box.innerHTML='<img src="'+url+'" alt="ava" onerror="this.parentNode.innerHTML=\'👤\'">';
+    else box.textContent="👤";
+  }
+  $("pAvatar").addEventListener("input",function(){ renderPv(this.value.trim()); });
+  $("pClose").addEventListener("click",function(){$("pModal").classList.remove("open");});
+  $("pModal").addEventListener("click",function(e){ if(e.target===$("pModal")) $("pModal").classList.remove("open"); });
+  $("btnSaveProfile").addEventListener("click",function(){
+    var nick=$("pNick").value.trim();
+    var id=$("pId").value.trim();
+    if(!nick){ $("pErr").textContent="Введи никнейм."; return; }
+    if(!id || !/^\d+$/.test(id)){ $("pErr").textContent="Введи ID только цифрами."; return; }
+    st.user.nick=nick;
+    st.user.id=id;
+    st.user.avatar=$("pAvatar").value.trim();
+    save();
+    $("pModal").classList.remove("open");
+    applyUser();
+    toast("✅ Профиль сохранён");
+  });
   applyUser();
   document.querySelectorAll(".sec-tabs button").forEach(function(b){
     b.addEventListener("click",function(){
