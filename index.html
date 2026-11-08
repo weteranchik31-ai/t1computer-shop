@@ -446,7 +446,7 @@
     <button class="btn-login" id="upgBack">← Назад</button>
   </div></div>
   <div class="wrap inv-body">
-    <p class="inv-sub">Выбери 2 одинаковых предмета из инвентаря и попробуй получить скин рангом выше. При неудаче предметы сгорают.</p>
+    <p class="inv-sub">Выбери предмет из инвентаря и попробуй получить скин рангом выше. При неудаче предмет сгорает.</p>
     <div class="upg-stage">
       <div class="upg-ring">
         <svg viewBox="0 0 120 120" width="150" height="150">
@@ -1138,7 +1138,7 @@ function renderBal(){
       map[it.name].count++; map[it.name].list.push(it);
       if(it.q && !map[it.name].q) map[it.name].q=it.q;
     });
-    return Object.keys(map).map(function(k){return map[k];}).filter(function(g){return g.count>=2;});
+    return Object.keys(map).map(function(k){return map[k];}).filter(function(g){return g.count>=1;});
   }
   function rankOf(g){
     return g.q||findItemRank(g.name)||"rare";
@@ -1146,7 +1146,7 @@ function renderBal(){
   function renderUpgList(){
     var list=$("upgList");list.innerHTML="";
     var groups=groupInv();
-    if(!groups.length){ list.innerHTML='<div class="sup-empty">Нужно минимум 2 одинаковых предмета в инвентаре.</div>'; return; }
+    if(!groups.length){ list.innerHTML='<div class="sup-empty">Инвентарь пуст — открой кейс, чтобы получить предметы.</div>'; return; }
     groups.forEach(function(g){
       var el=document.createElement("div"); el.className="upg-item";
       var isSel=(upgSelA&&upgSelA.name===g.name)||(upgSelB&&upgSelB.name===g.name);
@@ -1162,8 +1162,7 @@ function renderBal(){
   function clickUpgGroup(g){
     var q=rankOf(g);
     if(!q){ toast("⚠️ Нет ранга для этого предмета"); return; }
-    if(g.count<2){ toast("Нужно минимум 2 таких предмета"); return; }
-    // 1 клик — выбираем пару одинаковых предметов
+    // 1 клик — выбираем предмет для апгрейда
     if(upgSelA&&upgSelB&&upgSelA.name===g.name&&upgSelB.name===g.name){
       upgSelA=null; upgSelB=null; renderUpgList(); renderUpg(); return;
     }
@@ -1179,14 +1178,16 @@ function renderBal(){
       card.innerHTML='<div class="art" style="background:var(--bg2);border-radius:10px;padding:4px">'+g.img+'</div><div class="uc-nm">'+g.name+'</div>';
     }
     fill(c1,a); fill(c2,b);
-    var pct=0,label="—";
+    var pct=0,label="—", spanClass="";
     if(a&&b){
       var q=rankOf(a), nq=nextRank(q);
       if(nq){
         pct=chanceFor(q);
         label= Q[nq]?Q[nq].name:"выше";
+        spanClass=" upg-will";
       }
     }
+    if(a&&b){ c2.innerHTML='<div class="uc-empty" style="color:var(--yellow)">→ '+esc(label)+'</div>'; }
     var arc=$("upgArc"), pctEl=$("upgPct");
     var circ=2*Math.PI*48;
     arc.setAttribute("stroke-dasharray",circ);
@@ -1261,9 +1262,9 @@ function renderBal(){
     void strip.offsetWidth;
     // центр ленты должен встать на плитку двойного индекса LAND*2
     var target=-(LAND*2*SEG + SEG/2 - (strip.parentNode.offsetWidth/2));
-    // удалить 2 предмета сразу
+    // удалить 1 предмет
     var removed=0;
-    st.inv=(st.inv||[]).filter(function(it){ if(removed<2 && it.name===a.name){ removed++; return false; } return true; });
+    st.inv=(st.inv||[]).filter(function(it){ if(removed<1 && it.name===a.name){ removed++; return false; } return true; });
     save();
     setTimeout(function(){
       strip.style.transition="transform 1.4s cubic-bezier(.15,.85,.25,1)";
