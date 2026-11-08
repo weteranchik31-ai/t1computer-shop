@@ -1430,12 +1430,27 @@ var upgMine=null, upgTarget=null, upgMult=1;
     $("#btnUpgGo").disabled=!(upgMine&&upgTarget);
   }
   $("btnUpgrade").addEventListener("click",function(){
-    upgMine=null; upgTarget=null; upgMult=1;
-    Array.prototype.forEach.call($("mgMult").children,function(b){ b.classList.remove("on"); });
-    var x1=$("mgMult").querySelector('[data-m="1"]'); if(x1)x1.classList.add("on");
-    renderMyList(); renderTargetList(); renderUpg(); upgIdleStrip();
-    $("upgPage").classList.add("open");
-    document.body.style.overflow="hidden";
+    try{
+      upgMine=null; upgTarget=null; upgMult=1;
+      Array.prototype.forEach.call($("mgMult").children,function(b){ b.classList.remove("on"); });
+      var x1=$("mgMult").querySelector('[data-m="1"]'); if(x1)x1.classList.add("on");
+      renderMyList(); renderTargetList(); renderUpg(); upgIdleStrip();
+      $("upgPage").classList.add("open");
+      document.body.style.overflow="hidden";
+    }catch(err){ toast("Ошибка открытия апгрейда: "+err.message); }
+  });
+  // надёжное делегирование — сработает даже если прямой listener не навесился
+  document.addEventListener("click",function(ev){
+    if(ev.target && ev.target.closest && ev.target.closest("#btnUpgrade")){
+      try{
+        if(!$("upgPage").classList.contains("open")){
+          upgMine=null; upgTarget=null; upgMult=1;
+          renderMyList(); renderTargetList(); renderUpg(); upgIdleStrip();
+          $("upgPage").classList.add("open");
+          document.body.style.overflow="hidden";
+        }
+      }catch(err){ toast("Ошибка открытия апгрейда: "+err.message); }
+    }
   });
   Array.prototype.forEach.call($("mgMult").children,function(b){
     b.addEventListener("click",function(){
