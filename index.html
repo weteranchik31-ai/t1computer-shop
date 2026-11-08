@@ -1080,9 +1080,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     save(); closeModal(); applyUser(); renderBal();
     toast("🎉 Добро пожаловать, "+nick+"! +50 голды за регистрацию");
   });
-  var DEV_IDS={"DEV":1,"dev":1};
   function isValidId(id){
-    if(DEV_IDS.hasOwnProperty(String(id).trim())) return true;
     return /^\d+$/.test(String(id).trim());
   }
   function applyUser(){
