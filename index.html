@@ -432,9 +432,9 @@
 <div class="withdraw-modal" id="fdModal">
   <div class="wd-box">
     <button class="wd-close" id="fdClose" aria-label="Закрыть">✕</button>
-    <div class="wd-art" id="fdArt"></div>
-    <h4 id="fdName">G22 «Frost Wyrm»</h4>
-    <p class="wd-text">Поздравляем! Ты получил скин G22 «Frost Wyrm» и 50 голды.</p>
+    <div class="wd-art" id="fdArt" style="font-size:44px">💰</div>
+    <h4 id="fdName">Раздача</h4>
+    <p class="wd-text">Поздравляем! Ты получил 50 голды.</p>
     <button class="wd-btn" id="fdTake" type="button">Забрать</button>
   </div>
 </div>
@@ -805,21 +805,20 @@ function renderBal(){
       timer.textContent="До раздачи: "+p(h)+":"+p(m)+":"+p(s);
     }
   }
-  var fdImg='<img src="g22-frost-wyrm.png" alt="G22 Frost Wyrm">';
+  var fdImg='<span style="font-size:44px">💰</span>';
   $("btnClaim").addEventListener("click",function(){
     $("fdArt").innerHTML=fdImg;
-    $("fdName").textContent="G22 «Frost Wyrm»";
+    $("fdName").textContent="Раздача";
     $("fdModal").classList.add("open");
   });
   $("fdClose").addEventListener("click",function(){$("fdModal").classList.remove("open");});
   $("fdTake").addEventListener("click",function(){
     $("fdModal").classList.remove("open");
-    addToInv("G22 «Frost Wyrm»",fdImg,"Пистолет");
     st.bal=(st.bal||0)+50;
     st.fdClaim=Date.now();
     save();
     renderBal();
-    toast("🎁 +50 голды и скин G22 «Frost Wyrm»!");
+    toast("🎁 +50 голды!");
     tickTimer();
   });
   $("fdModal").addEventListener("click",function(e){ if(e.target===$("fdModal")) $("fdModal").classList.remove("open"); });
