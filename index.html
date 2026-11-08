@@ -1433,11 +1433,17 @@ function renderBal(){
     CASES.forEach(function(c){ c.items.forEach(function(it){ if(it.q===nq) pool.push(it); }); });
     if(!pool.length){ pool=[]; CASES.forEach(function(c){ c.items.forEach(function(it){ pool.push(it); }); }); }
     var prize = (pool.length && success) ? pool[Math.floor(Math.random()*pool.length)] : null;
+    // шанс на нож 10% при успешном апгрейде
+    if(prize && Math.random()*100<10){
+      var knives=[];
+      CASES.forEach(function(c){ c.items.forEach(function(it){ if((it.type||"").indexOf("нож")>-1) knives.push(it); }); });
+      if(knives.length){ prize = knives[Math.floor(Math.random()*knives.length)]; }
+    }
     // удалить 1 предмет сразу и сохранить результат в инвентарь (надёжно, до анимации)
     var removed=0;
     st.inv=(st.inv||[]).filter(function(it){ if(removed<1 && it.name===a.name){ removed++; return false; } return true; });
     if(prize){
-      addToInv(prize.name, prize.svg, prize.type, nq);
+      addToInv(prize.name, prize.svg, prize.type, prize.q||nq);
     }
     if(!st.task_upg){ completeTask("upg",25); }
     save();
