@@ -1162,6 +1162,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
   var TEST_BADGE_IDS=["02","01"];
   var MEDIA_BADGE_IDS=[];
   var YT_BADGE_IDS=[];
+  var TECH_BADGE_IDS=[];
   function chipSVG(col,innerCol){
     return '<svg viewBox="0 0 24 24" width="18" height="18">'+
       '<path d="M12 1 L21 8 L18 20 L6 20 L3 8 Z" fill="#1a2320" stroke="'+col+'" stroke-width="1.6" stroke-linejoin="round"/>'+
@@ -1176,6 +1177,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
   function badgeTestSVG(){ return chipSVG("#42a5f5","#0b0e13"); }
   function badgeMediaSVG(){ return chipSVG("#ff3fb0","#0b0e13"); }
   function badgeYtSVG(){ return chipSVG("#ff5252","#0b0e13"); }
+  function badgeTechSVG(){ return chipSVG("#26c6da","#0b0e13"); }
   function userBadges(){
     if(!st.user) return [];
     var list=[];
@@ -1184,6 +1186,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     if(TEST_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"test", name:"Тестировщик", svg:badgeTestSVG()});
     if(MEDIA_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"media", name:"Медиа-Партнер", svg:badgeMediaSVG()});
     if(YT_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"yt", name:"Ютубер", svg:badgeYtSVG()});
+    if(TECH_BADGE_IDS.indexOf(st.user.id)>-1) list.push({id:"tech", name:"Тех. Работник", svg:badgeTechSVG()});
     return list;
   }
   function applyUser(){
