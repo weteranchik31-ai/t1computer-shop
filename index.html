@@ -839,12 +839,21 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     $("invEmpty").style.display = arr.length===0 ? "" : "none";
   }
   var REF_URL="https://vk.ru/weyz1"; // ссылка на ЛС VK
+  var currentWithdraw=null;
   function openWithdraw(it){
+    currentWithdraw=it;
     $("wdArt").innerHTML=it.img;
     $("wdName").textContent=it.name;
     $("wdBtn").href=REF_URL;
     $("wdModal").classList.add("open");
   }
+  $("wdBtn").addEventListener("click",function(){
+    st.inv=st.inv||[];
+    st.inv=st.inv.filter(function(x){return x!==currentWithdraw;});
+    save();
+    $("wdModal").classList.remove("open");
+    renderInv();
+  });
   $("wdClose").addEventListener("click",function(){$("wdModal").classList.remove("open");});
   $("wdModal").addEventListener("click",function(e){ if(e.target===$("wdModal")) $("wdModal").classList.remove("open"); });
   $("btnInv").addEventListener("click",function(){
