@@ -221,6 +221,7 @@
   .upg-item img,.upg-item svg{max-width:100%;max-height:50px}
   .upg-item .ui-nm{font-size:10px;color:var(--muted);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .upg-item .ui-cnt{font-size:10px;color:var(--yellow);font-weight:700}
+  .upg-item .ui-ch{font-size:10px;color:#3de08a;font-weight:700;margin-top:2px}
   .upg-strip-wrap{position:relative;width:100%;max-width:460px;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:8px 0;background:var(--bg2)}
   .upg-strip{display:flex;gap:8px;transition:transform 1.2s cubic-bezier(.22,1,.22,1);will-change:transform}
   .upg-tile{flex:0 0 80px;height:74px;background:var(--panel);border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;padding:4px;box-sizing:border-box}
@@ -1144,7 +1145,10 @@ function renderBal(){
       var el=document.createElement("div"); el.className="upg-item";
       var isSel=(upgSelA&&upgSelA.name===g.name)||(upgSelB&&upgSelB.name===g.name);
       if(isSel) el.classList.add("sel");
-      el.innerHTML='<div class="art">'+g.img+'</div><div class="ui-nm">'+esc(g.name)+'</div><div class="ui-cnt">x'+g.count+'</div>';
+      var q=findItemRank(g.name);
+      var ch=(q&&nextRank(q))?chanceFor(q):null;
+      var chHtml=ch!==null?'<div class="ui-ch">Шанс '+ch+'%</div>':'';
+      el.innerHTML='<div class="art">'+g.img+'</div><div class="ui-nm">'+esc(g.name)+'</div><div class="ui-cnt">x'+g.count+'</div>'+chHtml;
       el.addEventListener("click",function(){ clickUpgGroup(g); });
       list.appendChild(el);
     });
