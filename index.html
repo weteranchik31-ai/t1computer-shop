@@ -868,7 +868,7 @@ function renderBal(){
     drawCases();renderBal();
 
     function byName(s){return selected.items.filter(function(x){return x.name.indexOf(s)>-1;});}
-    var win=rollItem(selected);
+    var win=rollItem(selected.items);
     buildStrip(selected,win);
     var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
     var spinW=$("spinner").offsetWidth;
