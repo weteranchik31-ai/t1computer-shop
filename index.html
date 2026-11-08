@@ -142,6 +142,17 @@
   .card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px}
   .card h3{font-size:18px;font-weight:800;margin-bottom:4px}
   .card .sub{color:var(--muted);font-size:13px;margin-bottom:14px}
+  .tasks-list{display:flex;flex-direction:column;gap:10px}
+  .task{display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .task .t-ic{font-size:22px;flex:none}
+  .task .t-info{flex:1;min-width:0}
+  .task .t-nm{font-size:14px;font-weight:700;color:var(--text)}
+  .task .t-reward{font-size:12px;color:var(--yellow);margin-top:2px}
+  .task .t-btn{background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;border:none;padding:9px 16px;border-radius:9px;font-weight:800;font-size:13px;cursor:pointer;flex:none}
+  .task .t-btn:hover{filter:brightness(1.08)}
+  .task .t-btn:disabled{background:var(--panel2);color:var(--muted);cursor:default;border:1px solid var(--line)}
+  .task.done{opacity:.75}
+  .task.done .t-btn{background:var(--panel2);color:#3de08a;cursor:default;border:1px solid var(--line)}
   .wheel{margin:8px auto 16px;width:200px;height:200px;border-radius:50%;box-shadow:0 0 24px rgba(255,63,110,.25);position:relative;border:2px solid #0b0e13;overflow:hidden}
   .wheel-skin{position:absolute;inset:0;width:100%;height:100%}
   .wheel-skin svg{width:100%;height:100%;display:block}
@@ -397,6 +408,11 @@
         <button class="btn-promo" id="btnPromo">Активировать</button>
         <div class="promo-msg" id="promoMsg"></div>
       </div>
+    </div>
+    <div class="card" id="tasks">
+      <h3>📋 Задания</h3>
+      <div class="sub">Выполняй задания и получай голду.</div>
+      <div class="tasks-list" id="tasksList"></div>
     </div>
     <div class="card">
       <h3>🏆 Пропуск &amp; ранг</h3>
@@ -804,7 +820,7 @@ it("Akimbo Uzi","Пистолеты-пулемёты","#ff2d3a","legendary",700,
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noFestal:0,noFrost:0,noRetro:0,noHohei:0,noVenator:0,noScorpion:0,noTanHide:0,fdClaim:0,sup:[]};
+    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noFestal:0,noFrost:0,noRetro:0,noHohei:0,noVenator:0,noScorpion:0,noTanHide:0,fdClaim:0,sup:[],task_sub:0,task_case:0,task_upg:0};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -936,6 +952,7 @@ function renderBal(){
     spinning=true;$("btnOpen").disabled=true;
     st.opened++;
     if(!isDev()) st.bal-=selected.price;
+    if(st.opened===1&&!st.task_case){ completeTask("case",25); }
     if(selected.stock)selected.stock.left=Math.max(0,selected.stock.left-1);
     drawCases();renderBal();
 
@@ -1255,6 +1272,7 @@ function renderBal(){
     if(prize){
       addToInv(prize.name, prize.svg, prize.type, nq);
     }
+    if(!st.task_upg){ completeTask("upg",25); }
     save();
     // строим ленту: чередуем предметы пула, на позицию приземления ставим результат
     var strip=$("upgStrip"); strip.innerHTML="";
@@ -1681,7 +1699,45 @@ function renderBal(){
 
   function g(x){return x;}
 
-  drawCases();renderBal();renderLive();renderRank();tickTimer();renderWheel();renderInv();
+  // ---------- Задания ----------
+  var VK_CHANNEL="https://vk.ru/im/channels/-243058919";
+  function renderTasks(){
+    var list=$("tasksList"); if(!list) return;
+    var stt=(st.task_sub?1:0)+(st.task_case?1:0)+(st.task_upg?1:0);
+    var tpl=[];
+    tpl.push({done:!!st.task_sub, ic:"👍", nm:"Подпишись на канал ВК",
+      rw:"+50 голды", type:"sub"});
+    tpl.push({done:!!st.task_case, ic:"🎁", nm:"Открой первый кейс",
+      rw:"+25 голды", type:"case"});
+    tpl.push({done:!!st.task_upg, ic:"⬆️", nm:"Сделай первый апгрейд",
+      rw:"+25 голды", type:"upg"});
+    list.innerHTML="";
+    tpl.forEach(function(t){
+      var el=document.createElement("div"); el.className="task"+(t.done?" done":"");
+      var btnHtml;
+      if(t.done){ btnHtml='<span class="t-btn" style="border:none;background:transparent">✓</span>'; }
+      else if(t.type==="sub"){ btnHtml='<button class="t-btn">Подписаться</button>'; }
+      else { btnHtml='<span class="t-btn" style="border:1px solid var(--line);background:var(--panel2);color:var(--text)">Выполнить</span>'; }
+      el.innerHTML='<div class="t-ic">'+t.ic+'</div><div class="t-info"><div class="t-nm">'+esc(t.nm)+'</div><div class="t-reward">'+esc(t.rw)+'</div></div>'+btnHtml;
+      if(t.type==="sub"&&!t.done){
+        el.querySelector(".t-btn").addEventListener("click",function(){
+          window.open(VK_CHANNEL,"_blank");
+          completeTask("sub",50);
+        });
+      }
+      list.appendChild(el);
+    });
+  }
+  function completeTask(kind,reward){
+    if(kind==="sub"&&!st.task_sub){ st.task_sub=1; }
+    if(kind==="case"&&!st.task_case){ st.task_case=1; }
+    if(kind==="upg"&&!st.task_upg){ st.task_upg=1; }
+    st.bal=(st.bal||0)+reward;
+    save(); renderBal(); renderTasks();
+    toast("🎉 Задание выполнено! +"+reward+" голды");
+  }
+
+  drawCases();renderBal();renderLive();renderRank();tickTimer();renderWheel();renderInv();renderTasks();
 })();
 </script>
 </body>
