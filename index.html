@@ -599,7 +599,6 @@
     <textarea id="revT" placeholder="Расскажите, что вам понравилось…" maxlength="500"></textarea>
     <div class="modal-err" id="revErr"></div>
     <div class="rev-btns">
-      <button class="btn-support" id="btnMyReviews">Мои отзывы</button>
       <button class="btn-reg" id="revSend">Оставить отзыв</button>
     </div>
     <div class="rev-list" id="revList">
@@ -1842,12 +1841,10 @@ function renderBal(){
   function revEsc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   function revTime(t){ var d=new Date(t); function p(x){return x<10?"0"+x:x;} return p(d.getDate())+"."+p(d.getMonth()+1)+"."+d.getFullYear(); }
   function reprStars(v){ var s=""; for(var i=1;i<=5;i++){ s+=(i<=v?"★":"☆"); } return s; }
-  function myReviews(){ var id=st.user?st.user.id:""; var nick=st.user?st.user.nick:""; return st.revs.filter(function(r){ return r.authorId===id || r.authorNick===nick; }); }
-  function renderRevList(onlyMine){
+  function renderRevList(){
     var list=$("revList");
-    var arr=st.revs.slice().sort(function(a,b){return b.time-a.time;});
-    arr=onlyMine?arr.filter(function(r){return myReviews().indexOf(r)>-1;}):arr.slice(0,8);
-    var html='<h4>'+(onlyMine?"Мои отзывы":"Последние отзывы")+'</h4>';
+    var arr=st.revs.slice().sort(function(a,b){return b.time-a.time;}).slice(0,15);
+    var html='<h4>Отзывы сайта</h4>';
     if(arr.length){
       html+=arr.map(function(r){
         return '<div class="rev-item"><div class="rh"><span class="rn">'+revEsc(r.authorNick)+'</span><span class="rt">'+reprStars(r.stars)+'</span><span class="rd">'+revTime(r.time)+'</span></div>'+
@@ -1858,17 +1855,17 @@ function renderBal(){
     }
     list.innerHTML=html;
   }
-  function openReviews(mine){
+  function openReviews(){
     revVal=0;
     var s=$("revStars").children;
     for(var i=0;i<s.length;i++)s[i].classList.remove("on");
     $("revHint").textContent="Выберите оценку";
     $("revT").value="";
     $("revErr").textContent="";
-    renderRevList(mine);
+    renderRevList();
     $("revModal").classList.add("open");
   }
-  $("btnReviews").addEventListener("click",function(){openReviews(false);});
+  $("btnReviews").addEventListener("click",function(){openReviews();});
   $("revClose").addEventListener("click",function(){$("revModal").classList.remove("open");});
   $("revModal").addEventListener("click",function(e){ if(e.target===$("revModal")) $("revModal").classList.remove("open"); });
   Array.prototype.forEach.call($("revStars").children,function(star){
@@ -1886,9 +1883,8 @@ function renderBal(){
     st.revs.unshift({time:Date.now(), authorNick:(st.user?st.user.nick:"Гость"), authorId:(st.user?st.user.id:""), stars:revVal, text:t});
     save();
     toast("✅ Спасибо за отзыв!");
-    openReviews(false);
+    openReviews();
   });
-  $("btnMyReviews").addEventListener("click",function(){openReviews(true);});
 
   // Панель DEV
   $("btnSupportDev").addEventListener("click",openDevPanel);
