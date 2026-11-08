@@ -1417,7 +1417,7 @@ var upgMine=null, upgTarget=null, upgMult=1;
       var diff=tgtP-stake;
       label = diff<=0 ? "шанс ≥100%" : ("выигрыш ~"+fmt(Math.max(0,diff))+" голды");
     }
-    $("#mgStake").textContent=upgMine?fmt(Math.round(stake)):"0";
+    $("mgStake").textContent=upgMine?fmt(Math.round(stake)):"0";
     var arc=$("mgArc"), pctEl=$("mgPct"), pct2=$("mgPct2");
     var circ=2*Math.PI*66;
     arc.setAttribute("stroke-dasharray",circ);
@@ -1427,7 +1427,7 @@ var upgMine=null, upgTarget=null, upgMult=1;
     var slotMine=$("mgMine"), slotT=$("mgTarget");
     slotMine.innerHTML = upgMine?'<div class="art">'+upgMine.img+'</div><div class="uc-nm">'+esc(upgMine.name)+'</div>':'<div class="uc-empty">Скин не выбран</div>';
     slotT.innerHTML = upgTarget?'<div class="art">'+upgTarget.svg+'</div><div class="uc-nm">'+esc(upgTarget.name)+'</div>':'<div class="uc-empty">Цель не выбрана</div>';
-    $("#btnUpgGo").disabled=!(upgMine&&upgTarget);
+    $("btnUpgGo").disabled=!(upgMine&&upgTarget);
   }
   $("btnUpgrade").addEventListener("click",function(){
     try{
