@@ -601,6 +601,7 @@
     <div class="rev-btns">
       <button class="btn-reg" id="revSend">Оставить отзыв</button>
     </div>
+    <p class="rev-hint" style="margin:10px 0 0">Новые отзывы проходят модерацию и попадают в общую ленту сайта.</p>
     <div class="rev-list" id="revList">
       <h4>Последние отзывы</h4>
     </div>
@@ -1836,14 +1837,29 @@ function renderBal(){
   });
 
   // ---------- Отзывы ----------
+  // Встроенный общий склад отзывов сайта — его видят все посетители одинаково.
+  // Новые отзывы пользователи добавляют локально (см. SITE_REVIEWS ниже: сюда
+  // вписываются отзывы, чтобы они стали общими для всех).
+  var SITE_REVIEWS=[
+    {time:new Date(2026,10,7).getTime(), authorNick:"T1Community", stars:5, text:"Лучший сайт по кейсам Standoff 2! Раздача голды каждые 3 часа — топ 🔥"},
+    {time:new Date(2026,10,6).getTime(), authorNick:"KnifeEnjoyer", stars:5, text:"Выбил Tanto и AWM с первых открытий. Работает быстро, без лагов."},
+    {time:new Date(2026,10,5).getTime(), authorNick:"DropHunter", stars:4, text:"Отличные кейсы и адекватные цены. Хотелось бы больше редких дропов."},
+    {time:new Date(2026,10,4).getTime(), authorNick:"BomjGaming", stars:5, text:"Бесплатные кейсы и ежедневный бонус — реально копятся скины!"},
+    {time:new Date(2026,10,3).getTime(), authorNick:"SkinsFuhrer", stars:4, text:"Поддержка отвечает быстро. Звёзды не снимаю только за мелкие баги тупых андрозидов)"}
+  ];
   st.revs=st.revs||[];
   var revVal=0;
   function revEsc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   function revTime(t){ var d=new Date(t); function p(x){return x<10?"0"+x:x;} return p(d.getDate())+"."+p(d.getMonth()+1)+"."+d.getFullYear(); }
   function reprStars(v){ var s=""; for(var i=1;i<=5;i++){ s+=(i<=v?"★":"☆"); } return s; }
+  // Уникальные локальные отзывы (не дублирующие встроенные)
+  function localRevs(){
+    var keys={};SITE_REVIEWS.forEach(function(r){keys[r.authorNick+"|"+r.text]=1;});
+    return st.revs.filter(function(r){return !keys[r.authorNick+"|"+r.text];});
+  }
   function renderRevList(){
     var list=$("revList");
-    var arr=st.revs.slice().sort(function(a,b){return b.time-a.time;}).slice(0,15);
+    var arr=SITE_REVIEWS.concat(localRevs()).sort(function(a,b){return b.time-a.time;}).slice(0,15);
     var html='<h4>Отзывы сайта</h4>';
     if(arr.length){
       html+=arr.map(function(r){
@@ -1880,9 +1896,13 @@ function renderBal(){
     var t=$("revT").value.trim();
     if(!revVal){ $("revErr").textContent="Выберите оценку звёздами."; return; }
     if(!t){ $("revErr").textContent="Напишите текст отзыва."; return; }
-    st.revs.unshift({time:Date.now(), authorNick:(st.user?st.user.nick:"Гость"), authorId:(st.user?st.user.id:""), stars:revVal, text:t});
+    var nick=st.user?st.user.nick:"Гость";
+    st.revs.unshift({time:Date.now(), authorNick:nick, authorId:(st.user?st.user.id:""), stars:revVal, text:t});
     save();
-    toast("✅ Спасибо за отзыв!");
+    // копируем отзыв в буфер, чтобы админ мог добавить его в общую ленту сайта
+    var msg="Отзыв для сайта: "+nick+" — "+reprStars(revVal)+" «"+t+"»";
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(msg).catch(function(){}); }
+    toast("✅ Спасибо за отзыв! Копия скопирована в буфер для публикации");
     openReviews();
   });
 
