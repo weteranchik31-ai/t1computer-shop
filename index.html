@@ -239,6 +239,24 @@
   .upg-tile{flex:0 0 80px;height:74px;background:var(--panel);border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;padding:4px;box-sizing:border-box}
   .upg-tile img,.upg-tile svg{max-width:100%;max-height:60px}
   .upg-line{position:absolute;left:50%;top:-6px;bottom:-6px;width:3px;background:var(--yellow);box-shadow:0 0 12px var(--yellow);transform:translateX(-50%);z-index:5}
+  /* ---------- Апгрейд (Musor) ---------- */
+  .mg-layout{display:grid;grid-template-columns:1fr auto 1fr;gap:18px;align-items:start;width:100%}
+  .mg-panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:16px;min-height:360px;display:flex;flex-direction:column;gap:10px}
+  .mg-panel h4{font-size:15px;font-weight:800;color:var(--text);margin:0}
+  .mg-sub{font-size:11px;color:var(--muted)}
+  .mg-slot{min-height:120px;background:var(--bg2);border:1px dashed var(--line);border-radius:12px;display:grid;place-items:center;text-align:center;padding:10px}
+  .mg-slot .art img,.mg-slot .art svg{max-width:120px;max-height:80px}
+  .mg-shadow{font-size:12px;color:var(--muted)}
+  .mg-list{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px;max-height:200px;overflow-y:auto}
+  .mg-center{display:flex;flex-direction:column;align-items:center;gap:12px;min-width:220px}
+  .mg-ring{width:180px;height:180px}
+  .mg-bal{color:var(--muted);font-size:13px}
+  .mg-bal b{color:var(--yellow);font-size:16px}
+  .mg-mult{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
+  .mg-mbtn{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:6px 12px;border-radius:8px;font-weight:700;cursor:pointer}
+  .mg-mbtn:hover{border-color:var(--green)}
+  .mg-mbtn.on{background:var(--green);color:#08130b;border-color:var(--green)}
+  @media(max-width:900px){ .mg-layout{grid-template-columns:1fr} }
   .inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
   .inv-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
   .inv-card .art{height:74px;display:grid;place-items:center;background:var(--bg2);border-radius:10px;margin-bottom:8px}
@@ -463,28 +481,52 @@
     <button class="btn-login" id="upgBack">← Назад</button>
   </div></div>
   <div class="wrap inv-body">
-    <p class="inv-sub">Выбери предмет из инвентаря и попробуй получить скин рангом выше. При неудаче предмет сгорает.</p>
-    <div class="upg-stage">
-      <div class="upg-ring">
-        <svg viewBox="0 0 120 120" width="150" height="150">
-          <circle cx="60" cy="60" r="48" fill="none" stroke="#2a3242" stroke-width="9"/>
-          <circle id="upgArc" cx="60" cy="60" r="48" fill="none" stroke="#ffd700" stroke-width="9" stroke-linecap="round" stroke-dasharray="301.6" stroke-dashoffset="301.6" transform="rotate(-90 60 60)"/>
-          <text x="60" y="58" id="upgPct" text-anchor="middle" font-size="22" font-weight="800" fill="#fff">0%</text>
-          <text x="60" y="76" text-anchor="middle" font-size="9" fill="#8a93a6">низкий шанс</text>
-        </svg>
+    <p class="inv-sub">Поставь свой скин и часть голды, выбери целевой — колесо решит, заберёшь ли ты его.</p>
+    <div class="mg-layout">
+      <!-- Левая колонка: исходный скин -->
+      <div class="mg-panel">
+        <h4>Выберите скин</h4>
+        <span class="mg-sub">Предмет, который хотите улучшить</span>
+        <div class="mg-slot" id="mgMine"><div class="uc-empty">Скин не выбран</div></div>
+        <div class="mg-shadow" id="mgMyHint">Выберите скин из инвентаря ниже</div>
+        <div class="mg-list" id="mgMyList"></div>
       </div>
-      <div class="upg-cards">
-        <div class="upg-card" id="upgIn1"><div class="uc-empty">Предмет 1</div></div>
-        <div class="upg-arrow">➜</div>
-        <div class="upg-card" id="upgIn2"><div class="uc-empty">Предмет 2</div></div>
+      <!-- Центр: круг + ставка + кнопка -->
+      <div class="mg-center">
+        <div class="mg-ring">
+          <svg viewBox="0 0 160 160" width="180" height="180">
+            <circle cx="80" cy="80" r="66" fill="none" stroke="#26303f" stroke-width="10"/>
+            <circle id="mgArc" cx="80" cy="80" r="66" fill="none" stroke="#3de08a" stroke-width="10" stroke-linecap="round" transform="rotate(-90 80 80)"/>
+            <text x="80" y="74" text-anchor="middle" font-size="11" fill="#8a93a6">ШАНС</text>
+            <text x="80" y="100" id="mgPct" text-anchor="middle" font-size="26" font-weight="800" fill="#fff">0%</text>
+            <text x="80" y="118" text-anchor="middle" id="mgPct2" font-size="9" fill="#3de08a">—</text>
+          </svg>
+        </div>
+        <div class="mg-bal">
+          <span>Ставка</span>
+          <b id="mgStake">0</b>
+        </div>
+        <div class="mg-mult" id="mgMult">
+          <button class="mg-mbtn" data-m="1">x1</button>
+          <button class="mg-mbtn" data-m="1.5">x1.5</button>
+          <button class="mg-mbtn" data-m="2">x2</button>
+          <button class="mg-mbtn" data-m="5">x5</button>
+          <button class="mg-mbtn" data-m="10">x10</button>
+        </div>
+        <div class="upg-strip-wrap">
+          <div class="upg-line"></div>
+          <div class="upg-strip" id="upgStrip"></div>
+        </div>
+        <button class="btn-spin" id="btnUpgGo" disabled>⬆️ УЛУЧШИТЬ</button>
       </div>
-      <!-- Прокручивающаяся лента -->
-      <div class="upg-strip-wrap">
-        <div class="upg-line"></div>
-        <div class="upg-strip" id="upgStrip"></div>
+      <!-- Правая колонка: целевой скин -->
+      <div class="mg-panel">
+        <h4>Выберите целевой скин</h4>
+        <span class="mg-sub">Предмет, который хотите получить</span>
+        <div class="mg-slot" id="mgTarget"><div class="uc-empty">Цель не выбрана</div></div>
+        <div class="mg-shadow" id="mgTargetHint">Выберите целевой скин выше по цене</div>
+        <div class="mg-list" id="mgTargetList"></div>
       </div>
-      <div class="upg-list" id="upgList"></div>
-      <button class="btn-spin" id="btnUpgGo" disabled>⬆️ Апгрейд</button>
     </div>
   </div>
 </div>
@@ -1296,190 +1338,151 @@ function renderBal(){
   $("invPage").addEventListener("click",function(e){ if(e.target===$("invPage")){ $("invPage").classList.remove("open"); document.body.style.overflow=""; } });
 
   // ---------- Апгрейд ----------
-  var upgSelA=null, upgSelB=null;
-  var UPGRADE_ORDER=["common","rare","epic","legendary","gold"];
-  function findItemRank(name){
+var upgMine=null, upgTarget=null, upgMult=1;
+  var RANKS=["common","rare","epic","legendary","gold"];
+  function findItemPrice(name){
     for(var k=0;k<CASES.length;k++){
       for(var j=0;j<CASES[k].items.length;j++){
-        if(CASES[k].items[j].name===name) return CASES[k].items[j].q;
+        if(CASES[k].items[j].name===name){ var v=CASES[k].items[j].val||0; return v>0?v:null; }
       }
     }
     return null;
   }
-  function nextRank(q){
-    var i=UPGRADE_ORDER.indexOf(q);
-    if(i<0) return "rare";
-    if(i>=UPGRADE_ORDER.length-1) return "gold";
-    return UPGRADE_ORDER[i+1];
-  }
-  function chanceFor(q){
-    // шанс падает с рангом
-    var ch={common:90,rare:72,epic:55,legendary:40,gold:25};
-    return ch[q]!==undefined?ch[q]:30;
+  function priceOfItem(it){
+    if(it.val&&it.val>0) return it.val;
+    return findItemPrice(it.name)||0;
   }
   function groupInv(){
     var map={};
     (st.inv||[]).forEach(function(it){
-      if(!map[it.name]) map[it.name]={name:it.name,img:it.img,type:it.type,q:it.q||null,count:0,list:[]};
-      map[it.name].count++; map[it.name].list.push(it);
-      if(it.q && !map[it.name].q) map[it.name].q=it.q;
+      if(!map[it.name]) map[it.name]={name:it.name,img:it.img,type:it.type,q:it.q||null,count:0,price:priceOfItem(it)};
+      map[it.name].count++; 
+      if(it.q&&!map[it.name].q) map[it.name].q=it.q;
+      if(!map[it.name].price) map[it.name].price=priceOfItem(it);
     });
-    return Object.keys(map).map(function(k){return map[k];}).filter(function(g){return g.count>=1;});
+    return Object.keys(map).map(function(k){return map[k];});
   }
-  function rankOf(g){
-    return g.q||findItemRank(g.name)||"rare";
+  function isKnifeGlove(it){ var t=(it.type||"").toLowerCase(); return t.indexOf("нож")>-1||t.indexOf("перчат")>-1||t.indexOf("knife")>-1||t.indexOf("glove")>-1; }
+  function rankName(r){ return Q[r]?Q[r].name:r; }
+  function allItems(){
+    var out=[];
+    CASES.forEach(function(c){ c.items.forEach(function(it){ out.push(it); }); });
+    return out;
   }
-  function renderUpgList(){
-    var list=$("upgList");list.innerHTML="";
-    var groups=groupInv();
-    if(!groups.length){ list.innerHTML='<div class="sup-empty">Инвентарь пуст — открой кейс, чтобы получить предметы.</div>'; return; }
+  function renderMyList(){
+    var list=$("mgMyList"), groups=groupInv().filter(function(g){ return !isKnifeGlove(g); });
+    if(!groups.length){ list.innerHTML='<div class="sup-empty" style="grid-column:1/-1;font-size:12px">Инвентарь пуст или предметы-ножи недоступны.</div>'; return; }
+    list.innerHTML="";
     groups.forEach(function(g){
-      var el=document.createElement("div"); el.className="upg-item";
-      var isSel=(upgSelA&&upgSelA.name===g.name)||(upgSelB&&upgSelB.name===g.name);
-      if(isSel) el.classList.add("sel");
-      var q=rankOf(g);
-      var ch=(q&&nextRank(q))?chanceFor(q):null;
-      var chHtml=ch!==null?'<div class="ui-ch">Шанс '+ch+'%</div>':'';
-      el.innerHTML='<div class="art">'+g.img+'</div><div class="ui-nm">'+esc(g.name)+'</div><div class="ui-cnt">x'+g.count+'</div>'+chHtml;
-      el.addEventListener("click",function(){ clickUpgGroup(g); });
+      var el=document.createElement("div"); el.className="mg-item"; 
+      if(upgMine&&upgMine.name===g.name) el.classList.add("on");
+      var pr=g.price?"· "+fmt(g.price)+" голды":"";
+      el.innerHTML='<div class="art">'+g.img+'</div><div class="nm">'+esc(g.name)+'</div><div class="pr">'+esc(pr)+'</div>';
+      el.addEventListener("click",function(){ upgMine=g; renderMyList(); renderUpg(); });
       list.appendChild(el);
     });
   }
-  function isKnifeGlove(g){
-    var t=(g.type||"").toLowerCase();
-    return t.indexOf("нож")>-1 || t.indexOf("нож ") > -1 || t==="нож" || t.indexOf("перчат")>-1 || t.indexOf("knife")>-1 || t.indexOf("glove")>-1;
-  }
-  function clickUpgGroup(g){
-    var q=rankOf(g);
-    if(!q){ toast("⚠️ Нет ранга для этого предмета"); return; }
-    if(isKnifeGlove(g)){ toast("🚫 Ножи и перчатки нельзя апгрейдить"); return; }
-    // 1 клик — выбираем предмет для апгрейда
-    if(upgSelA&&upgSelB&&upgSelA.name===g.name&&upgSelB.name===g.name){
-      upgSelA=null; upgSelB=null; renderUpgList(); renderUpg(); return;
-    }
-    upgSelA=g; upgSelB=g;
-    renderUpgList(); renderUpg();
+  function renderTargetList(){
+    var list=$("mgTargetList");
+    var items=allItems().filter(function(it){ var p=priceOfItem(it); return p>0 && !isKnifeGlove(it); });
+    var minePrice = upgMine?priceOfItem(upgMine):0;
+    // целевые скины дороже ставки минимум на 9%
+    var pool = items.filter(function(it){ return (!minePrice) || (priceOfItem(it) >= minePrice*1.09); });
+    if(!pool.length) pool=items;
+    list.innerHTML="";
+    pool.forEach(function(it){
+      var q=it.q||"common";
+      var el=document.createElement("div"); el.className="mg-item mg-target";
+      if(upgTarget&&upgTarget.name===it.name) el.classList.add("on");
+      el.innerHTML='<div class="art">'+it.svg+'</div><div class="nm">'+esc(it.name)+'</div><div class="pr">'+fmt(priceOfItem(it))+' голды</div>';
+      el.addEventListener("click",function(){ upgTarget=it; renderTargetList(); renderUpg(); });
+      list.appendChild(el);
+    });
   }
   function renderUpg(){
-    var a=upgSelA, b=upgSelB;
-    var c1=$("upgIn1"), c2=$("upgIn2");
-    function fill(card,g){
-      if(!g){ card.innerHTML='<div class="uc-empty">Выбери предмет</div>'; return; }
-      var q=rankOf(g);
-      card.innerHTML='<div class="art" style="background:var(--bg2);border-radius:10px;padding:4px">'+g.img+'</div><div class="uc-nm">'+g.name+'</div>';
+    var mineP=upgMine?priceOfItem(upgMine):0;
+    var stake=mineP*upgMult;
+    var tgtP=upgTarget?priceOfItem(upgTarget):0;
+    var pct=0,label="—";
+    if(upgMine&&upgTarget&&tgtP>0){
+      pct=Math.min(95, (stake/tgtP)*100);
+      var diff=tgtP-stake;
+      label = diff<=0 ? "шанс ≥100%" : ("выигрыш ~"+fmt(Math.max(0,diff))+" голды");
     }
-    fill(c1,a); fill(c2,b);
-    var pct=0,label="—", spanClass="";
-    if(a&&b){
-      var q=rankOf(a), nq=nextRank(q);
-      if(nq){
-        pct=chanceFor(q);
-        label= Q[nq]?Q[nq].name:"выше";
-        spanClass=" upg-will";
-      }
-    }
-    if(a&&b){ c2.innerHTML='<div class="uc-empty" style="color:var(--yellow)">→ '+esc(label)+'</div>'; }
-    var arc=$("upgArc"), pctEl=$("upgPct");
-    var circ=2*Math.PI*48;
+    $("#mgStake").textContent=upgMine?fmt(Math.round(stake)):"0";
+    var arc=$("mgArc"), pctEl=$("mgPct"), pct2=$("mgPct2");
+    var circ=2*Math.PI*66;
     arc.setAttribute("stroke-dasharray",circ);
     arc.setAttribute("stroke-dashoffset",circ*(1-pct/100));
     pctEl.textContent=pct.toFixed(0)+"%";
-    $("upgPct2")&&($("upgPct2").textContent=label);
-    var btn=$("btnUpgGo");
-    btn.disabled=!(a&&b);
+    pct2.textContent=label;
+    var slotMine=$("mgMine"), slotT=$("mgTarget");
+    slotMine.innerHTML = upgMine?'<div class="art">'+upgMine.img+'</div><div class="uc-nm">'+esc(upgMine.name)+'</div>':'<div class="uc-empty">Скин не выбран</div>';
+    slotT.innerHTML = upgTarget?'<div class="art">'+upgTarget.svg+'</div><div class="uc-nm">'+esc(upgTarget.name)+'</div>':'<div class="uc-empty">Цель не выбрана</div>';
+    $("#btnUpgGo").disabled=!(upgMine&&upgTarget);
   }
   $("btnUpgrade").addEventListener("click",function(){
-    upgSelA=null; upgSelB=null;
-    renderUpgList(); renderUpg();
+    upgMine=null; upgTarget=null; upgMult=1;
+    Array.prototype.forEach.call($("mgMult").children,function(b){ b.classList.remove("on"); });
+    var x1=$("mgMult").querySelector('[data-m="1"]'); if(x1)x1.classList.add("on");
+    renderMyList(); renderTargetList(); renderUpg(); upgIdleStrip();
     $("upgPage").classList.add("open");
     document.body.style.overflow="hidden";
   });
+  Array.prototype.forEach.call($("mgMult").children,function(b){
+    b.addEventListener("click",function(){
+      upgMult=parseFloat(b.getAttribute("data-m"))||1;
+      Array.prototype.forEach.call($("mgMult").children,function(x){ x.classList.remove("on"); });
+      b.classList.add("on");
+      renderUpg();
+    });
+  });
   function upgIdleStrip(){
-    // лента в предпросмотре: все предметы следующего ранга (если выбрано) или случайные из кейсов
     var strip=$("upgStrip"); if(!strip) return;
-    strip.innerHTML="";
-    var pool=[];
-    CASES.forEach(function(c){ c.items.forEach(function(it){ pool.push(it); }); });
-    strip.style.transition="none";
-    var SEG=80;
-    for(var i=0;i<16;i++){
-      var t=pool[Math.floor(Math.random()*pool.length)];
-      var d=document.createElement("div"); d.className="upg-tile";
-      d.innerHTML=(t&&t.svg)?t.svg:'<span style="color:var(--muted);font-size:22px">?</span>';
-      strip.appendChild(d);
-    }
+    strip.innerHTML=""; strip.style.transition="none";
+    var pool=allItems(), SEG=80;
+    for(var i=0;i<16;i++){ var t=pool[Math.floor(Math.random()*pool.length)]; var d=document.createElement("div"); d.className="upg-tile"; d.innerHTML=(t&&t.svg)?t.svg:'<span style="color:var(--muted);font-size:22px">?</span>'; strip.appendChild(d); }
     var wrap=strip.parentNode;
-    strip.style.transform="translateX("+(SEG*0-(wrap?wrap.offsetWidth/2:160))+"px)";
+    strip.style.transform="translateX("+(-(wrap?wrap.offsetWidth/2:160))+"px)";
   }
   var upgIdleDone=false;
   function ensureUpgStrip(){ if(!upgIdleDone){ upgIdleDone=true; upgIdleStrip(); } }
-  // заполнить ленту при первой отрисовке списка
-  var _origRenderUpgList=renderUpgList;
-  renderUpgList=function(){ ensureUpgStrip(); return _origRenderUpgList.apply(this,arguments); };
-  $("upgBack").addEventListener("click",function(){
-    $("upgPage").classList.remove("open");
-    document.body.style.overflow="";
-  });
+  var _oRML=renderMyList; renderMyList=function(){ ensureUpgStrip(); return _oRML.apply(this,arguments); };
+  $("upgBack").addEventListener("click",function(){ $("upgPage").classList.remove("open"); document.body.style.overflow=""; });
   $("upgPage").addEventListener("click",function(e){ if(e.target===$("upgPage")){ $("upgPage").classList.remove("open"); document.body.style.overflow=""; } });
   $("btnUpgGo").addEventListener("click",function(){
-    var a=upgSelA,b=upgSelB;
-    if(!a||!b) return;
-    var q=rankOf(a), nq=nextRank(q);
+    if(!upgMine||!upgTarget) return;
     var btn=$("btnUpgGo"); btn.disabled=true;
-    // заранее считаем результат
-    var chance=chanceFor(q);
-    var success=Math.random()*100<chance;
-    var pool=[];
-    CASES.forEach(function(c){ c.items.forEach(function(it){ if(it.q===nq) pool.push(it); }); });
-    if(!pool.length){ pool=[]; CASES.forEach(function(c){ c.items.forEach(function(it){ pool.push(it); }); }); }
-    var prize = (pool.length && success) ? pool[Math.floor(Math.random()*pool.length)] : null;
-    // шанс на нож 10% при успешном апгрейде
-    if(prize && Math.random()*100<10){
-      var knives=[];
-      CASES.forEach(function(c){ c.items.forEach(function(it){ if((it.type||"").indexOf("нож")>-1) knives.push(it); }); });
-      if(knives.length){ prize = knives[Math.floor(Math.random()*knives.length)]; }
-    }
-    // удалить 1 предмет сразу и сохранить результат в инвентарь (надёжно, до анимации)
+    var mineP=priceOfItem(upgMine), stake=Math.round(mineP*upgMult), tgtP=priceOfItem(upgTarget);
+    if(!isInfinity() && st.bal<stake){ toast("😕 Недостаточно голды на балансе для ставки"); btn.disabled=false; return; }
+    var pct=Math.min(95,(stake/tgtP)*100);
+    var success=Math.random()*100<pct;
+    // списываем ставку с баланса
+    if(!isInfinity()) st.bal-=stake;
+    // сжигаем 1 предмет из инвентаря
     var removed=0;
-    st.inv=(st.inv||[]).filter(function(it){ if(removed<1 && it.name===a.name){ removed++; return false; } return true; });
-    if(prize){
-      addToInv(prize.name, prize.svg, prize.type, prize.q||nq);
-    }
+    st.inv=(st.inv||[]).filter(function(it){ if(removed<1 && it.name===upgMine.name){ removed++; return false; } return true; });
+    var prize = success ? {name:upgTarget.name, svg:upgTarget.svg, type:upgTarget.type, q:upgTarget.q} : null;
+    if(prize){ addToInv(prize.name, prize.svg, prize.type, prize.q); }
     if(!st.task_upg){ completeTask("upg",25); }
-    save();
-    // строим ленту: чередуем предметы пула, на позицию приземления ставим результат
+    save(); renderBal();
+    // лента
     var strip=$("upgStrip"); strip.innerHTML="";
     var SEG=80, LAND=6, len=22, tiles=[];
-    for(var i=0;i<len;i++){
-      var ti = (i===LAND) ? (prize||null) : (pool.length? pool[Math.floor(Math.random()*pool.length)] : null);
-      tiles.push(ti);
-    }
-    // запас: дублируем предметы вдвое, чтобы лента была плотнее
+    var pool=allItems();
+    for(var i=0;i<len;i++){ var ti = (i===LAND)?(prize||null):(pool[Math.floor(Math.random()*pool.length)]||null); tiles.push(ti); }
     var double=[];
     for(i=0;i<len;i++){ double.push(tiles[i]); double.push(tiles[i]); }
-    double.forEach(function(t){
-      var d=document.createElement("div"); d.className="upg-tile";
-      d.innerHTML = (t&&t.svg) ? t.svg : '<span style="color:var(--muted);font-size:22px">💥</span>';
-      strip.appendChild(d);
-    });
-    strip.style.transition="none";
-    strip.style.transform="translateX(0)";
-    void strip.offsetWidth;
-    // центр ленты должен встать на плитку двойного индекса LAND*2
+    double.forEach(function(t){ var d=document.createElement("div"); d.className="upg-tile"; d.innerHTML=(t&&t.svg)?t.svg:'<span style="color:var(--muted);font-size:22px">💥</span>'; strip.appendChild(d); });
+    strip.style.transition="none"; strip.style.transform="translateX(0)"; void strip.offsetWidth;
     var target=-(LAND*2*SEG + SEG/2 - (strip.parentNode.offsetWidth/2));
+    setTimeout(function(){ strip.style.transition="transform 1.4s cubic-bezier(.15,.85,.25,1)"; strip.style.transform="translateX("+target+"px)"; },40);
     setTimeout(function(){
-      strip.style.transition="transform 1.4s cubic-bezier(.15,.85,.25,1)";
-      strip.style.transform="translateX("+target+"px)";
-    },40);
-    setTimeout(function(){
-      if(prize){
-        toast("🎉 Апгрейд успешен! +"+prize.name);
-      } else {
-        toast("💥 Апгрейд не удался — предмет сгорел");
-      }
-      upgSelA=null; upgSelB=null;
-      renderUpgList(); renderUpg();
-      renderInv();
+      if(prize){ toast("🎉 Апгрейд успешен! +"+prize.name); }
+      else { toast("💥 Апгрейд не удался — предмет и ставка сгорели"); }
+      upgMine=null; upgTarget=null; upgMult=1;
+      var on=$("mgMult").querySelector('[data-m="1"]'); if(on)on.classList.add("on");
+      renderMyList(); renderTargetList(); renderUpg(); renderInv();
       btn.disabled=false;
     },1600);
   });
