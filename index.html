@@ -1041,9 +1041,11 @@ function renderBal(){
   function addToInv(name, imgHtml, type, q){
     st.inv=st.inv||[];
     if(!q){ q=findItemRank(name)||"rare"; }
-    st.inv.push({name:name, img:imgHtml, type:type, q:q});
+    var item={name:name, img:imgHtml, type:type, q:q};
+    st.inv.push(item);
     save();
     renderInv();
+    return item;
   }
   function renderInv(){
     var grid=$("invGrid"), arr=st.inv||[];
@@ -1159,9 +1161,14 @@ function renderBal(){
       list.appendChild(el);
     });
   }
+  function isKnifeGlove(g){
+    var t=(g.type||"").toLowerCase();
+    return t.indexOf("нож")>-1 || t.indexOf("нож ") > -1 || t==="нож" || t.indexOf("перчат")>-1 || t.indexOf("knife")>-1 || t.indexOf("glove")>-1;
+  }
   function clickUpgGroup(g){
     var q=rankOf(g);
     if(!q){ toast("⚠️ Нет ранга для этого предмета"); return; }
+    if(isKnifeGlove(g)){ toast("🚫 Ножи и перчатки нельзя апгрейдить"); return; }
     // 1 клик — выбираем предмет для апгрейда
     if(upgSelA&&upgSelB&&upgSelA.name===g.name&&upgSelB.name===g.name){
       upgSelA=null; upgSelB=null; renderUpgList(); renderUpg(); return;
@@ -1242,6 +1249,13 @@ function renderBal(){
     CASES.forEach(function(c){ c.items.forEach(function(it){ if(it.q===nq) pool.push(it); }); });
     if(!pool.length){ pool=[]; CASES.forEach(function(c){ c.items.forEach(function(it){ pool.push(it); }); }); }
     var prize = (pool.length && success) ? pool[Math.floor(Math.random()*pool.length)] : null;
+    // удалить 1 предмет сразу и сохранить результат в инвентарь (надёжно, до анимации)
+    var removed=0;
+    st.inv=(st.inv||[]).filter(function(it){ if(removed<1 && it.name===a.name){ removed++; return false; } return true; });
+    if(prize){
+      addToInv(prize.name, prize.svg, prize.type, nq);
+    }
+    save();
     // строим ленту: чередуем предметы пула, на позицию приземления ставим результат
     var strip=$("upgStrip"); strip.innerHTML="";
     var SEG=80, LAND=6, len=22, tiles=[];
@@ -1262,22 +1276,16 @@ function renderBal(){
     void strip.offsetWidth;
     // центр ленты должен встать на плитку двойного индекса LAND*2
     var target=-(LAND*2*SEG + SEG/2 - (strip.parentNode.offsetWidth/2));
-    // удалить 1 предмет
-    var removed=0;
-    st.inv=(st.inv||[]).filter(function(it){ if(removed<1 && it.name===a.name){ removed++; return false; } return true; });
-    save();
     setTimeout(function(){
       strip.style.transition="transform 1.4s cubic-bezier(.15,.85,.25,1)";
       strip.style.transform="translateX("+target+"px)";
     },40);
     setTimeout(function(){
       if(prize){
-        addToInv(prize.name, prize.svg, prize.type);
         toast("🎉 Апгрейд успешен! +"+prize.name);
       } else {
-        toast("💥 Апгрейд не удался — предметы сгорели");
+        toast("💥 Апгрейд не удался — предмет сгорел");
       }
-      save();
       upgSelA=null; upgSelB=null;
       renderUpgList(); renderUpg();
       renderInv();
