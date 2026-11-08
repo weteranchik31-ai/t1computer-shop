@@ -245,6 +245,11 @@
   .btn-support:hover{border-color:var(--yellow)}
 
   /* ---------- Поддержка ---------- */
+  .sup-my{margin-top:18px;border-top:1px dashed var(--line);padding-top:14px}
+  .sup-my h4{font-size:13px;color:var(--muted);margin-bottom:10px;font-weight:700}
+  .sup-my .sup-item{cursor:default}
+  .sup-my .sup-item:hover{border-color:var(--line)}
+  .sup-my .sq{color:var(--text)}
   .modal textarea{width:100%;background:var(--bg2);border:1px solid var(--line);border-radius:10px;padding:11px 12px;color:var(--text);font-size:14px;font-family:inherit;resize:vertical;min-height:90px}
   .modal textarea:focus{outline:none;border-color:var(--yellow)}
   .sup-list{display:flex;flex-direction:column;gap:10px;max-height:340px;overflow-y:auto;margin-top:6px}
@@ -466,6 +471,7 @@
     <textarea id="supQ" placeholder="Опишите ваш вопрос…" maxlength="500"></textarea>
     <div class="modal-err" id="supErr"></div>
     <button class="btn-reg" id="supSend">Отправить</button>
+    <div id="supMy"></div>
   </div>
 </div>
 
@@ -1191,10 +1197,22 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     var mine=(st.user)?st.user.id:"";
     return st.sup.filter(function(q){return q.authorId===mine || q.authorNick===((st.user||{}).nick);});
   }
+  function renderSupMy(){
+    var box=$("supMy");
+    if(!box) return;
+    var my=supMyQuestions();
+    if(!my.length){ box.innerHTML=""; return; }
+    var html='<div class="sup-my"><h4>Мои обращения</h4>'+my.map(function(q){
+      return '<div class="sup-item'+(q.answer?' answered':'')+'"><div class="sq">'+esc(q.text)+'</div>'+
+        (q.answer?'<div class="sa">Ответ: '+esc(q.answer)+'</div>':'<div class="sm">Ожидает ответа DEV…</div>')+'</div>';
+    }).join("")+'</div>';
+    box.innerHTML=html;
+  }
   $("btnSupport").addEventListener("click",function(){
     $("supQ").value="";
     $("supErr").textContent="";
     $("supSub").textContent="Опишите вашу проблему — мы ответим в разделе поддержки.";
+    renderSupMy();
     $("supModal").classList.add("open");
   });
   $("supClose").addEventListener("click",function(){$("supModal").classList.remove("open");});
@@ -1206,6 +1224,7 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     save();
     $("supQ").value="";$("supErr").textContent="";
     $("supSub").textContent="Ваше обращение отправлено! Ответ появится здесь, когда DEV ответит.";
+    renderSupMy();
     toast("✅ Вопрос отправлен");
   });
 
