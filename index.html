@@ -952,7 +952,7 @@ function renderBal(){
     spinning=true;$("btnOpen").disabled=true;
     st.opened++;
     if(!isDev()) st.bal-=selected.price;
-    if(st.opened===1&&!st.task_case){ completeTask("case",25); }
+    if(!st.task_case){ completeTask("case",25); }
     if(selected.stock)selected.stock.left=Math.max(0,selected.stock.left-1);
     drawCases();renderBal();
 
