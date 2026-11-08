@@ -67,6 +67,8 @@
   .bnr.gold h4{color:var(--yellow)}
   .bnr.cyan h4{color:var(--cyan)}
   .bnr .timer{font-size:12px;color:var(--yellow);font-weight:700;margin-top:4px}
+  .btn-claim{margin-top:10px;width:100%;background:linear-gradient(135deg,var(--yellow),#ffa93c);color:#161006;border:none;padding:12px;border-radius:11px;font-weight:800;cursor:pointer;font-size:15px}
+  .btn-claim:hover{filter:brightness(1.08)}
 
   /* ---------- Секция кейсов ---------- */
   section{margin-top:34px}
@@ -269,7 +271,7 @@
 
   <!-- Баннеры -->
   <div class="banners">
-    <div class="bnr rose"><h4>🎁 Розыгрыш скинов</h4><p>Раздача подарков каждые 3 часа — не пропусти!</p><div class="timer" id="timerDraw">До розыгрыша: --:--</div><span class="ic">🎁</span></div>
+    <div class="bnr rose"><h4>🎁 Розыгрыш скинов</h4><p>Раздача подарков каждые 3 часа — не пропусти!</p><div class="timer" id="timerDraw">До розыгрыша: --:--</div><button class="btn-claim" id="btnClaim" style="display:none">Получить Скин!</button><span class="ic">🎁</span></div>
     <div class="bnr gold"><h4>Голда без доната</h4><p>Заходи на T1Computer-shop и получай игровую валюту бесплатно.</p></div>
     <div class="bnr cyan"><h4>🤝 Сотрудничество</h4><p>Приглашай людей на сайт и получай с них 10% прибыли.</p><span class="ic">🤝</span></div>
   </div>
@@ -380,6 +382,17 @@
     <h4 id="wdName">Скин</h4>
     <p class="wd-text">Если хотите вывести скин в Stand Knife — сделайте скрин инвентаря и напишите, что хотите вывести.</p>
     <a class="wd-btn" id="wdBtn" href="#" target="_blank" rel="noopener">Вывести</a>
+  </div>
+</div>
+
+<!-- Модалка раздачи скина -->
+<div class="withdraw-modal" id="fdModal">
+  <div class="wd-box">
+    <button class="wd-close" id="fdClose" aria-label="Закрыть">✕</button>
+    <div class="wd-art" id="fdArt"></div>
+    <h4 id="fdName">G22 «Frost Wyrm»</h4>
+    <p class="wd-text">Поздравляем! Ты получил скин G22 «Frost Wyrm» и 50 голды.</p>
+    <button class="wd-btn" id="fdTake" type="button">Забрать</button>
   </div>
 </div>
 
@@ -595,7 +608,7 @@
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noFestal:0,noFrost:0,noRetro:0,noHohei:0,noVenator:0,noScorpion:0,noTanHide:0};
+    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noFestal:0,noFrost:0,noRetro:0,noHohei:0,noVenator:0,noScorpion:0,noTanHide:0,fdClaim:0};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -629,13 +642,42 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
   }
   setInterval(function(){liveIdx++;renderLive();},4000);
 
-  // ---------- Таймер ----------
+  // ---------- Таймер раздачи (каждые 3 часа) ----------
   function tickTimer(){
-    var now=Date.now(), end=(Math.floor(now/10800000)+1)*10800000, rem=end-now;
-    var h=Math.floor(rem/3600000),m=Math.floor(rem%3600000/60000),s=Math.floor(rem%60000/1000);
-    function p(x){return x<10?"0"+x:x;}
-    $("timerDraw").textContent="До розыгрыша: "+p(h)+":"+p(m)+":"+p(s);
+    var now=Date.now();
+    var claim=st.fdClaim||0;
+    var HOURS3=10800000;
+    var ready=(claim===0)||(now-claim>=HOURS3);
+    var btn=$("btnClaim"), timer=$("timerDraw");
+    if(ready){
+      btn.style.display="block";
+      timer.textContent="Раздача доступна!";
+    } else {
+      btn.style.display="none";
+      var rem=HOURS3-(now-claim);
+      var h=Math.floor(rem/3600000),m=Math.floor(rem%3600000/60000),s=Math.floor(rem%60000/1000);
+      function p(x){return x<10?"0"+x:x;}
+      timer.textContent="До раздачи: "+p(h)+":"+p(m)+":"+p(s);
+    }
   }
+  var fdImg='<img src="g22-frost-wyrm.png" alt="G22 Frost Wyrm">';
+  $("btnClaim").addEventListener("click",function(){
+    $("fdArt").innerHTML=fdImg;
+    $("fdName").textContent="G22 «Frost Wyrm»";
+    $("fdModal").classList.add("open");
+  });
+  $("fdClose").addEventListener("click",function(){$("fdModal").classList.remove("open");});
+  $("fdTake").addEventListener("click",function(){
+    $("fdModal").classList.remove("open");
+    addToInv("G22 «Frost Wyrm»",fdImg,"Пистолет");
+    st.bal=(st.bal||0)+50;
+    st.fdClaim=Date.now();
+    save();
+    renderBal();
+    toast("🎁 +50 голды и скин G22 «Frost Wyrm»!");
+    tickTimer();
+  });
+  $("fdModal").addEventListener("click",function(e){ if(e.target===$("fdModal")) $("fdModal").classList.remove("open"); });
   setInterval(tickTimer,1000);tickTimer();
 
   // ---------- Кейсы ----------
