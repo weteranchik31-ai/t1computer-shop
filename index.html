@@ -221,6 +221,11 @@
   .upg-item img,.upg-item svg{max-width:100%;max-height:50px}
   .upg-item .ui-nm{font-size:10px;color:var(--muted);line-height:1.1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .upg-item .ui-cnt{font-size:10px;color:var(--yellow);font-weight:700}
+  .upg-strip-wrap{position:relative;width:100%;max-width:460px;overflow:hidden;border:1px solid var(--line);border-radius:12px;padding:8px 0;background:var(--bg2)}
+  .upg-strip{display:flex;gap:8px;transition:transform 1.2s cubic-bezier(.22,1,.22,1);will-change:transform}
+  .upg-tile{flex:0 0 80px;height:74px;background:var(--panel);border:1px solid var(--line);border-radius:10px;display:grid;place-items:center;padding:4px;box-sizing:border-box}
+  .upg-tile img,.upg-tile svg{max-width:100%;max-height:60px}
+  .upg-line{position:absolute;left:50%;top:-6px;bottom:-6px;width:3px;background:var(--yellow);box-shadow:0 0 12px var(--yellow);transform:translateX(-50%);z-index:5}
   .inv-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
   .inv-card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:center}
   .inv-card .art{height:74px;display:grid;place-items:center;background:var(--bg2);border-radius:10px;margin-bottom:8px}
@@ -454,6 +459,11 @@
         <div class="upg-card" id="upgIn1"><div class="uc-empty">Предмет 1</div></div>
         <div class="upg-arrow">➜</div>
         <div class="upg-card" id="upgIn2"><div class="uc-empty">Предмет 2</div></div>
+      </div>
+      <!-- Прокручивающаяся лента -->
+      <div class="upg-strip-wrap">
+        <div class="upg-line"></div>
+        <div class="upg-strip" id="upgStrip"></div>
       </div>
       <div class="upg-list" id="upgList"></div>
       <button class="btn-spin" id="btnUpgGo" disabled>⬆️ Апгрейд</button>
@@ -1142,17 +1152,13 @@ function renderBal(){
   function clickUpgGroup(g){
     var q=findItemRank(g.name);
     if(!q){ toast("⚠️ Нет ранга для этого предмета"); return; }
-    if(upgSelA&&upgSelB&&upgSelA.name===g.name&&upgSelB.name===g.name && upgSelA!==upgSelB){
-      // уже оба выбраны тем же именем — снять
-      upgSelA=null; upgSelB=null; renderUpg(); return;
-    }
     if(g.count<2){ toast("Нужно минимум 2 таких предмета"); return; }
-    if(!upgSelA || (upgSelA&&!upgSelB)){
-      upgSelA=g; upgSelB=g;
-    } else {
-      upgSelA=g; upgSelB=g;
+    // 1 клик — выбираем пару одинаковых предметов
+    if(upgSelA&&upgSelB&&upgSelA.name===g.name&&upgSelB.name===g.name){
+      upgSelA=null; upgSelB=null; renderUpgList(); renderUpg(); return;
     }
-    renderUpg();
+    upgSelA=g; upgSelB=g;
+    renderUpgList(); renderUpg();
   }
   function renderUpg(){
     var a=upgSelA, b=upgSelB;
@@ -1186,6 +1192,28 @@ function renderBal(){
     $("upgPage").classList.add("open");
     document.body.style.overflow="hidden";
   });
+  function upgIdleStrip(){
+    // лента в предпросмотре: все предметы следующего ранга (если выбрано) или случайные из кейсов
+    var strip=$("upgStrip"); if(!strip) return;
+    strip.innerHTML="";
+    var pool=[];
+    CASES.forEach(function(c){ c.items.forEach(function(it){ pool.push(it); }); });
+    strip.style.transition="none";
+    var SEG=80;
+    for(var i=0;i<16;i++){
+      var t=pool[Math.floor(Math.random()*pool.length)];
+      var d=document.createElement("div"); d.className="upg-tile";
+      d.innerHTML=(t&&t.svg)?t.svg:'<span style="color:var(--muted);font-size:22px">?</span>';
+      strip.appendChild(d);
+    }
+    var wrap=strip.parentNode;
+    strip.style.transform="translateX("+(SEG*0-(wrap?wrap.offsetWidth/2:160))+"px)";
+  }
+  var upgIdleDone=false;
+  function ensureUpgStrip(){ if(!upgIdleDone){ upgIdleDone=true; upgIdleStrip(); } }
+  // заполнить ленту при первой отрисовке списка
+  var _origRenderUpgList=renderUpgList;
+  renderUpgList=function(){ ensureUpgStrip(); return _origRenderUpgList.apply(this,arguments); };
   $("upgBack").addEventListener("click",function(){
     $("upgPage").classList.remove("open");
     document.body.style.overflow="";
@@ -1196,32 +1224,54 @@ function renderBal(){
     if(!a||!b) return;
     var q=findItemRank(a.name), nq=nextRank(q);
     if(!q||!nq){ toast("⚠️ Невозможно апгрейдить"); return; }
-    // удалить 2 предмета
-    var removed=0;
-    st.inv=(st.inv||[]).filter(function(it){
-      if(removed<2 && it.name===a.name){ removed++; return false; }
-      return true;
-    });
+    var btn=$("btnUpgGo"); btn.disabled=true;
+    // заранее считаем результат
     var chance=chanceFor(q);
     var success=Math.random()*100<chance;
-    if(success){
-      // найти предмет следующего ранга в кейсах
-      var pool=[];
-      CASES.forEach(function(c){ c.items.forEach(function(it){ if(it.q===nq) pool.push(it); }); });
-      if(pool.length){
-        var prize=pool[Math.floor(Math.random()*pool.length)];
+    var pool=[];
+    CASES.forEach(function(c){ c.items.forEach(function(it){ if(it.q===nq) pool.push(it); }); });
+    var prize = (pool.length && success) ? pool[Math.floor(Math.random()*pool.length)] : null;
+    // строим ленту: чередуем предметы пула, на позицию приземления ставим результат
+    var strip=$("upgStrip"); strip.innerHTML="";
+    var SEG=80, LAND=6, len=22, tiles=[];
+    for(var i=0;i<len;i++){
+      var ti = (i===LAND) ? (prize||null) : (pool.length? pool[Math.floor(Math.random()*pool.length)] : null);
+      tiles.push(ti);
+    }
+    // запас: дублируем предметы вдвое, чтобы лента была плотнее
+    var double=[];
+    for(i=0;i<len;i++){ double.push(tiles[i]); double.push(tiles[i]); }
+    double.forEach(function(t){
+      var d=document.createElement("div"); d.className="upg-tile";
+      d.innerHTML = (t&&t.svg) ? t.svg : '<span style="color:var(--muted);font-size:22px">💥</span>';
+      strip.appendChild(d);
+    });
+    strip.style.transition="none";
+    strip.style.transform="translateX(0)";
+    void strip.offsetWidth;
+    // центр ленты должен встать на плитку двойного индекса LAND*2
+    var target=-(LAND*2*SEG + SEG/2 - (strip.parentNode.offsetWidth/2));
+    // удалить 2 предмета сразу
+    var removed=0;
+    st.inv=(st.inv||[]).filter(function(it){ if(removed<2 && it.name===a.name){ removed++; return false; } return true; });
+    save();
+    setTimeout(function(){
+      strip.style.transition="transform 1.4s cubic-bezier(.15,.85,.25,1)";
+      strip.style.transform="translateX("+target+"px)";
+    },40);
+    setTimeout(function(){
+      if(prize){
         addToInv(prize.name, prize.svg, prize.type);
         toast("🎉 Апгрейд успешен! +"+prize.name);
       } else {
-        toast("😕 Не нашлось предмета выше — предметы сгорели");
+        toast("💥 Апгрейд не удался — предметы сгорели");
       }
-    } else {
-      toast("💥 Апгрейд не удался — предметы сгорели");
-    }
-    save();
-    upgSelA=null; upgSelB=null;
-    renderUpgList(); renderUpg();
-    renderInv();
+      save();
+      upgSelA=null; upgSelB=null;
+      renderUpgList(); renderUpg();
+      renderInv();
+      btn.disabled=false;
+    },1600);
   });
 
   function renderWheel(){
