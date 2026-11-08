@@ -959,7 +959,7 @@ function renderBal(){
       $("result").innerHTML='<div class="big">'+win.svg+'</div>'+
         '<h4 style="color:'+q.color+'">'+win.name+'</h4>'+
         '<div class="qcode" style="color:'+q.color+'">'+q.code+'</div>';
-      addToInv(win.name, win.svg, win.type);
+      addToInv(win.name, win.svg, win.type, win.q);
       save();
     } finally {
       spinning=false;$("btnOpen").disabled=false;
@@ -1038,9 +1038,10 @@ function renderBal(){
   $("winModal").addEventListener("click",function(e){ if(e.target===$("winModal")) $("winModal").classList.remove("open"); });
 
   // ---------- Инвентарь ----------
-  function addToInv(name, imgHtml, type){
+  function addToInv(name, imgHtml, type, q){
     st.inv=st.inv||[];
-    st.inv.push({name:name, img:imgHtml, type:type});
+    if(!q){ q=findItemRank(name)||"rare"; }
+    st.inv.push({name:name, img:imgHtml, type:type, q:q});
     save();
     renderInv();
   }
@@ -1121,7 +1122,8 @@ function renderBal(){
   }
   function nextRank(q){
     var i=UPGRADE_ORDER.indexOf(q);
-    if(i<0||i>=UPGRADE_ORDER.length-1) return null;
+    if(i<0) return "rare";
+    if(i>=UPGRADE_ORDER.length-1) return "gold";
     return UPGRADE_ORDER[i+1];
   }
   function chanceFor(q){
@@ -1132,10 +1134,14 @@ function renderBal(){
   function groupInv(){
     var map={};
     (st.inv||[]).forEach(function(it){
-      if(!map[it.name]) map[it.name]={name:it.name,img:it.img,type:it.type,count:0,list:[]};
+      if(!map[it.name]) map[it.name]={name:it.name,img:it.img,type:it.type,q:it.q||null,count:0,list:[]};
       map[it.name].count++; map[it.name].list.push(it);
+      if(it.q && !map[it.name].q) map[it.name].q=it.q;
     });
     return Object.keys(map).map(function(k){return map[k];}).filter(function(g){return g.count>=2;});
+  }
+  function rankOf(g){
+    return g.q||findItemRank(g.name)||"rare";
   }
   function renderUpgList(){
     var list=$("upgList");list.innerHTML="";
@@ -1145,7 +1151,7 @@ function renderBal(){
       var el=document.createElement("div"); el.className="upg-item";
       var isSel=(upgSelA&&upgSelA.name===g.name)||(upgSelB&&upgSelB.name===g.name);
       if(isSel) el.classList.add("sel");
-      var q=findItemRank(g.name);
+      var q=rankOf(g);
       var ch=(q&&nextRank(q))?chanceFor(q):null;
       var chHtml=ch!==null?'<div class="ui-ch">Шанс '+ch+'%</div>':'';
       el.innerHTML='<div class="art">'+g.img+'</div><div class="ui-nm">'+esc(g.name)+'</div><div class="ui-cnt">x'+g.count+'</div>'+chHtml;
@@ -1154,7 +1160,7 @@ function renderBal(){
     });
   }
   function clickUpgGroup(g){
-    var q=findItemRank(g.name);
+    var q=rankOf(g);
     if(!q){ toast("⚠️ Нет ранга для этого предмета"); return; }
     if(g.count<2){ toast("Нужно минимум 2 таких предмета"); return; }
     // 1 клик — выбираем пару одинаковых предметов
@@ -1169,13 +1175,13 @@ function renderBal(){
     var c1=$("upgIn1"), c2=$("upgIn2");
     function fill(card,g){
       if(!g){ card.innerHTML='<div class="uc-empty">Выбери предмет</div>'; return; }
-      var q=findItemRank(g.name);
+      var q=rankOf(g);
       card.innerHTML='<div class="art" style="background:var(--bg2);border-radius:10px;padding:4px">'+g.img+'</div><div class="uc-nm">'+g.name+'</div>';
     }
     fill(c1,a); fill(c2,b);
     var pct=0,label="—";
     if(a&&b){
-      var q=findItemRank(a.name), nq=nextRank(q);
+      var q=rankOf(a), nq=nextRank(q);
       if(nq){
         pct=chanceFor(q);
         label= Q[nq]?Q[nq].name:"выше";
@@ -1226,14 +1232,14 @@ function renderBal(){
   $("btnUpgGo").addEventListener("click",function(){
     var a=upgSelA,b=upgSelB;
     if(!a||!b) return;
-    var q=findItemRank(a.name), nq=nextRank(q);
-    if(!q||!nq){ toast("⚠️ Невозможно апгрейдить"); return; }
+    var q=rankOf(a), nq=nextRank(q);
     var btn=$("btnUpgGo"); btn.disabled=true;
     // заранее считаем результат
     var chance=chanceFor(q);
     var success=Math.random()*100<chance;
     var pool=[];
     CASES.forEach(function(c){ c.items.forEach(function(it){ if(it.q===nq) pool.push(it); }); });
+    if(!pool.length){ pool=[]; CASES.forEach(function(c){ c.items.forEach(function(it){ pool.push(it); }); }); }
     var prize = (pool.length && success) ? pool[Math.floor(Math.random()*pool.length)] : null;
     // строим ленту: чередуем предметы пула, на позицию приземления ставим результат
     var strip=$("upgStrip"); strip.innerHTML="";
