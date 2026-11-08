@@ -564,7 +564,6 @@
         it("AWM «Festal Wrap»","Снайперская","#ff5470","epic",420,"awm-festal-wrap.webp",8),
         it("Tanto «Frost Nova»","Нож","#3dd7ff","epic",480,"tanto-frost-nova.webp",17),
         it("AWM «Hohei Taisho»","Снайперская","#ff9f43","legendary",1800,"awm-hohei-taisho.webp",5),
-        it("Gloves «Artificer»","Перчатки","#ff8f3c","legendary",2200,"gloves-artificer.webp",10),
         it("Akimbo Uzi «Overdrive Red»","Пистолеты-пулемёты","#ff3f3f","rare",130,"uzi-overdrive-red.png",6),
         it("AWM «Dragon»","Снайперская","#ffd700","epic",390,"awm-dragon.png",7),
         it("Scorpion «Scratch»","ПП","#ff5470","rare",85,"scorpion-scratch.png",9),
@@ -595,7 +594,7 @@
   function tryLS(){try{return window.localStorage;}catch(e){return null;}}
   var LS=tryLS();
   function load(){
-    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noGloves:0,noFestal:0,noFrost:0,noRetro:0,noHohei:0,noVenator:0,noScorpion:0};
+    var d={bal:0,opened:0,level:1,xp:0,user:null,lastSpin:0,usedCodes:[],freeSpins:0,inv:[],noKnife:0,noFestal:0,noFrost:0,noRetro:0,noHohei:0,noVenator:0,noScorpion:0};
     if(!LS) return d;
     try{var s=JSON.parse(LS.getItem("scase_v1"));if(s&&typeof s.bal==="number")return s;}catch(e){}
     return d;
@@ -701,13 +700,11 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     st.noHohei=(st.noHohei||0)+1;
     st.noFrost=(st.noFrost||0)+1;
     st.noRetro=(st.noRetro||0)+1;
-    st.noGloves=(st.noGloves||0)+1;
     st.noVenator=(st.noVenator||0)+1;
     st.noScorpion=(st.noScorpion||0)+1;
     var hohei=byName("Hohei Taisho");
     var frost=byName("Frost Nova");
     var retro=byName("Retro Arcade");
-    var gloves=byName("Artificer");
     var venator=byName("Venator");
     var scorpion=byName("Scorpion");
     var win;
@@ -716,7 +713,6 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
     else if(retro.length>0 && st.noRetro>=7){ win=retro[Math.floor(Math.random()*retro.length)]; }
     else if(scorpion.length>0 && st.noScorpion>=11){ win=scorpion[Math.floor(Math.random()*scorpion.length)]; }
     else if(venator.length>0 && st.noVenator>=13){ win=venator[Math.floor(Math.random()*venator.length)]; }
-    else if(gloves.length>0 && st.noGloves>=9){ win=gloves[Math.floor(Math.random()*gloves.length)]; }
     else { win=rollItem(selected); }
     buildStrip(selected,win);
     var tile=$("strip").firstElementChild,tw=tile?tile.offsetWidth:150;
@@ -735,7 +731,6 @@ function renderBal(){$("balance").innerHTML=fmt(st.bal)+" "+G;}
       if(win.name.indexOf("Hohei Taisho")>-1){ st.noHohei=0; }
       if(win.name.indexOf("Frost Nova")>-1){ st.noFrost=0; }
       if(win.name.indexOf("Retro Arcade")>-1){ st.noRetro=0; }
-      if(win.name.indexOf("Artificer")>-1){ st.noGloves=0; }
       if(win.name.indexOf("Venator")>-1){ st.noVenator=0; }
       if(win.name.indexOf("Scorpion")>-1){ st.noScorpion=0; }
       if(win.q==="gold"){toast("🌟 Божественный дроп: "+win.name+"!");}
