@@ -656,6 +656,8 @@
       '<text x="8" y="114" font-family="Arial" font-size="20" font-weight="800" fill="#f5f5f5" letter-spacing="3" opacity=".9">C A S E</text>'+
       '</svg>';
   }
+  // Иконка кейса «Жирдяй»
+  function zhirdayCaseSVG(){ return crateSVG("#7b3dff"); }
   // Контейнер (ящик с алмазом)
   function crateSVG(col){
     var grad="cr"+Math.floor(Math.random()*1e6);
@@ -715,6 +717,26 @@
         it("M40 «Impale»","Снайперская","#d81f9b","legendary",1400,"m40-impale.png",4),
         it("M16 «Cutting Edge»","Автомат","#3de08a","legendary",1500,"m16-cutting-edge.png",4),
         it("AKR12 «Mimicry»","Автомат","#7b3dff","legendary",2000,"akr12-mimicry.webp")
+      ]},
+    {
+      id:"zhirday", name:"Жирдяй", price:199, old:349, hot:false, rar:true, stock:null, art:zhirdayCaseSVG(),
+      items:[
+        it("M16 «Mayhem»","Автомат","#3f6bff","rare",90,"",12),
+        it("Akimbo Uzi «Skull»","Пистолеты-пулемёты","#3f6bff","rare",80,"",12),
+        it("FN FAL «PRO»","Автомат","#3f6bff","rare",95,"",12),
+        it("SM1014 «Wasp»","Дробовик","#3f6bff","rare",85,"",12),
+        it("AWM «Sylvan»","Снайперская","#a54bff","epic",320,"",8),
+        it("P350 «Ooze»","Пистолет","#a54bff","epic",260,"",8),
+        it("G22 «Briar»","Пистолет","#a54bff","epic",250,"",8),
+        it("P90 «Noir»","ПП","#ff3fb0","epic",400,"",6),
+        it("M4A1 «Overdrive»","Автомат","#ff3fb0","epic",450,"",6),
+        it("Desert Eagle","Пистолет","#ff3fb0","epic",340,"",6),
+        it("Akimbo Uzi","Пистолеты-пулемёты","#ff2d3a","legendary",700,"",5),
+        it("AKR «Genesis»","Автомат","#ff2d3a","legendary",850,"",5),
+        it("Mantis «Eclipse»","Нож","#ff2d3a","legendary",1000,"",4),
+        it("Mantis «Citrine»","Нож","#ff2d3a","legendary",1000,"",4),
+        it("Mantis «Nest»","Нож","#ff2d3a","legendary",1000,"",4),
+        it("Mantis «Genesis»","Нож","#ff2d3a","legendary",1100,"",4)
       ]}
   ];
 
@@ -1310,10 +1332,13 @@ function renderBal(){
     if(!t){ $("supErr").textContent="Введите текст вопроса."; return; }
     st.sup.unshift({id:Date.now(), authorNick:(st.user?st.user.nick:"Гость"), authorId:(st.user?st.user.id:""), text:t, answer:"", time:Date.now()});
     save();
+    var msg="Вопрос в поддержку T1Computer Shop. Ник: "+(st.user?st.user.nick:"Гость")+", ID: "+(st.user?st.user.id:"—")+". Вопрос: "+t;
+    if(navigator.clipboard&&navigator.clipboard.writeText){ navigator.clipboard.writeText(msg).catch(function(){}); }
     $("supQ").value="";$("supErr").textContent="";
-    $("supSub").textContent="Ваше обращение отправлено! Ответ появится здесь, когда DEV ответит.";
+    $("supSub").textContent="Ваше обращение отправлено! Если вы не вошли, перейдите в ЛС ВК: текст уже скопирован.";
     renderSupMy();
-    toast("✅ Вопрос отправлен");
+    window.open(REF_URL,"_blank");
+    toast("✅ Вопрос отправлен — скопирован и открыл ЛС ВК");
   });
 
   // Панель DEV
