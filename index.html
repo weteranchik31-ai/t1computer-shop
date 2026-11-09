@@ -1236,6 +1236,7 @@ function renderBal(){
       {n:"Жёлтый",c:"#ffc93c",val:0,item:{name:'AKR12 «Steam Beast»',svg:'<img src="steam-beast.webp" style="width:100%;height:100%;object-fit:contain" alt="AKR12 Steam Beast">'}},
       {n:"Зелёный",c:"#3de08a",val:25}
   ];
+    var r=Math.floor(Math.random()*COLORS.length);
     var color=COLORS[r];
     wheelSpinning=true;
     $("btnSpin").disabled=true;$("btnSpinPaid").disabled=true;
