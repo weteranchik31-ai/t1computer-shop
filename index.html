@@ -1246,21 +1246,25 @@ function renderBal(){
     wheel.style.transition="transform 0.9s cubic-bezier(.22,1,.22,1)";
     wheel.style.transform="rotate("+(360*3 + (60*r + 30))+"deg)";
     setTimeout(function(){
-      if(color.item){
-        $("wheelLabel").textContent="🎁";
-        $("wheelLabel").style.color="#fff";
-        $("wheelLabel").style.fontSize="26px";
-        addToInv(color.item.name, color.item.svg, "Барабан");
-        showWinItem(color.item);
-        toast("🔫 Выпал скин: "+color.item.name+"!");
-      } else {
-        $("wheelLabel").textContent=color.n;
-        $("wheelLabel").style.color=color.n==="Белый"||color.n==="Жёлтый"?"#000":"#fff";
-        if(color.val>0){st.bal+=color.val;renderBal();}
-        toast("🎡 Выпал сектор: "+color.n+(color.val>0?" (+"+color.val+" голды)":""));
+      try{
+        if(color.item){
+          $("wheelLabel").textContent="🎁";
+          $("wheelLabel").style.color="#fff";
+          $("wheelLabel").style.fontSize="26px";
+          addToInv(color.item.name, color.item.svg, "Барабан");
+          showWinItem(color.item);
+          toast("🔫 Выпал скин: "+color.item.name+"!");
+        } else {
+          $("wheelLabel").textContent=color.n;
+          $("wheelLabel").style.color=color.n==="Белый"||color.n==="Жёлтый"?"#000":"#fff";
+          if(color.val>0){st.bal+=color.val;renderBal();}
+          toast("🎡 Выпал сектор: "+color.n+(color.val>0?" (+"+color.val+" голды)":""));
+        }
+      }finally{
+        wheelSpinning=false;save();
+        updateWheel();
+        if(!wheelSpinning){ $("btnSpinPaid").disabled=false; }
       }
-      wheelSpinning=false;save();
-      updateWheel();
     },950);
   }
   function showWinItem(item){
